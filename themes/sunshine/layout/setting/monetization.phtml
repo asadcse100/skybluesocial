@@ -1,0 +1,42 @@
+<div class="page-margin mt-0">
+	<div class="wow_content popular_posts_hdr">
+		<h2><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 8H21.5M5.99988 12H9.99988" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><rect x="2" y="3" width="20" height="18" rx="4" class="icon_main" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></rect></svg>&nbsp;<?php echo $wo['lang']['monetization']; ?></h2>
+	</div>
+</div>
+
+<div class="">
+    <div class="row wo_address_row">
+        <?php
+        if (!empty($wo['monetization_html'])) {
+            echo '<div class="col-xs-12"><div class="address_book"><div class="address_book_innr"><a href="javascript:void(0)" class="add_new_addrs main add_new_mon" onclick="NewMonetization()"><svg width="57" height="58" viewBox="0 0 57 58" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M54.4414 38.1487C52.4869 46.481 45.981 52.9869 37.6487 54.9414C31.6312 56.3529 25.3688 56.3529 19.3513 54.9414C11.019 52.9869 4.51312 46.481 2.55863 38.1487C1.14713 32.1312 1.14713 25.8688 2.55863 19.8513C4.51311 11.519 11.019 5.01312 19.3513 3.05863C25.3688 1.64713 31.6312 1.64713 37.6487 3.05863C45.981 5.01311 52.4869 11.519 54.4414 19.8513C55.8529 25.8688 55.8529 32.1312 54.4414 38.1487Z" stroke="currentColor" stroke-width="3"/><path d="M36 28.999H21M28.5 36.499L28.5 21.499" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>' . $wo['lang']['add_new'] . '</a></div></div></div>';
+            echo $wo['monetization_html'];
+        }
+        else{
+            echo '<div class="col-xs-12"><div class="address_book"><div class="address_book_innr"><a href="javascript:void(0)" class="add_new_addrs main add_new_mon" onclick="NewMonetization()"><svg width="57" height="58" viewBox="0 0 57 58" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M54.4414 38.1487C52.4869 46.481 45.981 52.9869 37.6487 54.9414C31.6312 56.3529 25.3688 56.3529 19.3513 54.9414C11.019 52.9869 4.51312 46.481 2.55863 38.1487C1.14713 32.1312 1.14713 25.8688 2.55863 19.8513C4.51311 11.519 11.019 5.01312 19.3513 3.05863C25.3688 1.64713 31.6312 1.64713 37.6487 3.05863C45.981 5.01311 52.4869 11.519 54.4414 19.8513C55.8529 25.8688 55.8529 32.1312 54.4414 38.1487Z" stroke="currentColor" stroke-width="3"/><path d="M36 28.999H21M28.5 36.499L28.5 21.499" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>' . $wo['lang']['add_new'] . '</a></div></div></div>
+            <div class="col-xs-12"><div class="empty_state"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>' . $wo['lang']['unlock_your_earning_potential'] . '</div></div>
+            ';
+        }
+        ?>
+    </div>
+    <input type="hidden" id="setting_address_page">
+</div>
+
+<script type="text/javascript">
+    function EditMonetization(id) {
+        $('.modal_edit_monetization_modal_alert_'+id).empty();
+        $("#edit_monetization_modal_"+id).find('.btn-mat').removeAttr('disabled')
+        $("#edit_monetization_modal_"+id).find('.btn-mat').text("<?php echo $wo['lang']['edit']; ?>");
+        $('#edit_monetization_modal_'+id).modal('show');
+    }
+    function DeleteMonetization(id,type = 'show') {
+        if (type == 'hide') {
+            $('#delete-monetization').find('.btn-mat').attr('onclick', "DeleteMonetization('"+id+"')");
+            $('#delete-monetization').modal('show');
+            return false;
+        }
+        $('.address_'+id).slideUp();
+        $('.address_'+id).remove();
+        $('#edit_address_modal_'+id).remove();
+        $.post(Wo_Ajax_Requests_File() + '?f=monetization&s=delete&hash=' + $('.main_session').val(), {id: id}, function(data, textStatus, xhr) {});
+    }
+</script>
