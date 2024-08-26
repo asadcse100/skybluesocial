@@ -1,4 +1,13 @@
 <?php
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2018 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $response_data = array(
     'api_status' => 400,
 );
@@ -13,7 +22,7 @@ if (empty($error_code)) {
         $error_code    = 6;
         $error_message = 'Group not found';
     } else {
-        $join_message = 'invalid';
+    	$join_message = 'invalid';
         if (Wo_IsGroupJoined($group_id) === true || Wo_IsJoinRequested($group_id, $wo['user']['user_id']) === true) {
             if (Wo_LeaveGroup($group_id, $wo['user']['user_id'])) {
                 $join_message = 'left';
@@ -22,14 +31,15 @@ if (empty($error_code)) {
             if (Wo_RegisterGroupJoin($group_id, $wo['user']['user_id'])) {
                 if ($group_data['join_privacy'] == 2) {
                     $join_message = 'requested';
-                } else {
+                }
+                else{
                     $join_message = 'joined';
                 }
             }
         }
         $response_data = array(
-            'api_status' => 200,
-            'join_status' => $join_message
-        );
+		    'api_status' => 200,
+		    'join_status' => $join_message
+		);
     }
 }

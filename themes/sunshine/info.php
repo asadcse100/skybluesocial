@@ -5,7 +5,7 @@ $themeFolder = 'sunshine';
 
 $themeAuthor = 'Deen Doughouz';
 
-$themeAuthorUrl = 'https://codecanyon.net/user/doughouzforest/';
+$themeAuthorUrl = '#';
 
 $themeVirsion = '1.0';
 

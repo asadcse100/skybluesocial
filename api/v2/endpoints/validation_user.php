@@ -1,27 +1,27 @@
 <?php
 if (!empty($_POST['code']) && !empty($_POST['email'])) {
-    $code   = Wo_Secure($_POST['code']);
-    $email   = Wo_Secure($_POST['email']);
-    if (Wo_EmailExists($email) === false) {
+	$code   = Wo_Secure($_POST['code']);
+	$email   = Wo_Secure($_POST['email']);
+	if (Wo_EmailExists($email) === false) {
         $response_data       = array(
-            'api_status'     => '400',
-            'errors'         => array(
-                'error_id'   => '5',
-                'error_text' => 'wrong email'
-            )
-        );
-        echo json_encode($response_data, JSON_PRETTY_PRINT);
-        exit();
-    } else if (Wo_ActivateUser($email, $code) === false) {
+	        'api_status'     => '400',
+	        'errors'         => array(
+	            'error_id'   => '5',
+	            'error_text' => 'wrong email'
+	        )
+	    );
+	    echo json_encode($response_data, JSON_PRETTY_PRINT);
+	    exit();
+    } else if (Wo_ActivateUser($email, $code) === false) {   
         $response_data       = array(
-            'api_status'     => '400',
-            'errors'         => array(
-                'error_id'   => '6',
-                'error_text' => 'wrong data'
-            )
-        );
-        echo json_encode($response_data, JSON_PRETTY_PRINT);
-        exit();
+	        'api_status'     => '400',
+	        'errors'         => array(
+	            'error_id'   => '6',
+	            'error_text' => 'wrong data'
+	        )
+	    );
+	    echo json_encode($response_data, JSON_PRETTY_PRINT);
+	    exit();
     } else {
         $session = Wo_CreateLoginSession(Wo_UserIdFromEmail($email));
         $access_token = $session;
@@ -39,7 +39,11 @@ if (!empty($_POST['code']) && !empty($_POST['email'])) {
         $cookie         = '';
         $access_token   = sha1(rand(111111111, 999999999)) . md5(microtime()) . rand(11111111, 99999999) . md5(rand(5555, 9999));
         $timezone       = 'UTC';
-        $create_session = mysqli_query($sqlConnect, "INSERT INTO " . T_APP_SESSIONS . " (`user_id`, `session_id`, `platform`, `time`) VALUES ('{$user_id}', '{$access_token}', 'phone', '{$time}')");
+        $device_type = 'phone';
+        if (!empty($_POST['device_type']) && in_array($_POST['device_type'], array('phone','windows'))) {
+            $device_type = Wo_Secure($_POST['device_type']);
+        }
+        $create_session = mysqli_query($sqlConnect, "INSERT INTO " . T_APP_SESSIONS . " (`user_id`, `session_id`, `platform`, `time`) VALUES ('{$user_id}', '{$access_token}', '{$device_type}', '{$time}')");
         if (!empty($_POST['timezone'])) {
             $timezone = Wo_Secure($_POST['timezone']);
         }
@@ -71,10 +75,13 @@ if (!empty($_POST['code']) && !empty($_POST['email'])) {
                 'timezone' => $timezone,
                 'access_token' => $access_token,
                 'user_id' => $user_id,
+                'user_platform' => $device_type,
             );
         }
     }
-} else {
-    $error_code    = 4;
+
+}
+else{
+	$error_code    = 4;
     $error_message = 'email , code can not be empty';
 }

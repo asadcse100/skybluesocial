@@ -1,5 +1,13 @@
 <?php
-
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com   
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2016 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $json_error_data     = array();
 $json_success_data   = array();
 $json_success_data_2 = array();
@@ -121,7 +129,7 @@ if ($type == 'get_user_messages') {
                 if ($message['from_id'] == $user_id) {
                     $message_po  = 'right';
                 }
-
+                
                 $message['position']  = $message_po;
                 $message['type']      = Wo_GetFilePosition($message['media']);
                 if (!empty($message['stickers']) && strpos($message['stickers'], '.gif') !== false) {
@@ -167,7 +175,7 @@ $typing = 0;
 $check_typing = Wo_IsTyping($recipient_id);
 if ($check_typing) {
     $typing = 1;
-}
+} 
 $json_success_data22 = array(
     'api_status' => '200',
     'api_text' => 'success',
@@ -178,3 +186,4 @@ $json_success_data22 = array(
 header("Content-type: application/json");
 echo json_encode($json_success_data22);
 exit();
+?>

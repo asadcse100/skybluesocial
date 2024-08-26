@@ -1,4 +1,13 @@
 <?php
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com   
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2018 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $response_data = array(
     'api_status' => 400
 );
@@ -10,10 +19,10 @@ $required_fields = array(
 
 if (empty($_POST['product_id'])) {
     if (empty($_POST['text']) && $_POST['text'] != 0 && empty($_POST['lat']) && empty($_POST['lng'])) {
-        if (empty($_FILES['file']['name']) && empty($_POST['image_url']) && empty($_POST['gif'])) {
-            $error_code    = 3;
-            $error_message = 'file (STREAM FILE) AND text (POST) AND image_url AND gif (POST) are missing, at least one is required';
-        }
+    	if (empty($_FILES['file']['name']) && empty($_POST['image_url']) && empty($_POST['gif'])) {
+    	    $error_code    = 3;
+    	    $error_message = 'file (STREAM FILE) AND text (POST) AND image_url AND gif (POST) are missing, at least one is required';
+    	}
     }
 }
 
@@ -34,7 +43,7 @@ if (empty($error_code)) {
     } else {
         if (empty($_POST['product_id'])) {
 
-            $mediaFilename = '';
+    	    $mediaFilename = '';
             $mediaName     = '';
             if (isset($_FILES['file']['name'])) {
                 $fileInfo      = array(
@@ -48,10 +57,10 @@ if (empty($error_code)) {
                 $mediaName     = $_FILES['file']['name'];
             }
             if (!empty($_POST['image_url'])) {
-                $fileend = '_url_image';
-                if (!empty($_POST['sticker_id'])) {
-                    $fileend =  '_sticker_' . Wo_Secure($_POST['sticker_id']);
-                }
+            	$fileend = '_url_image';
+            	if (!empty($_POST['sticker_id'])) {
+            		$fileend =  '_sticker_' . Wo_Secure($_POST['sticker_id']);
+            	}
                 $mediaFilename = Wo_ImportImageFromUrl($_POST['image_url'], $fileend);
             }
             $gif = '';
@@ -66,7 +75,7 @@ if (empty($error_code)) {
                 $lng = Wo_Secure($_POST['lng']);
                 $lat = Wo_Secure($_POST['lat']);
             }
-            $message_data = array(
+        	$message_data = array(
                 'from_id' => Wo_Secure($wo['user']['user_id']),
                 'to_id' => Wo_Secure($recipient_id),
                 'media' => Wo_Secure($mediaFilename),
@@ -78,9 +87,10 @@ if (empty($error_code)) {
                 'lng' => $lng,
                 'lat' => $lat,
             );
-            if (!empty($_POST['text']) || (isset($_POST['text']) && $_POST['text'] === '0')) {
-                $message_data['text'] = Wo_Secure($_POST['text']);
-            } else {
+    		if (!empty($_POST['text']) || (isset($_POST['text']) && $_POST['text'] === '0') ) {
+    		 	$message_data['text'] = Wo_Secure($_POST['text']);
+    		}
+            else{
                 if (empty($lng) && empty($lat) && empty($_FILES['file']['name']) && empty($_POST['image_url']) && empty($_POST['gif'])) {
                     $error_code    = 5;
                     $error_message = 'Please check your details.';
@@ -92,40 +102,41 @@ if (empty($error_code)) {
             if (empty($error_message)) {
                 $last_id      = Wo_RegisterMessage($message_data);
             }
-        } else {
+        }
+        else{
             $last_id = Wo_RegisterMessage(array(
-                'from_id' => Wo_Secure($wo['user']['user_id']),
-                'to_id' => $recipient_id,
-                'time' => time(),
-                'stickers' => '',
-                'product_id' => Wo_Secure($_POST['product_id'])
-            ));
+                            'from_id' => Wo_Secure($wo['user']['user_id']),
+                            'to_id' => $recipient_id,
+                            'time' => time(),
+                            'stickers' => '',
+                            'product_id' => Wo_Secure($_POST['product_id'])
+                        ));
         }
         if (!empty($last_id)) {
             if (!empty($_POST['reply_id']) && is_numeric($_POST['reply_id']) && $_POST['reply_id'] > 0) {
                 $reply_id = Wo_Secure($_POST['reply_id']);
-                $db->where('id', $last_id)->update(T_MESSAGES, array('reply_id' => $reply_id));
+                $db->where('id',$last_id)->update(T_MESSAGES,array('reply_id' => $reply_id));
             }
             if (!empty($_POST['story_id']) && is_numeric($_POST['story_id']) && $_POST['story_id'] > 0) {
                 $story_id = Wo_Secure($_POST['story_id']);
-                $db->where('id', $last_id)->update(T_MESSAGES, array('story_id' => $story_id));
+                $db->where('id',$last_id)->update(T_MESSAGES,array('story_id' => $story_id));
             }
-            $message_info = array(
+        	$message_info = array(
                 'user_id' => $recipient_id,
                 'message_id' => $last_id
             );
             $message_info = Wo_GetMessages($message_info);
             foreach ($non_allowed as $key => $value) {
-                unset($message_info[0]['messageUser'][$value]);
-            }
-            if (empty($wo['user']['timezone'])) {
+	           unset($message_info[0]['messageUser'][$value]);
+	        }
+	        if (empty($wo['user']['timezone'])) {
                 $wo['user']['timezone'] = 'UTC';
             }
-            $timezone = new DateTimeZone($wo['user']['timezone']);
-            $messages = array();
-            foreach ($message_info as $key => $message) {
+	        $timezone = new DateTimeZone($wo['user']['timezone']);
+	        $messages = array();
+	        foreach ($message_info as $key => $message) {
                 $message['text'] = Wo_Markup($message['or_text']);
-                $message['time_text'] = Wo_Time_Elapsed_String($message['time']);
+	        	$message['time_text'] = Wo_Time_Elapsed_String($message['time']);
                 $message_po           = 'left';
                 if ($message['from_id'] == $wo['user']['user_id']) {
                     $message_po = 'right';
@@ -168,7 +179,7 @@ if (empty($error_code)) {
                 unset($message['or_text']);
                 if (!empty($message['reply'])) {
                     foreach ($non_allowed as $key => $value) {
-                        unset($message['reply']['messageUser'][$value]);
+                       unset($message['reply']['messageUser'][$value]);
                     }
 
                     $message['reply']['text'] = Wo_Markup($message['reply']['or_text']);
@@ -211,7 +222,7 @@ if (empty($error_code)) {
                 }
                 if (!empty($message['story'])) {
                     foreach ($non_allowed as $key => $value) {
-                        unset($message['story']['user_data'][$value]);
+                       unset($message['story']['user_data'][$value]);
                     }
                     if (!empty($message['story']['thumb']['filename'])) {
                         $message['story']['thumbnail'] = $message['story']['thumb']['filename'];
@@ -220,19 +231,21 @@ if (empty($error_code)) {
                         $message['story']['thumbnail'] = $message['story']['user_data']['avatar'];
                     }
                     $message['story']['time_text'] = Wo_Time_Elapsed_String($message['story']['posted']);
-                    $message['story']['view_count'] = $db->where('story_id', $message['story']['id'])->where('user_id', $message['story']['user_id'], '!=')->getValue(T_STORY_SEEN, 'COUNT(*)');
+                    $message['story']['view_count'] = $db->where('story_id',$message['story']['id'])->where('user_id',$message['story']['user_id'],'!=')->getValue(T_STORY_SEEN,'COUNT(*)');
                 }
                 array_push($messages, $message);
-            }
-            if (!empty($messages)) {
-                $response_data = array(
-                    'api_status' => 200,
-                    'message_data' => $messages
-                );
-            }
-        } else {
+	        }
+	        if (!empty($messages)) {
+	        	$response_data = array(
+	                'api_status' => 200,
+	                'message_data' => $messages
+	            );
+	        }
+        }
+        else{
             $error_code    = 6;
             $error_message = 'something went wrong.';
         }
     }
 }
+

@@ -1,26 +1,35 @@
 <?php
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com   
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2018 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $response_data = array(
     'api_status' => 400
 );
 
 $required_fields =  array(
-    'create',
-    'delete',
-    'edit',
-    'leave',
-    'add_user',
-    'remove_user',
-    'send',
-    'fetch_messages',
-    'get_list',
-    'accept',
-    'reject',
-    'get_by_id',
-    'get_message_by_id',
-    'search',
-    'join',
-    'destruct_at',
-);
+                        'create',
+                        'delete',
+                        'edit',
+                        'leave',
+                        'add_user',
+                        'remove_user',
+                        'send',
+                        'fetch_messages',
+                        'get_list',
+                        'accept',
+                        'reject',
+                        'get_by_id',
+                        'get_message_by_id',
+                        'search',
+                        'join',
+                        'destruct_at',
+                    );
 if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
     if ($_POST['type'] == 'join') {
         if (empty($_POST['id']) || !is_numeric($_POST['id']) || $_POST['id'] < 1) {
@@ -37,22 +46,26 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
 
         if (empty($error_code)) {
             if (!Wo_IsGChatMemeberExists($group_id, $wo['user']['id'])) {
-                @mysqli_query($sqlConnect, "INSERT INTO " . T_GROUP_CHAT_USERS . " (`id`,`user_id`,`group_id`,`active`) VALUES (null," . $wo['user']['id'] . ",$group_id,'1')");
+                @mysqli_query($sqlConnect, "INSERT INTO " . T_GROUP_CHAT_USERS . " (`id`,`user_id`,`group_id`,`active`) VALUES (null,".$wo['user']['id'].",$group_id,'1')");
                 $response_data = array(
                     'api_status' => 200,
                     'message_data' => 'joined group successfully'
                 );
-            } else {
+            }
+            else{
                 $error_code    = 8;
                 $error_message = 'you are already joined this group';
             }
         }
+
+
     }
     if ($_POST['type'] == 'search') {
         if (empty($_POST['id']) || !is_numeric($_POST['id']) || $_POST['id'] < 1) {
             $error_code    = 7;
             $error_message = 'id must be numeric and greater than 0';
-        } elseif (empty($_POST['keyword'])) {
+        }
+        elseif (empty($_POST['keyword'])) {
             $error_code    = 8;
             $error_message = 'keyword can not be empty';
         }
@@ -64,7 +77,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
         `text`     LIKE '%$filter_keyword%'
         )";
 
-        $messages = $db->where('group_id', $group_id)->where($sql)->get(T_MESSAGES);
+        $messages = $db->where('group_id',$group_id)->where($sql)->get(T_MESSAGES);
 
         $messagesData = [];
         foreach ($messages as $key => $value) {
@@ -76,11 +89,23 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
             $message_info = Wo_GetGroupMessages($message_info);
 
             $messagesData[] = messageMarkup($message_info);
+
+            
+
+
+            
+            
+
+
+
+
         }
         $response_data = array(
-            'api_status' => 200,
-            'data' => $messagesData
-        );
+                                'api_status' => 200,
+                                'data' => $messagesData
+                            );
+
+
     }
     if ($_POST['type'] == 'create') {
 
@@ -124,8 +149,8 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
             if (!empty($_POST['group_type'])) {
                 $type    = Wo_Secure($_POST['group_type']);
             }
-            $id      = Wo_CreateGChat($name, $users, $type);
-
+            $id      = Wo_CreateGChat($name, $users,$type);
+            
             if (isset($_FILES["avatar"]["tmp_name"])) {
                 $fileInfo      = array(
                     'file' => $_FILES["avatar"]["tmp_name"],
@@ -178,7 +203,8 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                     'api_status' => 200,
                     'message_data' => 'group successfully deleted'
                 );
-            } else {
+            }
+            else{
                 $error_code    = 8;
                 $error_message = 'group not found or removed';
             }
@@ -191,7 +217,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
             $error_message = 'id must be numeric and greater than 0';
         }
 
-
+        
         if (!empty($_POST['destruct_at']) && !is_numeric($_POST['destruct_at'])) {
             $error_code    = 8;
             $error_message = 'destruct_at must be numeric';
@@ -205,7 +231,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
             $group_id = Wo_Secure($_POST['id']);
             $group_tab = Wo_GroupTabData($group_id);
             if ($group_tab && is_array($group_tab) && $group_tab['type'] == 'secret' && Wo_IsGChatMemeberExists($group_id, $wo['user']['id'])) {
-                $db->where('group_id', $group_id)->update(T_GROUP_CHAT, [
+                $db->where('group_id',$group_id)->update(T_GROUP_CHAT,[
                     'destruct_at' => $destruct_at
                 ]);
 
@@ -213,7 +239,8 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                     'api_status' => 200,
                     'message' => 'chat updated successfully'
                 );
-            } else {
+            }
+            else{
                 $error_code    = 8;
                 $error_message = 'chat not found or not secret';
             }
@@ -229,7 +256,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
             $error_code      = 9;
             $error_message   = 'group_name and image can not be empty';
         }
-        if (!empty($_POST['group_name']) && (strlen($_POST['group_name']) < 4 || strlen($_POST['group_name']) > 25)) {
+        if (!empty($_POST['group_name']) && (strlen($_POST['group_name']) < 4 || strlen($_POST['group_name']) > 25) ) {
             $error_code      = 5;
             $error_message   = 'group_name must be between 4 and 25 character';
         }
@@ -272,6 +299,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                     $media         = Wo_ShareFile($fileInfo);
                     $mediaFilename = $media['filename'];
                     $update_data['avatar']    = $mediaFilename;
+                    
                 }
                 if (!empty($update_data)) {
                     @Wo_UpdateGChat($id, $update_data);
@@ -291,7 +319,8 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                         'data' => $group_data
                     );
                 }
-            } else {
+            }
+            else{
                 $error_code    = 8;
                 $error_message = 'group not found or removed';
             }
@@ -312,7 +341,8 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                     'api_status' => 200,
                     'message_data' => 'you are successfully leaved this group'
                 );
-            } else {
+            }
+            else{
                 $error_code    = 8;
                 $error_message = 'group not found or removed';
             }
@@ -340,18 +370,20 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                             if ($type == 'channel') {
                                 $active = 1;
                             }
-                            @mysqli_query($sqlConnect, "INSERT INTO " . T_GROUP_CHAT_USERS . " (`id`,`user_id`,`group_id`,`active`) VALUES (null,$user,$id,'" . $active . "')");
+                            @mysqli_query($sqlConnect, "INSERT INTO " . T_GROUP_CHAT_USERS . " (`id`,`user_id`,`group_id`,`active`) VALUES (null,$user,$id,'".$active."')");
                         }
                     }
                     $response_data = array(
                         'api_status' => 200,
                         'message_data' => 'users successfully joined to group'
                     );
-                } else {
+                }
+                else{
                     $error_code    = 11;
                     $error_message = 'sorry you are not the group owner';
                 }
-            } else {
+            }
+            else{
                 $error_code    = 8;
                 $error_message = 'group not found or removed';
             }
@@ -382,11 +414,13 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                         'api_status' => 200,
                         'message_data' => 'users successfully removed from group'
                     );
-                } else {
+                }
+                else{
                     $error_code    = 11;
                     $error_message = 'sorry you are not the group owner';
                 }
-            } else {
+            }
+            else{
                 $error_code    = 8;
                 $error_message = 'group not found or removed';
             }
@@ -412,6 +446,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
         if (!Wo_IsGChatMemeberExists($_POST['id'], $wo['user']['id']) && $group_tab['user_id'] != $wo['user']['id']) {
             $error_code    = 13;
             $error_message = 'sorry you are not a group memeber';
+
         }
         if ($group_tab['type'] == 'channel' && $wo['user']['id'] != $group_tab['user_id']) {
             $error_code    = 14;
@@ -496,24 +531,24 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
 
             if (!empty($last_id)) {
                 if ($group_tab['type'] == 'secret') {
-                    $db->where('group_id', $group_id)->where('from_id', $wo['user']['id'], '!=')->where('seen', 0)->update(T_MESSAGES, [
+                    $db->where('group_id',$group_id)->where('from_id',$wo['user']['id'],'!=')->where('seen',0)->update(T_MESSAGES,[
                         'seen' => time(),
                         'remove_at' => ($group_tab['destruct_at'] > 0 ? (time() + $group_tab['destruct_at']) : 0),
                     ]);
 
-                    $removed_messages = $db->where('group_id', $group_id)->where('remove_at', 0, '!=')->where('remove_at', time(), '<')->get(T_MESSAGES);
+                    $removed_messages = $db->where('group_id',$group_id)->where('remove_at',0,'!=')->where('remove_at',time(),'<')->get(T_MESSAGES);
                     foreach ($removed_messages as $key => $value) {
-                        $db->where('id', $value->id)->update(T_MESSAGES, array(
+                        $db->where('id',$value->id)->update(T_MESSAGES,array(
                             'deleted_one' => '1',
                             'deleted_two' => '1',
                         ));
-                        Wo_DeleteMessage($value->id, '', $value->from_id);
+                        Wo_DeleteMessage($value->id,'',$value->from_id);
                     }
                 }
 
                 if (!empty($_POST['reply_id']) && is_numeric($_POST['reply_id']) && $_POST['reply_id'] > 0) {
                     $reply_id = Wo_Secure($_POST['reply_id']);
-                    $db->where('id', $last_id)->update(T_MESSAGES, array('reply_id' => $reply_id));
+                    $db->where('id',$last_id)->update(T_MESSAGES,array('reply_id' => $reply_id));
                 }
                 $message_info = array(
                     'group_id' => $group_id,
@@ -521,7 +556,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                 );
                 $message_info = Wo_GetGroupMessages($message_info);
                 foreach ($non_allowed as $key => $value) {
-                    unset($message_info[0]['messageUser'][$value]);
+                   unset($message_info[0]['messageUser'][$value]);
                 }
                 if (empty($wo['user']['timezone'])) {
                     $wo['user']['timezone'] = 'UTC';
@@ -569,7 +604,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
 
                     if (!empty($message['reply'])) {
                         foreach ($non_allowed as $key => $value) {
-                            unset($message['reply']['messageUser'][$value]);
+                           unset($message['reply']['messageUser'][$value]);
                         }
 
                         $message['reply']['time_text'] = Wo_Time_Elapsed_String($message['reply']['time']);
@@ -639,6 +674,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
         if (!Wo_IsGChatMemeberExists($_POST['id'], $wo['user']['id']) && $group_tab['user_id'] != $wo['user']['id']) {
             $error_code    = 13;
             $error_message = 'sorry you are not a group memeber';
+
         }
 
         if (empty($error_code)) {
@@ -660,28 +696,26 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
             }
 
             if ($group_tab['type'] == 'secret') {
-                $db->where('group_id', $group_id)->where('from_id', $wo['user']['id'], '!=')->where('seen', 0)->update(T_MESSAGES, [
+                $db->where('group_id',$group_id)->where('from_id',$wo['user']['id'],'!=')->where('seen',0)->update(T_MESSAGES,[
                     'seen' => time(),
                     'remove_at' => ($group_tab['destruct_at'] > 0 ? (time() + $group_tab['destruct_at']) : 0),
                 ]);
 
-                $removed_messages = $db->where('group_id', $group_id)->where('remove_at', 0, '!=')->where('remove_at', time(), '<')->get(T_MESSAGES);
+                $removed_messages = $db->where('group_id',$group_id)->where('remove_at',0,'!=')->where('remove_at',time(),'<')->get(T_MESSAGES);
                 foreach ($removed_messages as $key => $value) {
-                    $db->where('id', $value->id)->update(T_MESSAGES, array(
+                    $db->where('id',$value->id)->update(T_MESSAGES,array(
                         'deleted_one' => '1',
                         'deleted_two' => '1',
                     ));
-                    Wo_DeleteMessage($value->id, '', $value->from_id);
+                    Wo_DeleteMessage($value->id,'',$value->from_id);
                 }
             }
 
-            $messages = Wo_GetGroupMessagesAPP(array(
-                'group_id' => $group_id,
-                'limit'    => $limit,
-                'new'      => $new,
-                'old'      => $old,
-                'offset'   => $offset
-            ));
+            $messages = Wo_GetGroupMessagesAPP(array('group_id' => $group_id,
+                                                                  'limit'    => $limit,
+                                                                  'new'      => $new,
+                                                                  'old'      => $old,
+                                                                  'offset'   => $offset));
             $not_include_status = false;
             $not_include_array = array();
             if (!empty($_POST['not_include'])) {
@@ -706,7 +740,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                 if ($message['from_id'] == $wo['user']['id']) {
                     $message_po  = 'right';
                 }
-
+                
                 $message['position']  = $message_po;
                 $message['type']      = Wo_GetFilePosition($message['media']);
                 if ($message['type_two'] == 'contact') {
@@ -738,7 +772,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
 
                 if (!empty($message['reply'])) {
                     foreach ($non_allowed as $key => $value) {
-                        unset($message['reply']['messageUser'][$value]);
+                       unset($message['reply']['messageUser'][$value]);
                     }
 
                     $message['reply']['time_text'] = Wo_Time_Elapsed_String($message['reply']['time']);
@@ -746,7 +780,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                     if ($message['reply']['from_id'] == $wo['user']['id']) {
                         $message_po  = 'right';
                     }
-
+                    
                     $message['reply']['position']  = $message_po;
                     $message['reply']['type']      = Wo_GetFilePosition($message['reply']['media']);
                     if ($message['reply']['type_two'] == 'contact') {
@@ -783,16 +817,19 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                 foreach ($non_allowed as $key => $value) {
                     if (empty($group_tab['messages'][$m_id]['user_data'])) {
                         $group_tab['messages'][$m_id]['user_data'] = null;
-                    } else {
+                    }
+                    else{
                         unset($group_tab['messages'][$m_id]['user_data'][$value]);
                     }
+                    
                 }
             }
 
             $response_data = array(
-                'api_status' => 200,
-                'data' => $group_tab
-            );
+                                'api_status' => 200,
+                                'data' => $group_tab
+                            );
+
         }
     }
 
@@ -802,18 +839,18 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
         $offset = (!empty($_POST['offset']) && is_numeric($_POST['offset']) && $_POST['offset'] > 0 ? Wo_Secure($_POST['offset']) : 0);
         $limit = (!empty($_POST['limit']) && is_numeric($_POST['limit']) && $_POST['limit'] > 0 && $_POST['limit'] <= 50 ? Wo_Secure($_POST['limit']) : 20);
 
-        $groups = Wo_GetGroupsListAPP(array('offset' => $offset, 'limit' => $limit));
+        $groups = Wo_GetGroupsListAPP(array('offset' => $offset , 'limit' => $limit));
         foreach ($groups as $key => $value) {
             if (!empty($groups[$key]['user_data'])) {
                 foreach ($non_allowed as $key4 => $value4) {
-                    unset($groups[$key]['user_data'][$value4]);
+                  unset($groups[$key]['user_data'][$value4]);
                 }
             }
             if (!empty($groups[$key]['parts'])) {
                 foreach ($groups[$key]['parts'] as $key3 => $g_user) {
                     if (!empty($g_user)) {
                         foreach ($non_allowed as $key5 => $value5) {
-                            unset($groups[$key]['parts'][$key3][$value5]);
+                          unset($groups[$key]['parts'][$key3][$value5]);
                         }
                     }
                 }
@@ -822,19 +859,17 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
             if (!empty($groups[$key]['last_message'])) {
                 foreach ($groups[$key]['last_message'] as $key3 => $g_user) {
                     foreach ($non_allowed as $key5 => $value5) {
-                        unset($groups[$key]['last_message']['user_data'][$value5]);
+                      unset($groups[$key]['last_message']['user_data'][$value5]);
                     }
                 }
                 $groups[$key]['last_message']['text'] = openssl_encrypt($groups[$key]['last_message']['text'], "AES-128-ECB", $groups[$key]['last_message']['time']);
             }
-            $groups[$key]['mute'] = array(
-                'notify' => 'yes',
-                'call_chat' => 'yes',
-                'archive' => 'no',
-                'fav' => 'no',
-                'pin' => 'no'
-            );
-            $mute = $db->where('user_id', $wo['user']['id'])->where('chat_id', $groups[$key]['chat_id'])->where('type', 'group')->getOne(T_MUTE);
+            $groups[$key]['mute'] = array('notify' => 'yes',
+                               'call_chat' => 'yes',
+                               'archive' => 'no',
+                               'fav' => 'no',
+                               'pin' => 'no');
+            $mute = $db->where('user_id',$wo['user']['id'])->where('chat_id',$groups[$key]['chat_id'])->where('type','group')->getOne(T_MUTE);
             if (!empty($mute)) {
                 $groups[$key]['mute']['notify'] = $mute->notify;
                 $groups[$key]['mute']['call_chat'] = $mute->call_chat;
@@ -845,15 +880,15 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
         }
 
         $response_data = array(
-            'api_status' => 200,
-            'data' => $groups
-        );
+                                'api_status' => 200,
+                                'data' => $groups
+                            );
     }
 
     if ($_POST['type'] == 'accept') {
         if (!empty($_POST['group_id']) && is_numeric($_POST['group_id']) && $_POST['group_id'] > 0) {
             $group_id = Wo_Secure($_POST['group_id']);
-            $db->where('user_id', $wo['user']['id'])->where('group_id', $group_id)->update(T_GROUP_CHAT_USERS, array('last_seen' => time(), 'active' => '1'));
+            $db->where('user_id',$wo['user']['id'])->where('group_id',$group_id)->update(T_GROUP_CHAT_USERS,array('last_seen' => time(),'active' => '1'));
 
             $group_chat = Wo_GroupTabData($group_id);
 
@@ -867,10 +902,11 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
             Wo_RegisterNotification($notification_data);
 
             $response_data = array(
-                'api_status' => 200,
-                'message_data' => 'Request successfully accepted'
-            );
-        } else {
+                                    'api_status' => 200,
+                                    'message_data' => 'Request successfully accepted'
+                                );
+        }
+        else{
             $error_code    = 8;
             $error_message = 'group_id can not be empty';
         }
@@ -880,7 +916,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
         if (!empty($_POST['group_id']) && is_numeric($_POST['group_id']) && $_POST['group_id'] > 0) {
             $group_id = Wo_Secure($_POST['group_id']);
 
-            $db->where('user_id', $wo['user']['id'])->where('group_id', $group_id)->delete(T_GROUP_CHAT_USERS);
+            $db->where('user_id',$wo['user']['id'])->where('group_id',$group_id)->delete(T_GROUP_CHAT_USERS);
 
             $group_chat = Wo_GroupTabData($group_id);
 
@@ -894,13 +930,16 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
             Wo_RegisterNotification($notification_data);
 
             $response_data = array(
-                'api_status' => 200,
-                'message_data' => 'Request successfully rejected'
-            );
-        } else {
+                                    'api_status' => 200,
+                                    'message_data' => 'Request successfully rejected'
+                                );
+
+        }
+        else{
             $error_code    = 8;
             $error_message = 'group_id can not be empty';
         }
+
     }
     if ($_POST['type'] == 'get_by_id') {
         if (!empty($_POST['id']) && is_numeric($_POST['id']) && $_POST['id'] > 0) {
@@ -920,7 +959,8 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                 'api_status' => 200,
                 'data' => $group_data
             );
-        } else {
+        }
+        else{
             $error_code    = 4;
             $error_message = 'id can not be empty';
         }
@@ -932,7 +972,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
             if (!empty($last_id)) {
                 if (!empty($_POST['reply_id']) && is_numeric($_POST['reply_id']) && $_POST['reply_id'] > 0) {
                     $reply_id = Wo_Secure($_POST['reply_id']);
-                    $db->where('id', $last_id)->update(T_MESSAGES, array('reply_id' => $reply_id));
+                    $db->where('id',$last_id)->update(T_MESSAGES,array('reply_id' => $reply_id));
                 }
                 $message_info = array(
                     'group_id' => $group_id,
@@ -940,7 +980,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                 );
                 $message_info = Wo_GetGroupMessages($message_info);
                 foreach ($non_allowed as $key => $value) {
-                    unset($message_info[0]['messageUser'][$value]);
+                   unset($message_info[0]['messageUser'][$value]);
                 }
                 if (empty($wo['user']['timezone'])) {
                     $wo['user']['timezone'] = 'UTC';
@@ -988,7 +1028,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
 
                     if (!empty($message['reply'])) {
                         foreach ($non_allowed as $key => $value) {
-                            unset($message['reply']['messageUser'][$value]);
+                           unset($message['reply']['messageUser'][$value]);
                         }
 
                         $message['reply']['time_text'] = Wo_Time_Elapsed_String($message['reply']['time']);
@@ -1043,12 +1083,14 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                     );
                 }
             }
-        } else {
+        }
+        else{
             $error_code    = 5;
             $error_message = 'group_id and message_id can not be empty';
         }
     }
-} else {
+}
+else{
     $error_code    = 4;
     $error_message = 'type can not be empty';
 }

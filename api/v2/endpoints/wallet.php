@@ -1,14 +1,25 @@
 <?php
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com   
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2018 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 
 $response_data = array(
     'api_status' => 400
 );
 
 $required_fields =  array(
-    'send',
-    'top_up',
-    'pay',
-);
+                        'send',
+                        'top_up',
+                        'pay',
+                    );
+
+
 
 if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
 
@@ -47,10 +58,12 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
             );
             Wo_RegisterNotification($notification_data_array);
             $response_data = array(
-                'api_status' => 200,
-                'message' => "Money successfully sent."
-            );
+                                    'api_status' => 200,
+                                    'message' => "Money successfully sent."
+                                );
         }
+
+
     }
 
     if ($_POST['type'] == 'top_up') {
@@ -66,19 +79,22 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                 }
                 $user = Wo_UserData(Wo_Secure($_POST['user_id']));
                 $response_data = array(
-                    'api_status' => 200,
-                    'message' => "The money successfully added to your wallet.",
-                    'wallet' => $user['wallet'],
-                    'balance' => $user['balance'],
-                );
-            } else {
+                                    'api_status' => 200,
+                                    'message' => "The money successfully added to your wallet.",
+                                    'wallet' => $user['wallet'],
+                                    'balance' => $user['balance'],
+                                );
+            }
+            else{
                 $error_code    = 7;
                 $error_message = 'user not found';
             }
-        } else {
+        }
+        else{
             $error_code    = 5;
             $error_message = 'Please check your details.';
         }
+
     }
     if ($_POST['type'] == 'pay') {
         try {
@@ -88,7 +104,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                 $img = $wo["pro_packages"][$_POST['pro_type']]['name'];
                 $price = $wo["pro_packages"][$_POST['pro_type']]['price'];
                 $pro_type        = $_POST['pro_type'];
-
+                
                 $update_array = array(
                     'is_pro' => 1,
                     'pro_time' => time(),
@@ -112,14 +128,15 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                     affiliateRef($price);
                 }
                 updatePoints($price);
-
+                
                 cache($wo['user']['id'], 'users', 'delete');
 
                 $response_data = array(
                     'api_status' => 200,
                     'message' => "upgraded to pro"
                 );
-            } elseif ($_POST['pay_type'] == 'fund') {
+            }
+            elseif ($_POST['pay_type'] == 'fund') {
                 $fund_id = Wo_Secure($_POST['fund_id']);
                 $price   = Wo_Secure($_POST['price']);
                 $amount             = $price;
@@ -162,12 +179,15 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                     'message' => "Payment successfully done"
                 );
             }
+            
         } catch (Exception $e) {
             $error_code    = 5;
             $error_message = $e->getMessage();
         }
     }
-} else {
+
+}
+else{
     $error_code    = 4;
     $error_message = 'type can not be empty';
 }

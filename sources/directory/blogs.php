@@ -15,13 +15,13 @@ $wo['blogs'] = $db->objectbuilder()->orderBy('id', 'DESC')->paginate(T_BLOG, $wo
 $wo['totalPages'] = $db->totalPages;
 
 if (count($wo['blogs']) > 0) {
-    $pagination = loadHTMLPage('directory/includes/pagination', [
+    $pagination = loadHTMLPage('directory/includes/pagination',[
         'link' => 'directory/blogs',
         'ajax_link' => '?link1=directory-blogs',
     ]);
 
     $html = '';
-    foreach ($wo['blogs'] as $key => $wo['article']) {
+    foreach ($wo['blogs'] as $key => $wo['article']){
         $wo['article'] = (array) $wo['article'];
         $wo['article'] = Wo_GetArticle($wo['article']['id']);
         $html .= Wo_LoadPage('blog/includes/card-list');
@@ -35,7 +35,7 @@ $wo['keywords'] = $wo['config']['siteKeywords'];
 $wo['page'] = 'blog';
 $wo['title'] = $wo['config']['siteTitle'];
 
-$wo['content'] = loadHTMLPage('directory/blogs', [
+$wo['content'] = loadHTMLPage('directory/blogs',[
     'html' => $html,
     'pagination' => $pagination,
     'sidebar' => Wo_LoadPage("directory/left-sidebar"),

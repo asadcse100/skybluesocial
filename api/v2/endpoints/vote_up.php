@@ -1,4 +1,4 @@
-<?php
+<?php 
 $response_data = array(
     'api_status' => 400,
 );
@@ -6,7 +6,8 @@ $response_data = array(
 if (empty($_POST['id'])) {
     $error_code    = 3;
     $error_message = 'id (POST) is missing';
-} else {
+}
+else{
     $post_id = Wo_GetPostIDFromOptionID($_POST['id']);
     if (Wo_IsPostVoted($post_id, $wo['user']['user_id'])) {
         $error_code    = 4;

@@ -518,6 +518,9 @@ if (!isEnabled('shell_exec')) {
             <div class="card">
                 <div class="card-body">
                     <h6 class="card-title">Wasabi Configuration</h6>
+                    <div class="alert alert-warning">
+                          <a href="https://knowledgebase.wasabi.com/hc/en-us/articles/13615396482203-Change-in-Ability-to-configure-PUBLIC-Access-to-objects-and-buckets">Wasabi has recently implemented updates to enhance security measures by disabling public access and altering configurations related to the accessibility of objects and buckets.</a>
+                      </div>
                     <form class="wasabi_storage-settings" method="POST">
                          <div class="float-left">
                             <label for="wasabi_storage" class="main-label">Wasabi Storage</label>
@@ -525,7 +528,7 @@ if (!isEnabled('shell_exec')) {
                         </div>
                         <div class="form-group float-right switcher">
                             <input type="hidden" name="wasabi_storage" value="0" />
-                            <input type="checkbox" name="wasabi_storage" id="chck-wasabi_storage" value="1" <?php echo ($wo['config']['wasabi_storage'] == 1) ? 'checked': '';?>>
+                            <input type="checkbox" name="wasabi_storage" id="chck-wasabi_storage" value="1" <?php echo ($wo['config']['wasabi_storage'] == 1) ? 'checked': '';?> disabled>
                             <label for="chck-wasabi_storage" class="check-trail"><span class="check-handler"></span></label>
                         </div>
                         <div class="clearfix"></div>
@@ -533,35 +536,35 @@ if (!isEnabled('shell_exec')) {
                         <div class="form-group form-float">
                             <div class="form-line">
                                 <label class="form-label">Wasabi Bucket Name</label>
-                                <input type="text" id="wasabi_bucket_name" name="wasabi_bucket_name" class="form-control" value="<?php echo $wo['config']['wasabi_bucket_name']?>">
+                                <input type="text" id="wasabi_bucket_name" name="wasabi_bucket_name" class="form-control" value="<?php echo $wo['config']['wasabi_bucket_name']?>" disabled>
                                 <small class="admin-info">Your Wasabi Bucket Name.</small>
                             </div>
                         </div>
                         <div class="form-group form-float">
                             <div class="form-line">
                                 <label class="form-label">Wasabi Access Key</label>
-                                <input type="text" id="wasabi_access_key" name="wasabi_access_key" class="form-control" value="<?php echo $wo['config']['wasabi_access_key']?>">
+                                <input type="text" id="wasabi_access_key" name="wasabi_access_key" class="form-control" value="<?php echo $wo['config']['wasabi_access_key']?>" disabled>
                                 <small class="admin-info">Your Wasabi Access Key.</small>
                             </div>
                         </div>
                         <div class="form-group form-float">
                             <div class="form-line">
                                 <label class="form-label">Wasabi Secret Key</label>
-                                <input type="text" id="wasabi_secret_key" name="wasabi_secret_key" class="form-control" value="<?php echo $wo['config']['wasabi_secret_key']?>">
+                                <input type="text" id="wasabi_secret_key" name="wasabi_secret_key" class="form-control" value="<?php echo $wo['config']['wasabi_secret_key']?>" disabled>
                                 <small class="admin-info">Your Wasabi Secret Key.</small>
                             </div>
                         </div>
                         <div class="form-group form-float">
                             <div class="form-line">
                                 <label class="form-label">Wasabi Custom Endpoint (Optional)</label>
-                                <input type="text" name="wasabi_endpoint" class="form-control" value="<?php echo ($wo['config']['wasabi_endpoint']);?>">
+                                <input type="text" name="wasabi_endpoint" class="form-control" value="<?php echo ($wo['config']['wasabi_endpoint']);?>" disabled>
                                 <small class="admin-info">Your Wasabi custom domain name, e.g: https://customCDNdomain.com</small>
                             </div>
                         </div>
                         <div class="clearfix"></div>
                         <hr>
                         <label for="wasabi_bucket_region">Wasabi bucket region</label>
-                        <select class="form-control show-tick" id="wasabi_bucket_region" name="wasabi_bucket_region">
+                        <select class="form-control show-tick" id="wasabi_bucket_region" name="wasabi_bucket_region" disabled>
                           <option value="us-west-1" <?php echo ($wo['config']['wasabi_bucket_region'] == 'us-west-1')   ? ' selected' : '';?> >us-west-1</option>
                           <option value="us-east-1" <?php echo ($wo['config']['wasabi_bucket_region'] == 'us-east-1')   ? ' selected' : '';?> >us-east-1</option>
                           <option value="us-east-2" <?php echo ($wo['config']['wasabi_bucket_region'] == 'us-east-2')   ? ' selected' : '';?> >us-east-2</option>

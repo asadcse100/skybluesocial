@@ -1,4 +1,13 @@
 <?php
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2018 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $response_data = array(
     'api_status' => 400,
 );
@@ -12,11 +21,12 @@ if (empty($error_code)) {
     if (empty($recipient_data)) {
         $error_code    = 6;
         $error_message = 'Recipient user not found';
-    } elseif (empty($_POST['type']) || !in_array($_POST['type'], array('photos', 'video', 'music', 'files', 'maps', 'text'))) {
-        $error_code    = 7;
-        $error_message = 'type can not be empty';
-    } else {
-        $data = array(
+    }
+    elseif (empty($_POST['type']) || !in_array($_POST['type'], array('photos','video','music','files','maps','text'))) {
+         $error_code    = 7;
+         $error_message = 'type can not be empty';
+     } else {
+		$data = array(
             'filter_by' => Wo_Secure($_POST['type']),
             'limit' => (!empty($_POST['limit'])) ? (int) $_POST['limit'] : 35,
             'publisher_id' => $recipient_id,
@@ -27,12 +37,12 @@ if (empty($error_code)) {
         foreach ($get_albums as $key => $album) {
             $comments = array();
             foreach ($non_allowed as $key => $value) {
-                unset($album['publisher'][$value]);
+               unset($album['publisher'][$value]);
             }
             $album['shared_from'] = (!empty($album['shared_from'])) ? $album['shared_from'] : null;
             foreach ($album['get_post_comments'] as $key => $comment) {
                 foreach ($non_allowed as $key => $value) {
-                    unset($comment['publisher'][$value]);
+                  unset($comment['publisher'][$value]);
                 }
                 $comments[] = $comment;
             }
@@ -40,8 +50,8 @@ if (empty($error_code)) {
             $albums[] = $album;
         }
         $response_data = array(
-            'api_status' => 200,
-            'data' => $albums
-        );
+		    'api_status' => 200,
+		    'data' => $albums
+		);
     }
 }

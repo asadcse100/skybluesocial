@@ -1,5 +1,13 @@
 <?php
-
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com   
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2018 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $response_data   = array(
     'api_status' => 400
 );
@@ -42,8 +50,9 @@ if (empty($error_code)) {
                 $social_email = 'fb_' . $social_id . '@facebook.com';
             }
         }
-    } else if ($provider == 'google') {
 
+    } else if ($provider == 'google') {
+        
         $get_user_details = fetchDataFromURL("https://oauth2.googleapis.com/tokeninfo?id_token={$access_token}");
         $json_data = json_decode($get_user_details);
         if (!empty($json_data->error)) {
@@ -106,28 +115,30 @@ if (empty($error_code)) {
                 echo json_encode($json_success_data, JSON_PRETTY_PRINT);
                 exit();
             }
-        } else {
+        }
+        else{
             $json_error_data = array(
                 'api_status' => '400',
                 'api_text' => 'failed',
                 'api_version' => $api_version,
                 'errors' => array(
                     'error_id' => '2',
-                    'error_text' => 'There is something wrong with connect to ' . $provider
+                    'error_text' => 'There is something wrong with connect to '.$provider
                 )
             );
             header("Content-type: application/json");
             echo json_encode($json_error_data, JSON_PRETTY_PRINT);
             exit();
         }
-    } else {
+    }
+    else{
         $json_error_data = array(
             'api_status' => '400',
             'api_text' => 'failed',
             'api_version' => $api_version,
             'errors' => array(
                 'error_id' => '3',
-                'error_text' => 'There is something wrong with connect to ' . $provider
+                'error_text' => 'There is something wrong with connect to '.$provider
             )
         );
         header("Content-type: application/json");

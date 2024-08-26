@@ -326,6 +326,7 @@ if (!empty($_COOKIE['mode']) && $_COOKIE['mode'] == 'night') {
                       $(".content").getNiceScroll().resize()
                     }, 500);
                     $(".content").animate({ scrollTop: 0 }, "slow");
+                    showEncryptedAlert();
                 });
             }
         });
@@ -1492,6 +1493,13 @@ if (!empty($_COOKIE['mode']) && $_COOKIE['mode'] == 'night') {
     <script src="<?php echo(Wo_LoadAdminLink('assets/js/examples/select2.js')) ?>"></script>
     <script src="<?php echo(Wo_LoadAdminLink('assets/js/app.min.js')) ?>"></script>
     <script type="text/javascript">
+        function showEncryptedAlert() {
+            <?php foreach ($wo['encryptedKeys'] as $key => $value) {  if (!empty($wo['hiddenConfig'][$value])) { ?> 
+                if ($(".alert_<?php echo($value) ?>").length == 0) {
+                    $("input[name='<?php echo($value) ?>']").before('<div class="alert alert-danger alert_<?php echo($value) ?>" role="alert">The secret key is not showing due security reasons, you can still overwrite the current one.</div>');
+                }
+            <?php } } ?>
+        }
         function Wo_SubmitSelectProForm(self) {
             let form_select_pro = $('.SelectProModalForm');
             form_select_pro.ajaxForm({
@@ -1555,6 +1563,7 @@ if (!empty($_COOKIE['mode']) && $_COOKIE['mode'] == 'night') {
             $.get(Wo_Ajax_Requests_File(),{f:'admin_setting', s:'change_mode', hash_id: hash_id}, function(data) {});
         }
         $(document).ready(function(){
+            showEncryptedAlert();
             $('[data-toggle="popover"]').popover();
             var hash = $('.main_session').val();
               $.ajaxSetup({

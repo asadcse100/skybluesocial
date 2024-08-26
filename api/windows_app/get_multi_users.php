@@ -1,5 +1,13 @@
 <?php
-
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com   
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2016 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $json_error_data   = array();
 $json_success_data = array();
 $type              = Wo_Secure($_GET['type'], 0);
@@ -88,13 +96,13 @@ if ($type == 'get_multi_users') {
                                 }
                             }
                         }
-                        $user_profile_data['is_following_me'] = (Wo_IsFollowing($wo['user']['user_id'], $user_profile_data['user_id'])) ? 1 : 0;
+                        $user_profile_data['is_following_me'] = (Wo_IsFollowing( $wo['user']['user_id'], $user_profile_data['user_id'])) ? 1 : 0;
                         $user_profile_data['lastseen_time_text'] = Wo_Time_Elapsed_String($user_profile_data['lastseen']);
                         $user_profile_data['is_blocked']         = Wo_IsBlocked($user_profile_data['user_id']);
 
-                        $user_profile_data['gender'] = ($user_profile_data['gender'] == 'male') ? $wo['lang']['male'] : $wo['lang']['female'];
-                        $user_profile_data['lastseen_status'] = ($user_profile_data['lastseen'] > (time() - 60)) ? 'online' : 'offline';
-                        $user_profile_data['lastseen_text'] = ($user_profile_data['lastseen'] > (time() - 60)) ? $wo['lang']['online'] : $wo['lang']['last_seen'] . ' ' . Wo_Time_Elapsed_String($user_profile_data['lastseen']);
+                    	$user_profile_data['gender'] = ($user_profile_data['gender'] == 'male') ? $wo['lang']['male']: $wo['lang']['female'];
+                        $user_profile_data['lastseen_status'] = ($user_profile_data['lastseen'] > (time() - 60)) ? 'online': 'offline';
+                        $user_profile_data['lastseen_text'] = ($user_profile_data['lastseen'] > (time() - 60)) ? $wo['lang']['online']: $wo['lang']['last_seen'] . ' ' . Wo_Time_Elapsed_String($user_profile_data['lastseen']);
                         array_push($json_success_data, $user_profile_data);
                     }
                 }
@@ -133,3 +141,4 @@ if ($continue == false) {
 header("Content-type: application/json");
 echo json_encode($json_success_data);
 exit();
+?>

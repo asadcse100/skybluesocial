@@ -1,7 +1,10 @@
 <?php
-if ($_POST['type'] == 'checkout') {
-    try {
-        if (!empty($_POST['amount']) && is_numeric($_POST['amount']) && $_POST['amount'] > 0) {
+if ($_POST['type'] == 'checkout')
+{
+    try
+    {
+        if (!empty($_POST['amount']) && is_numeric($_POST['amount']) && $_POST['amount'] > 0)
+        {
             $price = Wo_Secure($_POST['amount']);
             require_once 'assets/libraries/iyzipay/samples/config.php';
             $callback_url = $wo['config']['site_url'] . "/requests.php?f=iyzipay&s=success&amount=" . $price . '&user_id=' . $wo['user']['user_id'] . '&ConversationId=' . $ConversationId;
@@ -20,23 +23,33 @@ if ($_POST['type'] == 'checkout') {
             $request->setBasketItems($basketItems);
             $checkoutFormInitialize = \Iyzipay\Model\CheckoutFormInitialize::create($request, IyzipayConfig::options());
             $content = $checkoutFormInitialize->getCheckoutFormContent();
-            if (!empty($content)) {
+            if (!empty($content))
+            {
                 $response_data = array(
                     'api_status' => 200,
                     'html' => $content
                 );
-            } else {
+            }
+            else
+            {
                 throw new Exception('something went wrong');
             }
-        } else {
+        }
+        else
+        {
             throw new Exception('amount can not be empty');
         }
-    } catch (Exception $e) {
+    }
+    catch(Exception $e)
+    {
         $error_code = 5;
         $error_message = $e->getMessage();
     }
-} elseif ($_POST['type'] == 'success') {
-    if (!empty($_POST['ConversationId']) && !empty($_POST['token'])) {
+}
+elseif ($_POST['type'] == 'success')
+{
+    if (!empty($_POST['ConversationId']) && !empty($_POST['token']))
+    {
 
         require_once 'assets/libraries/iyzipay/samples/config.php';
         # create request class
@@ -49,7 +62,8 @@ if ($_POST['type'] == 'checkout') {
         $checkoutForm = \Iyzipay\Model\CheckoutForm::retrieve($request, IyzipayConfig::options());
 
         # print result
-        if ($checkoutForm->getPaymentStatus() == 'SUCCESS') {
+        if ($checkoutForm->getPaymentStatus() == 'SUCCESS')
+        {
             $amount = Wo_Secure($_POST['amount']);
             $_POST['user_id'] = Wo_Secure($_POST['user_id']);
             $db->where('user_id', $_POST['user_id'])->update(T_USERS, array(
@@ -66,12 +80,17 @@ if ($_POST['type'] == 'checkout') {
                 'wallet' => $user['wallet'],
                 'balance' => $user['balance'],
             );
-        } else {
+        }
+        else
+        {
             $error_code = 6;
             $error_message = 'something went wrong';
         }
-    } else {
+    }
+    else
+    {
         $error_code = 5;
         $error_message = 'ConversationId , token can not be empty';
     }
 }
+

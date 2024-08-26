@@ -1,5 +1,13 @@
 <?php
-
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2018 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $response_data = array(
     'api_status' => 400,
 );
@@ -12,7 +20,7 @@ if (empty($error_code)) {
         $error_code    = 6;
         $error_message = 'Email not found';
     } else {
-        $user_recover_data         = Wo_UserData(Wo_UserIdFromEmail($_POST['email']));
+    	$user_recover_data         = Wo_UserData(Wo_UserIdFromEmail($_POST['email']));
         $subject                   = $config['siteName'] . ' ' . $wo['lang']['password_rest_request'];
         $user_recover_data['link'] = Wo_Link('index.php?link1=reset-password&code=' . $user_recover_data['user_id'] . '_' . $user_recover_data['password']);
         $wo['recover']             = $user_recover_data;
@@ -29,11 +37,11 @@ if (empty($error_code)) {
         );
         $send                      = Wo_SendMessage($send_message_data);
         if ($send) {
-            $response_data = array(
-                'api_status' => 200,
-            );
+        	$response_data = array(
+			    'api_status' => 200,
+			);
         } else {
-            $error_code    = 7;
+        	$error_code    = 7;
             $error_message = 'Failed to send the email, please check your server email settings.';
         }
     }

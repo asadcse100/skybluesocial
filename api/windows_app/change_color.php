@@ -1,5 +1,13 @@
 <?php
-
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com   
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2016 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $json_error_data   = array();
 $json_success_data = array();
 $json_success_data_2 = array();
@@ -79,16 +87,16 @@ if ($type == 'change_color') {
             $recipient_user = $_POST['recipient_id'];
             $color = false;
             if (isset($_POST['color']) && in_array($_POST['color'], $colors)) {
-                $color = $_POST['color'];
-            }
+	            $color = $_POST['color'];
+	        }
             if ($user_id && $color && $recipient_user) {
-                if (Wo_UpdateChatColor($user_id, $recipient_user, $color)) {
-                    $json_success_data = array(
-                        'status' => 200,
-                        'message' => "color changed",
-                        'color' => $color
-                    );
-                }
+            	if (Wo_UpdateChatColor($user_id, $recipient_user, $color)) {
+	                $json_success_data = array(
+	                    'status' => 200,
+	                    'message' => "color changed",
+	                    'color' => $color
+	                );
+	            }
             }
         }
     } else {
@@ -100,3 +108,4 @@ if ($type == 'change_color') {
 header("Content-type: application/json");
 echo json_encode($json_success_data);
 exit();
+?>

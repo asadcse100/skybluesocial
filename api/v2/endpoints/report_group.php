@@ -13,7 +13,8 @@ if (isset($_POST['group_id']) && is_numeric($_POST['group_id']) && isset($_POST[
         $response_data['api_status'] = 200;
         $response_data['code']   = 1;
     }
-} else {
-    $error_code    = 3;
+}
+else{
+	$error_code    = 3;
     $error_message = 'group_id , text can not be empty';
 }

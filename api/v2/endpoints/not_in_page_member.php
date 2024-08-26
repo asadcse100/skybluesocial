@@ -13,11 +13,11 @@ if (empty($error_code)) {
     $members = Wo_GetPageInvites($page_id);
     foreach ($members as $key => $member) {
         foreach ($non_allowed as $key2 => $value2) {
-            unset($members[$key][$value2]);
+           unset($members[$key][$value2]);
         }
         $members[$key]['is_following'] = (Wo_IsFollowing($members[$key]['user_id'], $wo['user']['user_id'])) ? 1 : 0;
     }
-
+        
     $response_data = array(
         'api_status' => 200,
         'users' => $members

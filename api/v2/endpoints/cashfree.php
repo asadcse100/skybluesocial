@@ -8,139 +8,82 @@ else
 {
     if ($_POST['request'] == 'initialize')
     {
-        $types = array(
-            'week',
-            'year',
-            'month',
-            'life-time',
-            'wallet',
-            'fund'
-        );
+        if (!empty($_POST['phone']) && !empty($_POST['name']) && !empty($_POST['email']) && filter_var($_POST['email'], FILTER_VALIDATE_EMAIL) && !empty($_POST['amount']) && is_numeric($_POST['amount'])) {
 
-        if (!empty($_POST['type']) && in_array($_POST['type'], $types) && !empty($_POST['phone']) && !empty($_POST['name']) && !empty($_POST['email']) && filter_var($_POST['email'], FILTER_VALIDATE_EMAIL))
-        {
-            $type = $_POST['type'];
-            $price = $wo['config']['weekly_price'];
-            $pro_type = 1;
-            if ($type == 'week')
-            {
-                $price = $wo['pro_packages']['star']['price'];
-                $pro_type = 1;
-            }
-            else if ($type == 'year')
-            {
-                $price = $wo['pro_packages']['ultima']['price'];
-                $pro_type = 3;
-            }
-            else if ($type == 'month')
-            {
-                $price = $wo['pro_packages']['hot']['price'];
-                $pro_type = 2;
-            }
-            else if ($type == 'life-time')
-            {
-                $price = $wo['pro_packages']['vip']['price'];
-                $pro_type = 4;
-            }
-            $return_url = $wo['config']['site_url'] . "/requests.php?f=cashfree&s=upgrade&pro_type=" . $pro_type;
-            $notify_url = $wo['config']['site_url'] . "/requests.php?f=cashfree&s=wallet&user_id=" . $wo['user']['user_id'];
 
-            if ($type == 'wallet')
+            $order_id = uniqid().rand(100,1000);
+            $customer_id = uniqid().rand(100,1000);
+            $name = Wo_Secure($_POST['name']);
+            $email = Wo_Secure($_POST['email']);
+            $phone = Wo_Secure($_POST['phone']);
+            $order_amount = Wo_Secure($_POST['amount']);
+
+            $secretKey = $wo['config']['cashfree_secret_key'];
+            $cashfree_client_key = $wo['config']['cashfree_client_key'];
+            $callback_url = $wo['config']['site_url'] . "/requests.php?f=cashfree&s=wallet&amount=".$order_amount."&user_id=".$wo['user']['user_id']."&order_id=".$order_id."&customer_id=".$customer_id;
+
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+              CURLOPT_URL => 'https://sandbox.cashfree.com/pg/orders',
+              CURLOPT_RETURNTRANSFER => true,
+              CURLOPT_ENCODING => '',
+              CURLOPT_MAXREDIRS => 10,
+              CURLOPT_TIMEOUT => 0,
+              CURLOPT_FOLLOWLOCATION => true,
+              CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+              CURLOPT_CUSTOMREQUEST => 'POST',
+              CURLOPT_POSTFIELDS =>'
             {
-                if (!empty($_POST['amount']) && is_numeric($_POST['amount']) && $_POST['amount'] > 0)
-                {
-                    $price = $_POST['amount'];
-                    $return_url = $wo['config']['site_url'] . "/requests.php?f=cashfree&s=wallet&order_id={order_id}&user_id=" . $wo['user']['user_id'];
-                    $notify_url = $wo['config']['site_url'] . "/requests.php?f=cashfree&s=wallet&user_id=" . $wo['user']['user_id'];
+              "customer_details": {
+                "customer_id": "'.$customer_id.'",
+                "customer_email": "'.$email.'",
+                "customer_phone": "'.$phone.'"
+              },
+              "order_id": "'.$order_id.'",
+              "order_amount": '.$order_amount.',
+              "order_currency": "INR",
+              "order_meta": {
+                "return_url": "'.$callback_url.'"
+              }
+            }
+            ',
+              CURLOPT_HTTPHEADER => array(
+                'accept: application/json',
+                'content-type: application/json',
+                'x-api-version: 2023-08-01',
+                'x-client-id: ' . $wo['config']['cashfree_client_key'],
+                'x-client-secret: ' . $wo['config']['cashfree_secret_key']
+              ),
+            ));
+
+            $response = curl_exec($curl);
+
+            curl_close($curl);
+
+            if (!empty($response)) {
+                $response = json_decode($response);
+
+                if (!empty($response->message)) {
+                    $error_code = 7;
+                    $error_message = $response->message;
                 }
-                else
-                {
+                else{
                     $response_data = array(
-                        'api_status' => '400',
-                        'errors' => array(
-                            'error_id' => 6,
-                            'error_text' => 'amount can not be empty'
-                        )
+                        'api_status' => 200,
+                        'payment_session_id' => $response->payment_session_id,
                     );
-                    echo json_encode($response_data, JSON_PRETTY_PRINT);
-                    exit();
                 }
             }
-            if ($type == 'fund')
-            {
-                if (!empty($_POST['amount']) && is_numeric($_POST['amount']) && $_POST['amount'] > 0 && !empty($_POST['fund_id']))
-                {
-                    $fund_id = Wo_Secure($_POST['fund_id']);
-                    $fund = $db->where('id', $fund_id)->getOne(T_FUNDING);
-                    if (!empty($fund))
-                    {
-                        $price = $_POST['amount'];
-                        $callback_url = $wo['config']['site_url'] . "/requests.php?f=cashfree&s=fund&amount=" . $price . "&fund_id=" . $fund_id;
-                    }
-                    else
-                    {
-                        $response_data = array(
-                            'api_status' => '400',
-                            'errors' => array(
-                                'error_id' => 7,
-                                'error_text' => 'fund not found'
-                            )
-                        );
-                        echo json_encode($response_data, JSON_PRETTY_PRINT);
-                        exit();
-                    }
-
-                }
-                else
-                {
-                    $response_data = array(
-                        'api_status' => '400',
-                        'errors' => array(
-                            'error_id' => 8,
-                            'error_text' => 'amount fund_id can not be empty'
-                        )
-                    );
-                    echo json_encode($response_data, JSON_PRETTY_PRINT);
-                    exit();
-                }
-            }
-
-            try
-            {
-                if (empty($_POST['cashfree_card_number']) || empty($_POST['cashfree_card_expiry_mm']) || empty($_POST['cashfree_card_expiry_yy']) || empty($_POST['cashfree_card_cvv']))
-                {
-                    throw new Exception("cashfree_card_number , cashfree_card_expiry_mm , cashfree_card_expiry_yy , cashfree_card_cvv can not be empty");
-                }
-
-                $result = array();
-                $order_id = uniqid();
-                $name = Wo_Secure($_POST['name']);
-                $email = Wo_Secure($_POST['email']);
-                $phone = Wo_Secure($_POST['phone']);
-                $card_number = Wo_Secure($_POST['cashfree_card_number']);
-                $card_expiry_mm = Wo_Secure($_POST['cashfree_card_expiry_mm']);
-                $card_expiry_yy = Wo_Secure($_POST['cashfree_card_expiry_yy']);
-                $card_cvv = Wo_Secure($_POST['cashfree_card_cvv']);
-
-                $payment_session_id = createCashfreeOrder(['email' => $email, 'phone' => $phone, 'amount' => $price, 'return_url' => $return_url, 'notify_url' => $notify_url, ]);
-
-                $url = payCashfreeOrder(['payment_session_id' => $payment_session_id, 'card_number' => $card_number, 'card_holder_name' => $name, 'card_expiry_mm' => $card_expiry_mm, 'card_expiry_yy' => $card_expiry_yy, 'card_cvv' => $card_cvv]);
-
-                $response_data = array(
-                    'api_status' => 200,
-                    'url' => $url
-                );
-            }
-            catch(Exception $e)
-            {
-                $error_code = 5;
-                $error_message = $e->getMessage();
+            else{
+                $error_code = 6;
+                $error_message = "Something went wrong";
             }
         }
-        else
-        {
+        else{
             $error_code = 5;
-            $error_message = 'type,phone,name,email can not be empty';
+            $error_message = "phone , name , email , amount can not be empty";
         }
     }
 
@@ -382,39 +325,70 @@ else
 
     if ($_POST['request'] == 'wallet')
     {
-        try
-        {
-
-            if (empty($_POST['order_id']))
-            {
-                throw new Exception('something went wrong');
+        try {
+            if (empty($_POST['user_id']) || empty($_POST['order_id']) || empty($_POST['amount']) || !is_numeric($_POST['user_id'])) {
+                throw new Exception('user_id , order_id , amount can not be empty');
             }
 
-            $amount = getCashfreeOrder($_POST['order_id']);
+            $wo['user'] = Wo_UserData(Wo_Secure($_POST["user_id"]));
+            if (!empty($wo['user'])) {
 
-            if (Wo_ReplenishingUserBalance($amount))
-            {
-                $amount = Wo_Secure($amount);
-                $create_payment_log = mysqli_query($sqlConnect, "INSERT INTO " . T_PAYMENT_TRANSACTIONS . " (`userid`, `kind`, `amount`, `notes`) VALUES ('" . $wo['user']['id'] . "', 'WALLET', '" . $amount . "', 'Cashfree')");
-                $_SESSION['replenished_amount'] = $amount;
+                $curl = curl_init();
 
-                $user = Wo_UserData($wo['user']['user_id']);
+                curl_setopt_array($curl, array(
+                  CURLOPT_URL => 'https://sandbox.cashfree.com/pg/orders/' . $_POST['order_id'],
+                  CURLOPT_RETURNTRANSFER => true,
+                  CURLOPT_ENCODING => '',
+                  CURLOPT_MAXREDIRS => 10,
+                  CURLOPT_TIMEOUT => 0,
+                  CURLOPT_FOLLOWLOCATION => true,
+                  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                  CURLOPT_CUSTOMREQUEST => 'GET',
+                  CURLOPT_HTTPHEADER => array(
+                    'accept: application/json',
+                    'x-api-version: 2023-08-01',
+                    'x-client-id: ' . $wo['config']['cashfree_client_key'],
+                    'x-client-secret: ' . $wo['config']['cashfree_secret_key']
+                  ),
+                ));
 
-                $response_data = array(
-                    'api_status' => 200,
-                    'message' => 'payment successfully',
-                    'wallet' => $user['wallet'],
-                    'balance' => $user['balance'],
-                );
+                $response = curl_exec($curl);
+
+                curl_close($curl);
+
+                if (!empty($response)) {
+                    $response = json_decode($response);
+
+                    if (!empty($response->order_status) && $response->order_status == 'PAID') {
+                        $wo["loggedin"] = true;
+                        if (Wo_ReplenishingUserBalance($_POST['amount'])) {
+                            $_POST['amount'] = Wo_Secure($_POST['amount']);
+                            $create_payment_log = mysqli_query($sqlConnect, "INSERT INTO " . T_PAYMENT_TRANSACTIONS . " (`userid`, `kind`, `amount`, `notes`) VALUES ('" . $wo['user']['id'] . "', 'WALLET', '" . $_POST['amount'] . "', 'Cashfree')");
+
+                            $user = Wo_UserData($wo['user']['user_id']);
+
+                            $response_data = array(
+                                'api_status' => 200,
+                                'message' => 'payment successfully done',
+                                'wallet' => $user['wallet'],
+                                'balance' => $user['balance'],
+                            );
+                        } else {
+                            throw new Exception('order status not paid');
+                        }
+                    }
+                    else{
+                        throw new Exception('order status not paid');
+                    }
+                }
+                else{
+                    throw new Exception('Something went wrong');
+                }
+            } else {
+                throw new Exception('user not found');
             }
-            else
-            {
-                throw new Exception('something went wrong');
-            }
-
-        }
-        catch(Exception $e)
-        {
+            
+        } catch (Exception $e) {
             $error_code = 5;
             $error_message = $e->getMessage();
         }

@@ -1,4 +1,13 @@
 <?php
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2018 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $response_data = array(
     'api_status' => 400,
 );
@@ -13,7 +22,7 @@ if (empty($error_code)) {
         $error_code    = 6;
         $error_message = 'Page not found';
     } else {
-        $like_message = 'invalid';
+    	$like_message = 'invalid';
         if (Wo_IsPageLiked($page_id, $wo['user']['user_id']) === true) {
             if (Wo_DeletePageLike($page_id, $wo['user']['user_id'])) {
                 $like_message = 'unliked';
@@ -24,8 +33,8 @@ if (empty($error_code)) {
             }
         }
         $response_data = array(
-            'api_status' => 200,
-            'like_status' => $like_message
-        );
+		    'api_status' => 200,
+		    'like_status' => $like_message
+		);
     }
 }

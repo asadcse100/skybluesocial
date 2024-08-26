@@ -1,6 +1,5 @@
-<?php
-function Wo_SecureData($config = array(), $data = array())
-{
+<?php 
+function Wo_SecureData($config = array(), $data = array()) {
     global $non_allowed;
     if (!empty($config['multi_array'])) {
         $final_data = array();
@@ -19,8 +18,7 @@ function Wo_SecureData($config = array(), $data = array())
     return $data;
 }
 
-function Wo_UserContactsAPP($limit = 20, $json_contacts = '{}', $user_id = 0)
-{
+function Wo_UserContactsAPP($limit = 20, $json_contacts = '{}', $user_id = 0) {
     global $wo, $sqlConnect;
     if (empty($json_contacts)) {
         return false;
@@ -46,8 +44,7 @@ function Wo_UserContactsAPP($limit = 20, $json_contacts = '{}', $user_id = 0)
     return $data;
 }
 
-function Wo_GetFilePosition($file)
-{
+function Wo_GetFilePosition($file) {
     $file_type = 'text';
     if (empty($file)) {
         return $file_type;
@@ -67,3 +64,4 @@ function Wo_GetFilePosition($file)
     }
     return $file_type;
 }
+?>

@@ -1,6 +1,5 @@
 <?php
-function Wo_SendPushNotification($data = array(), $push_type = 'chat')
-{
+function Wo_SendPushNotification($data = array(), $push_type = 'chat') {
     global $sqlConnect, $wo;
     if (empty($data)) {
         return false;
@@ -74,3 +73,4 @@ function Wo_SendPushNotification($data = array(), $push_type = 'chat')
     }
     return false;
 }
+?>

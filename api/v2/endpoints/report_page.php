@@ -13,7 +13,8 @@ if (isset($_POST['page_id']) && is_numeric($_POST['page_id']) && isset($_POST['p
         $response_data['api_status'] = 200;
         $response_data['code']   = 1;
     }
-} else {
-    $error_code    = 3;
+}
+else{
+	$error_code    = 3;
     $error_message = 'page_id , text can not be empty';
 }

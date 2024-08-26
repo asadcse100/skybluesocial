@@ -1,4 +1,13 @@
 <?php
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com   
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2018 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $response_data   = array(
     'api_status' => 400
 );
@@ -117,6 +126,12 @@ if (empty($error_code)) {
                 }
             }
         }
+
+        if ($wo['config']['auto_username'] == 1) {
+            $account_data['first_name'] = Wo_Secure($_POST['first_name']);
+            $account_data['last_name'] = Wo_Secure($_POST['last_name']);
+        }
+
         $register     = Wo_RegisterUser($account_data);
         if ($register === true) {
             if (!empty($account_data['referrer']) && is_numeric($wo['config']['affiliate_level']) && $wo['config']['affiliate_level'] > 1) {
@@ -146,7 +161,8 @@ if (empty($error_code)) {
                     $response_data = array(
                         'api_status' => 200,
                         'access_token' => $access_token,
-                        'user_id' => $user_id
+                        'user_id' => $user_id,
+                        'user_platform' => $device_type,
                     );
                 }
             } elseif ($wo['config']['sms_or_email'] == 'mail') {

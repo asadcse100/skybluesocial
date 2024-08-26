@@ -1,5 +1,13 @@
 <?php
-
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com   
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2016 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $json_error_data   = array();
 $json_success_data = array();
 if (empty($_GET['type']) || !isset($_GET['type'])) {
@@ -30,22 +38,22 @@ if ($type == 'user_registration') {
             'error_text' => 'Please write your username.'
         );
     } else if (in_array(true, Wo_IsNameExist($_POST['username'], 0))) {
-        $json_error_data['errors'] = array(
+    	$json_error_data['errors'] = array(
             'error_id' => '3',
             'error_text' => 'Username is already exists.'
         );
     } else if (in_array($_POST['username'], $wo['site_pages'])) {
-        $json_error_data['errors'] = array(
+    	$json_error_data['errors'] = array(
             'error_id' => '4',
             'error_text' => 'Invalid username characters.'
         );
-    } else if (strlen($_POST['username']) < 5 or strlen($_POST['username']) > 32) {
-        $json_error_data['errors'] = array(
+    } else if (strlen($_POST['username']) < 5 OR strlen($_POST['username']) > 32) {
+    	$json_error_data['errors'] = array(
             'error_id' => '6',
             'error_text' => 'Username must be between 5 / 32'
         );
     } else if (!preg_match('/^[\w]+$/', $_POST['username'])) {
-        $json_error_data['errors'] = array(
+    	$json_error_data['errors'] = array(
             'error_id' => '7',
             'error_text' => 'Invalid username characters'
         );
@@ -55,32 +63,32 @@ if ($type == 'user_registration') {
             'error_text' => 'Please write your email.'
         );
     } else if (Wo_EmailExists($_POST['email']) === true) {
-        $json_error_data['errors'] = array(
+    	$json_error_data['errors'] = array(
             'error_id' => '9',
             'error_text' => 'This e-mail is already in use.'
         );
     } else if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-        $json_error_data['errors'] = array(
+    	$json_error_data['errors'] = array(
             'error_id' => '10',
             'error_text' => 'This e-mail is invalid.'
         );
     } else if (empty($_POST['password'])) {
-        $json_error_data['errors'] = array(
+    	$json_error_data['errors'] = array(
             'error_id' => '11',
             'error_text' => 'Please write your password.'
         );
     } else if (strlen($_POST['password']) < 6) {
-        $json_error_data['errors'] = array(
+    	$json_error_data['errors'] = array(
             'error_id' => '12',
             'error_text' => 'Password is too short.'
         );
     } else if (empty($_POST['confirm_password'])) {
-        $json_error_data['errors'] = array(
+    	$json_error_data['errors'] = array(
             'error_id' => '13',
             'error_text' => 'Please confirm your password.'
         );
     } else if ($_POST['password'] != $_POST['confirm_password']) {
-        $json_error_data['errors'] = array(
+    	$json_error_data['errors'] = array(
             'error_id' => '14',
             'error_text' => 'Password not match.'
         );
@@ -91,9 +99,9 @@ if ($type == 'user_registration') {
         $email           = Wo_Secure($_POST['email'], 0);
         $gender          = 'male';
         if (!empty($_POST['gender'])) {
-            if ($_POST['gender'] == 'female') {
-                $gender  = 'female';
-            }
+        	if ($_POST['gender'] == 'female') {
+        		$gender  = 'female';
+        	}
         }
         $activate = ($wo['config']['emailValidation'] == '1') ? '0' : '1';
         $device_id = '';
@@ -115,7 +123,7 @@ if ($type == 'user_registration') {
         if ($register === true) {
             if ($activate == 1) {
                 $json_success_data  = array(
-                    'api_status' => '200',
+                	'api_status' => '200',
                     'api_text' => 'success',
                     'api_version' => $api_version,
                     'message' => 'Successfully joined, Please wait..',
@@ -130,10 +138,12 @@ if ($type == 'user_registration') {
                 $access_token   = sha1(rand(111111111, 999999999)) . md5(microtime()) . rand(11111111, 99999999) . md5(rand(5555, 9999));
                 $add_session = mysqli_query($sqlConnect, "INSERT INTO " . T_APP_SESSIONS . " (`user_id`, `session_id`, `platform`, `time`) VALUES ('{$user_id}', '{$access_token}', 'windows', '{$time}')");
                 if ($add_session) {
-                    $json_success_data['access_token'] = $access_token;
-                    $json_success_data['user_id'] = $user_id;
+            	    $json_success_data['access_token'] = $access_token;
+            	    $json_success_data['user_id'] = $user_id;
                 }
-            } elseif ($wo['config']['sms_or_email'] == 'mail') {
+            }
+
+            elseif ($wo['config']['sms_or_email'] == 'mail') {
                 $wo['user']        = $_POST;
                 $body              = Wo_LoadPage('emails/activate');
                 $send_message_data = array(
@@ -147,7 +157,7 @@ if ($type == 'user_registration') {
                     'is_html' => true
                 );
                 $send              = Wo_SendMessage($send_message_data);
-
+                
                 if ($send) {
                     $json_success_data  = array(
                         'api_status' => '200',
@@ -167,7 +177,8 @@ if ($type == 'user_registration') {
                     echo json_encode($json_error_data, JSON_PRETTY_PRINT);
                     exit();
                 }
-            } elseif ($wo['config']['sms_or_email'] == 'sms' && !empty($_POST['phone_num'])) {
+            }
+            elseif ($wo['config']['sms_or_email'] == 'sms' && !empty($_POST['phone_num'])) {
                 $random_activation = Wo_Secure(rand(11111, 99999));
                 $message           = "Your confirmation code is: {$random_activation}";
 
@@ -193,7 +204,8 @@ if ($type == 'user_registration') {
                     echo json_encode($json_error_data, JSON_PRETTY_PRINT);
                     exit();
                 }
-            } elseif ($wo['config']['sms_or_email'] == 'sms' && empty($_POST['phone_num'])) {
+            }
+            elseif ($wo['config']['sms_or_email'] == 'sms' && empty($_POST['phone_num'])) {
                 $json_error_data['errors'] = array(
                     'error_id' => '17',
                     'error_text' => 'phone_num can not be empty.'
@@ -202,6 +214,7 @@ if ($type == 'user_registration') {
                 echo json_encode($json_error_data, JSON_PRETTY_PRINT);
                 exit();
             }
+
         }
     } else {
         header("Content-type: application/json");
@@ -212,3 +225,4 @@ if ($type == 'user_registration') {
 header("Content-type: application/json");
 echo json_encode($json_success_data);
 exit();
+?>

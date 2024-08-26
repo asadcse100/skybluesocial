@@ -1,0 +1,37 @@
+<div class="page-margin">
+    <div class="row">
+        <div class="col-md-2 leftcol"><?php echo Wo_LoadPage("sidebar/left-sidebar"); ?></div>
+        <div class="col-md-7 singlecol" data-page-type="watch">
+            <div class="page-margin wow_content mt-0">
+                <div class="wo_page_hdng pag_neg_padd pag_alone">
+                    <div class="wo_page_hdng_innr big_size">
+                        <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M22 4V13.81C21.12 13.3 20.1 13 19 13C15.69 13 13 15.69 13 19C13 19.34 13.04 19.67 13.09 20H4C2.9 20 2 19.11 2 18V6C2 4.89 2.9 4 4 4H5L7 8H10L8 4H10L12 8H15L13 4H15L17 8H20L18 4H22M17 22L22 19L17 16V22Z" /></svg></span> <?php echo $wo['lang']['watch']; ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="watch">
+                <?php
+                $stories = Wo_GetPosts(array('filter_by' => 'video'));
+                if (count($stories) <= 0) {
+                    echo Wo_LoadPage('watch/no-watch-videos');
+                } else {
+                    foreach ($stories as $wo['story']) {
+                        echo Wo_LoadPage('story/content');
+                    }
+                }
+                ?>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    <?php if(isset($wo['single_story'])) { ?>
+    var single_post_id = <?php echo $wo['single_story']->id;?>;
+    $('.lightbox-container').remove();
+    setTimeout(() => {
+        Wo_CloseLightbox()
+        Wo_OpenLightBox(single_post_id)}, 100)
+    <?php } ?>
+</script>
+

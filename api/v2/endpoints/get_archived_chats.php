@@ -114,7 +114,7 @@ if (!empty($chats)) {
                     }
                 }
             }
-            $array[] = $group_data;
+            $array = $group_data;
 		}
 	}
 }

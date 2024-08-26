@@ -1,5 +1,13 @@
 <?php
-
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com   
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2016 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $json_error_data   = array();
 $json_success_data = array();
 if (empty($_GET['type']) || !isset($_GET['type'])) {
@@ -117,17 +125,18 @@ if ($type == 'user_login') {
                         echo json_encode($json_error_data, JSON_PRETTY_PRINT);
                         exit();
                     }
-                } else {
+                }
+                else{
                     $json_success_data = array(
-                        'api_status' => '200',
-                        'api_text' => 'success',
-                        'api_version' => $api_version,
-                        'messages' => 'Please enter your confirmation code',
-                        'user_id' => $user_id
-                    );
-                    header("Content-type: application/json");
-                    echo json_encode($json_success_data, JSON_PRETTY_PRINT);
-                    exit();
+                            'api_status' => '200',
+                            'api_text' => 'success',
+                            'api_version' => $api_version,
+                            'messages' => 'Please enter your confirmation code',
+                            'user_id' => $user_id
+                        );
+                        header("Content-type: application/json");
+                        echo json_encode($json_success_data, JSON_PRETTY_PRINT);
+                        exit();
                 }
             }
         }
@@ -140,3 +149,4 @@ if ($type == 'user_login') {
 header("Content-type: application/json");
 echo json_encode($json_success_data);
 exit();
+?>

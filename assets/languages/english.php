@@ -448,7 +448,7 @@ $wo['lang'] = array(
     'welcome_connect_text' => 'Connect with your family and friends and share your moments. ',
     'welcome_share_text' => 'Share what\'s new and life moments with your friends. ',
     'welcome_discover_text' => 'Discover new people, create new connections and make new friends. ',
-    'welcome_find_more_text' => 'Find more of what you\'re looking for with Search. ',
+    'welcome_find_more_text' => 'Find more of what you\'re looking for with WoWonder Search. ',
     'welcome_mobile_text' => '100% screen adaptable on all tablets and smartphones.',
     
     'working_at' => 'Working at',
@@ -473,7 +473,7 @@ $wo['lang'] = array(
     'group_title' => 'Group title',
     'my_groups' => 'My Groups',
     'school' => 'School',
-    'site_keywords_help' => 'Example: social, skyblue, social site',
+    'site_keywords_help' => 'Example: social, wowonder, social site',
     'message_seen' => 'Message Seen',
     'recommended_for_powerful' => 'Recommended for powerful servers',
     'message_typing' => 'Chat typing system',

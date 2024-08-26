@@ -1,13 +1,22 @@
 <?php
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com   
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2018 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $response_data = array(
     'api_status' => 400
 );
 
 $required_fields =  array(
-    'create',
-    'remove',
-    'fetch'
-);
+                        'create',
+                        'remove',
+                        'fetch'
+                    );
 if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
     if ($_POST['type'] == 'create') {
         if (empty($_POST['user_id']) || !is_numeric($_POST['user_id']) || $_POST['user_id'] < 1) {
@@ -24,7 +33,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
         }
 
         if (empty($error_code)) {
-            if (Wo_IsPoked($wo['user']['id'], Wo_Secure($_POST['user_id']))) {
+            if (Wo_IsPoked($wo['user']['id'],Wo_Secure($_POST['user_id']))) {
                 $received_user_id = $wo['user']['id'];
                 $send_user_id = Wo_Secure($_POST['user_id']);
                 mysqli_query($sqlConnect, "DELETE FROM " . T_POKES . " WHERE `received_user_id` = '{$received_user_id}' AND `send_user_id` = {$send_user_id}");
@@ -52,10 +61,10 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                 unset($poke['user_data'][$value]);
             }
             $response_data = array(
-                'api_status' => 200,
-                'message_data' => 'user successfully poked',
-                'data'         => $poke
-            );
+                                'api_status' => 200,
+                                'message_data' => 'user successfully poked',
+                                'data'         => $poke
+                            );
         }
     }
 
@@ -78,9 +87,9 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
             $poke_id  = $poke['id'];
             mysqli_query($sqlConnect, "DELETE FROM " . T_POKES . " WHERE `id` = {$poke_id}");
             $response_data = array(
-                'api_status' => 200,
-                'message_data' => 'poke successfully deleted'
-            );
+                                'api_status' => 200,
+                                'message_data' => 'poke successfully deleted'
+                            );
         }
     }
 
@@ -102,11 +111,14 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
             }
         }
         $response_data = array(
-            'api_status' => 200,
-            'data'         => $pokes
-        );
+                                'api_status' => 200,
+                                'data'         => $pokes
+                            );
     }
-} else {
+
+
+}
+else{
     $error_code    = 5;
     $error_message = 'type can not be empty';
 }

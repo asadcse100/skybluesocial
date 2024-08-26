@@ -1,15 +1,24 @@
 <?php
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com   
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2018 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $response_data = array(
     'api_status' => 400
 );
 
 $required_fields =  array(
-    'send',
-    'fetch',
-    'get_list',
-    'delete_chat',
-    'get_message_by_id'
-);
+                        'send',
+                        'fetch',
+                        'get_list',
+                        'delete_chat',
+                        'get_message_by_id'
+                    );
 if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
 
     if ($_POST['type'] == 'send') {
@@ -71,7 +80,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                 if ($last_id && $last_id > 0) {
                     if (!empty($_POST['reply_id']) && is_numeric($_POST['reply_id']) && $_POST['reply_id'] > 0) {
                         $reply_id = Wo_Secure($_POST['reply_id']);
-                        $db->where('id', $last_id)->update(T_MESSAGES, array('reply_id' => $reply_id));
+                        $db->where('id',$last_id)->update(T_MESSAGES,array('reply_id' => $reply_id));
                     }
                     $message_info = Wo_GetPageMessages(array(
                         'id' => $last_id,
@@ -79,7 +88,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                     ));
 
                     foreach ($non_allowed as $key => $value) {
-                        unset($message_info[0]['user_data'][$value]);
+                       unset($message_info[0]['user_data'][$value]);
                     }
                     if (empty($wo['user']['timezone'])) {
                         $wo['user']['timezone'] = 'UTC';
@@ -123,7 +132,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
 
                         if (!empty($message['reply'])) {
                             foreach ($non_allowed as $key => $value) {
-                                unset($message['reply']['messageUser'][$value]);
+                               unset($message['reply']['messageUser'][$value]);
                             }
 
                             $message['reply']['time_text'] = Wo_Time_Elapsed_String($message['reply']['time']);
@@ -171,15 +180,18 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                         'api_status' => 200,
                         'data' => $messages
                     );
-                } else {
-                    $error_code    = 7;
-                    $error_message = 'Something wrong';
                 }
-            } else {
+                else{
+                   $error_code    = 7;
+                   $error_message = 'Something wrong'; 
+                }
+            }
+            else{
                 $error_code    = 6;
                 $error_message = 'Please check your details.';
             }
-        } else {
+        }
+        else{
             $error_code    = 5;
             $error_message = 'page_id And recipient_id can not be empty';
         }
@@ -198,8 +210,8 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                 if (!empty($_POST['before']) && empty($_POST['after'])) {
                     $offset = (!empty($_POST['before']) && is_numeric($_POST['before']) && $_POST['before'] > 0 ? Wo_Secure($_POST['before']) : 0);
                 }
-
-
+                
+                
                 $limit = (!empty($_POST['limit']) && is_numeric($_POST['limit']) && $_POST['limit'] > 0 && $_POST['limit'] <= 50 ? Wo_Secure($_POST['limit']) : 20);
                 $new = 0;
                 if (!empty($offset) && !empty($_POST['after'])) {
@@ -211,18 +223,18 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                 }
 
                 $message_info = Wo_GetPageMessages(array(
-                    'page_id' => $page_id,
-                    'from_id' => $page_tab['user_id'],
-                    'to_id'   => !empty($_POST['recipient_id']) ? Wo_Secure($_POST['recipient_id']) : 0,
-                    'limit' => $limit,
-                    'limit_type' => 1,
-                    'offset' => $offset,
-                    'new' => $new,
-                    'old' => $old
-                ));
+                                            'page_id' => $page_id,
+                                            'from_id' => $page_tab['user_id'],
+                                            'to_id'   => !empty($_POST['recipient_id']) ? Wo_Secure($_POST['recipient_id']) : 0,
+                                            'limit' => $limit,
+                                            'limit_type' => 1,
+                                            'offset' => $offset,
+                                            'new' => $new,
+                                            'old' => $old
+                                        ));
 
                 foreach ($non_allowed as $key => $value) {
-                    unset($message_info[0]['user_data'][$value]);
+                   unset($message_info[0]['user_data'][$value]);
                 }
                 if (empty($wo['user']['timezone'])) {
                     $wo['user']['timezone'] = 'UTC';
@@ -265,7 +277,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                     }
                     if (!empty($message['reply'])) {
                         foreach ($non_allowed as $key => $value) {
-                            unset($message['reply']['messageUser'][$value]);
+                           unset($message['reply']['messageUser'][$value]);
                         }
                         if (empty($message['reply']['stickers'])) {
                             $message['reply']['stickers'] = '';
@@ -275,7 +287,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                         if ($message['reply']['from_id'] == $user_id) {
                             $message_po  = 'right';
                         }
-
+                        
                         $message['reply']['position']  = $message_po;
                         $message['reply']['type']      = Wo_GetFilePosition($message['reply']['media']);
                         if (!empty($message['reply']['stickers']) && strpos($message['reply']['stickers'], '.gif') !== false) {
@@ -319,11 +331,14 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                     'api_status' => 200,
                     'data' => $messages
                 );
-            } else {
+
+            }
+            else{
                 $error_code    = 6;
                 $error_message = 'page not found';
             }
-        } else {
+        }
+        else{
             $error_code    = 5;
             $error_message = 'page_id And recipient_id can not be empty';
         }
@@ -340,8 +355,8 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
             $search_key = Wo_Secure($_POST['search_key']);
         }
         $fetch_array = array(
-            'user_id' => $wo['user']['id'],
-            'searchQuery' => $search_key,
+            'user_id' => $wo['user']['id'], 
+            'searchQuery' => $search_key, 
             'limit' => $limit,
             'offset' => $offset
         );
@@ -351,14 +366,12 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
             foreach ($get as $key => $value) {
                 $page = Wo_PageData($value['message']['page_id']);
                 $page['chat_id'] = $value['chat_id'];
-                $page['mute'] = array(
-                    'notify' => 'yes',
-                    'call_chat' => 'yes',
-                    'archive' => 'no',
-                    'fav' => 'no',
-                    'pin' => 'no'
-                );
-                $mute = $db->where('user_id', $wo['user']['id'])->where('chat_id', $value['chat_id'])->where('type', 'page')->getOne(T_MUTE);
+                $page['mute'] = array('notify' => 'yes',
+                                       'call_chat' => 'yes',
+                                       'archive' => 'no',
+                                       'fav' => 'no',
+                                       'pin' => 'no');
+                $mute = $db->where('user_id',$wo['user']['id'])->where('chat_id',$value['chat_id'])->where('type','page')->getOne(T_MUTE);
                 if (!empty($mute)) {
                     $page['mute']['notify'] = $mute->notify;
                     $page['mute']['call_chat'] = $mute->call_chat;
@@ -368,12 +381,12 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                 }
                 if (!empty($page) && !empty($value['message']) && !empty($value['message']['page_id']) && !empty($value['message']['user_id']) && !empty($value['message']['conversation_user_id'])) {
                     $message = Wo_GetPageMessages(array(
-                        'page_id' => $value['message']['page_id'],
-                        'from_id' => $value['message']['user_id'],
-                        'to_id'   => $value['message']['conversation_user_id'],
-                        'limit' => 1,
-                        'limit_type' => 1
-                    ));
+                                                'page_id' => $value['message']['page_id'],
+                                                'from_id' => $value['message']['user_id'],
+                                                'to_id'   => $value['message']['conversation_user_id'],
+                                                'limit' => 1,
+                                                'limit_type' => 1
+                                            ));
                     if (!empty($message) && !empty($message[0]) && !empty($message[0]['time'])) {
                         $page['last_message'] = $message[0];
                         $timezone = new DateTimeZone($wo['user']['timezone']);
@@ -389,7 +402,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                             $page['last_message']['date_time'] = $time->format('H:i');
                         }
                         foreach ($non_allowed as $key4 => $value4) {
-                            unset($page['last_message']['user_data'][$value4]);
+                          unset($page['last_message']['user_data'][$value4]);
                         }
                         $page['last_message']['text'] = openssl_encrypt($page['last_message']['text'], "AES-128-ECB", $page['last_message']['time']);
 
@@ -399,23 +412,25 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
             }
         }
         $response_data = array(
-            'api_status' => 200,
-            'data' => $pages
-        );
+                    'api_status' => 200,
+                    'data' => $pages
+                );
     }
 
     if ($_POST['type'] == 'delete_chat') {
         if (!empty($_POST['page_id']) && is_numeric($_POST['page_id']) && $_POST['page_id'] > 0 && !empty($_POST['recipient_id']) && is_numeric($_POST['recipient_id']) && $_POST['recipient_id'] > 0) {
-            if (Wo_DeletePageConversation($_POST['recipient_id'], $_POST['page_id'])) {
+            if (Wo_DeletePageConversation($_POST['recipient_id'],$_POST['page_id'])) {
                 $response_data = array(
                     'api_status' => 200,
                     'message' => 'chat deleted'
                 );
-            } else {
+            }
+            else{
                 $error_code    = 6;
                 $error_message = 'Something went wrong';
             }
-        } else {
+        }
+        else{
             $error_code    = 5;
             $error_message = 'page_id And recipient_id can not be empty';
         }
@@ -428,7 +443,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
             if ($last_id && $last_id > 0) {
                 if (!empty($_POST['reply_id']) && is_numeric($_POST['reply_id']) && $_POST['reply_id'] > 0) {
                     $reply_id = Wo_Secure($_POST['reply_id']);
-                    $db->where('id', $last_id)->update(T_MESSAGES, array('reply_id' => $reply_id));
+                    $db->where('id',$last_id)->update(T_MESSAGES,array('reply_id' => $reply_id));
                 }
                 $message_info = Wo_GetPageMessages(array(
                     'id' => $last_id,
@@ -436,7 +451,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                 ));
 
                 foreach ($non_allowed as $key => $value) {
-                    unset($message_info[0]['user_data'][$value]);
+                   unset($message_info[0]['user_data'][$value]);
                 }
                 if (empty($wo['user']['timezone'])) {
                     $wo['user']['timezone'] = 'UTC';
@@ -479,7 +494,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
 
                     if (!empty($message['reply'])) {
                         foreach ($non_allowed as $key => $value) {
-                            unset($message['reply']['messageUser'][$value]);
+                           unset($message['reply']['messageUser'][$value]);
                         }
 
                         $message['reply']['time_text'] = Wo_Time_Elapsed_String($message['reply']['time']);
@@ -528,12 +543,14 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                     'data' => $messages
                 );
             }
-        } else {
+        }
+        else{
             $error_code    = 5;
             $error_message = 'page_id and message_id can not be empty';
         }
     }
-} else {
+}
+else{
     $error_code    = 4;
     $error_message = 'type can not be empty';
 }

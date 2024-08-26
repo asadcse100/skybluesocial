@@ -1,4 +1,13 @@
 <?php
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2018 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $response_data = array(
     'api_status' => 400
 );
@@ -34,7 +43,11 @@ if (empty($error_code))
         $cookie = '';
         $access_token = sha1(rand(111111111, 999999999)) . md5(microtime()) . rand(11111111, 99999999) . md5(rand(5555, 9999));
         $timezone = 'UTC';
-        $create_session = mysqli_query($sqlConnect, "INSERT INTO " . T_APP_SESSIONS . " (`user_id`, `session_id`, `platform`, `time`) VALUES ('{$user_id}', '{$access_token}', 'phone', '{$time}')");
+        $device_type = 'phone';
+        if (!empty($_POST['device_type']) && in_array($_POST['device_type'], array('phone','windows'))) {
+            $device_type = Wo_Secure($_POST['device_type']);
+        }
+        $create_session = mysqli_query($sqlConnect, "INSERT INTO " . T_APP_SESSIONS . " (`user_id`, `session_id`, `platform`, `time`) VALUES ('{$user_id}', '{$access_token}', '{$device_type}', '{$time}')");
         if (!empty($_POST['timezone']))
         {
             $timezone = Wo_Secure($_POST['timezone']);
@@ -72,6 +85,7 @@ if (empty($error_code))
                 'timezone' => $timezone,
                 'access_token' => $access_token,
                 'user_id' => $user_id,
+                'user_platform' => $device_type,
             );
         }
 

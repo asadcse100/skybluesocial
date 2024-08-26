@@ -1,5 +1,13 @@
 <?php
-
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2022 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 /* Script Main Functions (File 3) */
 function Wo_RegisterPoint($post_id, $type, $action = '+', $user_id = 0) {
     global $wo, $sqlConnect, $db;
@@ -227,7 +235,7 @@ function Wo_GetProduct($id = 0) {
     $fetched_data['rating']        = $db->where('product_id', $fetched_data['id'])->getValue(T_PRODUCT_REVIEW, "FLOOR(sum(star)/count(id))");
     $fetched_data['reviews_count'] = $db->where('product_id', $fetched_data['id'])->getValue(T_PRODUCT_REVIEW, "count(id)");
     // $fetched_data['price_format']  = number_format($fetched_data['price'], 2,",",".");
-    $fetched_data['price_format'] = number_format($fetched_data['price'], 2,".",".");
+    $fetched_data['price_format'] = number_format($fetched_data['price'], 2);
     return $fetched_data;
 }
 function Wo_DeleteProductImage($id) {
@@ -1582,7 +1590,12 @@ function Wo_UpdateBlog($id = 0, $update_data = array()) {
         return false;
     }
     foreach ($update_data as $field => $data) {
-        $update[] = '`' . $field . '` = \'' . Wo_Secure($data, 0, false) . '\'';
+        if ($field == 'content') {
+            $update[] = '`' . $field . '` = \'' . Wo_Secure($data, 0, false,0,false) . '\'';
+        }
+        else{
+            $update[] = '`' . $field . '` = \'' . Wo_Secure($data, 0, false) . '\'';
+        }
     }
     $impload   = implode(', ', $update);
     $query_one = "UPDATE " . T_BLOG . " SET {$impload} WHERE `id` = {$id} ";
@@ -4492,9 +4505,18 @@ function Wo_GetMytransactions($args = array()) {
     $query = mysqli_query($sqlConnect, $sql);
     if (mysqli_num_rows($query)) {
         while ($fetched_data = mysqli_fetch_assoc($query)) {
+            if (!empty($fetched_data['extra'])) {
+                $fetched_data['extra'] = json_decode($fetched_data['extra'],true);
+            }
+
             if ($fetched_data['kind'] == 'RECEIVED') {
                 if (strpos($fetched_data['notes'], "subscribed")) {
                     $fetched_data['notes'] = str_replace('{text}', $fetched_data['notes'], $wo['lang']['trans_successfully_received_from']);
+                }
+                if (!empty($fetched_data['extra']) && $fetched_data['extra']['type'] == 'monetization_subscription' && !empty($fetched_data['extra']['from_id'])) {
+                    $user = Wo_UserData($fetched_data['extra']['from_id']);
+                    $link = '<a href="'.$user['url'].'" data-ajax="?link1=timeline&u='.$user['username'].'">'.$user['name'].'</a>';
+                    $fetched_data['notes'] = str_replace('{text}', $link, $wo['lang']['subscription_earnings']);
                 }
             }
 
@@ -4527,7 +4549,12 @@ function Wo_GetMytransactions($args = array()) {
             if ($fetched_data['kind'] == 'PURCHASE') {
                 if (strpos($fetched_data['notes'], "Subscribed") === false) {
                     $fetched_data['notes'] = $wo['lang']['product_purchase'];
-            }
+                }
+                if (!empty($fetched_data['extra']) && $fetched_data['extra']['type'] == 'monetization_subscription' && !empty($fetched_data['extra']['to_id'])) {
+                    $user = Wo_UserData($fetched_data['extra']['to_id']);
+                    $link = '<a href="'.$user['url'].'" data-ajax="?link1=timeline&u='.$user['username'].'">'.$user['name'].'</a>';
+                    $fetched_data['notes'] = str_replace('{text}', $link, $wo['lang']['subscribed_to']);
+                }
             }
 
             if ($fetched_data['kind'] == 'SALE') {

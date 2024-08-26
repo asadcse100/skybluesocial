@@ -1,5 +1,13 @@
 <?php
-
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com   
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2016 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $non_allowed = array(
     'password',
     'background_image',
@@ -34,12 +42,11 @@ $non_allowed = array(
     'src',
     'country_id'
 );
-function Wo_GetMessagesUsersAPP($user_id, $searchQuery = '', $limit = 50, $new = false, $update = 0, $session_id = 0)
-{
+function Wo_GetMessagesUsersAPP($user_id, $searchQuery = '', $limit = 50, $new = false, $update = 0, $session_id = 0) {
     global $wo, $sqlConnect;
     if (empty($session_id)) {
         if ($wo['loggedin'] == false) {
-            return false;
+           return false;
         }
     }
     if (!is_numeric($user_id) or $user_id < 1) {
@@ -50,7 +57,7 @@ function Wo_GetMessagesUsersAPP($user_id, $searchQuery = '', $limit = 50, $new =
     }
     $data     = array();
     $excludes = array();
-    if (isset($searchQuery) and !empty($searchQuery)) {
+    if (isset($searchQuery) AND !empty($searchQuery)) {
         $query_one = " SELECT `user_id` as `conversation_user_id` FROM " . T_USERS . " WHERE (`user_id` IN (SELECT `from_id` FROM " . T_MESSAGES . " WHERE `to_id` = {$user_id} AND `user_id` NOT IN (SELECT `blocked` FROM " . T_BLOCKS . " WHERE `blocker` = '{$user_id}') AND `user_id` NOT IN (SELECT `blocker` FROM " . T_BLOCKS . " WHERE `blocked` = '{$user_id}') AND `active` = '1' ";
         if (isset($new) && $new == true) {
             $query_one .= " AND `seen` = 0";
@@ -61,7 +68,7 @@ function Wo_GetMessagesUsersAPP($user_id, $searchQuery = '', $limit = 50, $new =
         }
         $query_one .= ") AND ((`username` LIKE '%{$searchQuery}%') OR CONCAT( `first_name`,  ' ', `last_name` ) LIKE  '%{$searchQuery}%')";
     } else {
-        $query_one = "SELECT `conversation_user_id` FROM " . T_U_CHATS . " WHERE `user_id` = '$user_id' AND (`conversation_user_id` NOT IN (SELECT `blocked` FROM " . T_BLOCKS . " WHERE `blocker` = '{$user_id}') AND `conversation_user_id` NOT IN (SELECT `blocker` FROM " . T_BLOCKS . " WHERE `blocked` = '{$user_id}')) ORDER BY `time` DESC";
+       $query_one = "SELECT `conversation_user_id` FROM " . T_U_CHATS . " WHERE `user_id` = '$user_id' AND (`conversation_user_id` NOT IN (SELECT `blocked` FROM " . T_BLOCKS . " WHERE `blocker` = '{$user_id}') AND `conversation_user_id` NOT IN (SELECT `blocker` FROM " . T_BLOCKS . " WHERE `blocked` = '{$user_id}')) ORDER BY `time` DESC";
     }
     $query_one .= " LIMIT {$limit}";
     $sql_query_one = mysqli_query($sqlConnect, $query_one);
@@ -76,12 +83,11 @@ function Wo_GetMessagesUsersAPP($user_id, $searchQuery = '', $limit = 50, $new =
     return $data;
 }
 
-function Wo_ChatSearchUsersAPP($search_query = '', $user_session = '', $user_id = 0)
-{
+function Wo_ChatSearchUsersAPP($search_query = '', $user_session = '', $user_id = 0) {
     global $sqlConnect, $wo;
     if (empty($user_session)) {
         if ($wo['loggedin'] == false) {
-            return false;
+           return false;
         }
     }
     if (empty($user_id)) {
@@ -102,8 +108,7 @@ function Wo_ChatSearchUsersAPP($search_query = '', $user_session = '', $user_id 
     return $data;
 }
 
-function Wo_GetChatUsersAPP($user_id = 0, $type = 'online', $search_query = '')
-{
+function Wo_GetChatUsersAPP($user_id = 0, $type = 'online', $search_query = '') {
     global $sqlConnect, $wo;
     $data       = array();
     $time       = time() - 60;
@@ -129,8 +134,7 @@ function Wo_GetChatUsersAPP($user_id = 0, $type = 'online', $search_query = '')
     return $data;
 }
 
-function Wo_GetMessagesAPP($data = array(), $limit = 50)
-{
+function Wo_GetMessagesAPP($data = array(), $limit = 50) {
     global $wo, $sqlConnect;
     $message_data   = array();
     $user_id        = Wo_Secure($data['recipient_id']);
@@ -179,8 +183,7 @@ function Wo_GetMessagesAPP($data = array(), $limit = 50)
     return $message_data;
 }
 
-function Wo_GetFilePosition($file)
-{
+function Wo_GetFilePosition($file) {
     $file_type = 'text';
     if (empty($file)) {
         return $file_type;

@@ -61,11 +61,11 @@ if ($insert == true) {
     $config = Wo_GetConfig();
 }
 if (isset($_GET["theme"]) && in_array($_GET["theme"], array(
-    "default",
-    "sunshine",
-    "wowonder",
-    "wondertag"
-))) {
+        "default",
+        "sunshine",
+        "wowonder",
+        "wondertag"
+    ))) {
     $_SESSION["theme"] = $_GET["theme"];
 }
 if (isset($_SESSION["theme"]) && !empty($_SESSION["theme"])) {
@@ -74,14 +74,14 @@ if (isset($_SESSION["theme"]) && !empty($_SESSION["theme"])) {
         header("Location: " . $_SERVER["HTTP_REFERER"]);
     }
 }
-$config["withdrawal_payment_method"] = json_decode($config['withdrawal_payment_method'], true);
+$config["withdrawal_payment_method"] = json_decode($config['withdrawal_payment_method'],true);
 // Config Url
 $config["theme_url"] = $site_url . "/themes/" . $config["theme"];
 $config["site_url"]  = $site_url;
 $wo["site_url"]      = $site_url;
-$config["wasabi_site_url"]         = "https://s3." . $config["wasabi_bucket_region"] . ".wasabisys.com";
+$config["wasabi_site_url"]         = "https://s3.".$config["wasabi_bucket_region"].".wasabisys.com";
 if (!empty($config["wasabi_bucket_name"])) {
-    $config["wasabi_site_url"] = "https://s3." . $config["wasabi_bucket_region"] . ".wasabisys.com/" . $config["wasabi_bucket_name"];
+    $config["wasabi_site_url"] = "https://s3.".$config["wasabi_bucket_region"].".wasabisys.com/".$config["wasabi_bucket_name"];
 }
 $s3_site_url         = "https://test.s3.amazonaws.com";
 if (!empty($config["bucket_name"])) {
@@ -128,7 +128,7 @@ $wo["DiscordLoginUrl"]    = $config["site_url"] . "/login-with.php?provider=Disc
 $wo["MailruLoginUrl"]     = $config["site_url"] . "/login-with.php?provider=Mailru";
 $wo["OkLoginUrl"]         = $config["site_url"] . "/login-with.php?provider=OkRu";
 $wo["TikTokLoginUrl"]         = $config["site_url"] . "/login-with.php?provider=TikTok";
-$wo["WordpressLoginUrl"]         = $config["site_url"] . "/login-with.php?provider=Wordpress";
+$wo["WordpressLoginUrl"]         = $config["site_url"] . "/login-with.php?provider=WordPress";
 // Defualt User Pictures
 $wo["userDefaultAvatar"]  = "upload/photos/d-avatar.jpg";
 $wo["userDefaultBlur"]  = "upload/photos/blur.jpg";
@@ -372,7 +372,8 @@ try {
     $wo["products_categories"] = Wo_GetCategories(T_PRODUCTS_CATEGORY);
     $wo["job_categories"]      = Wo_GetCategories(T_JOB_CATEGORY);
     $wo["reactions_types"]     = Wo_GetReactionsTypes();
-} catch (Exception $e) {
+}
+catch (Exception $e) {
     $wo["genders"]             = array();
     $wo["page_categories"]     = array();
     $wo["group_categories"]    = array();
@@ -404,8 +405,7 @@ if ($wo["config"]["colored_posts_system"] == 1) {
 }
 
 
-$wo['manage_pro_features'] = array(
-    'funding_request' => 'can_use_funding',
+$wo['manage_pro_features'] = array('funding_request' => 'can_use_funding',
     'job_request' => 'can_use_jobs',
     'game_request' => 'can_use_games',
     'market_request' => 'can_use_market',
@@ -493,16 +493,16 @@ if (!$wo['config']['can_use_background']) {
 if (!$wo['config']['can_use_chat']) {
     $wo['config']['chatSystem'] = 0;
 }
-if ($wo['config']['ai_image_system'] == 0 && in_array('ai_image_use', array_keys($wo['available_pro_features']))) {
+if ($wo['config']['ai_image_system'] == 0 && in_array('ai_image_use',array_keys($wo['available_pro_features']))) {
     unset($wo['available_pro_features']['ai_image_use']);
 }
-if ($wo['config']['ai_post_system'] == 0 && in_array('ai_post_use', array_keys($wo['available_pro_features']))) {
+if ($wo['config']['ai_post_system'] == 0 && in_array('ai_post_use',array_keys($wo['available_pro_features']))) {
     unset($wo['available_pro_features']['ai_post_use']);
 }
-if ($wo['config']['ai_user_system'] == 0 && in_array('ai_user_use', array_keys($wo['available_pro_features']))) {
+if ($wo['config']['ai_user_system'] == 0 && in_array('ai_user_use',array_keys($wo['available_pro_features']))) {
     unset($wo['available_pro_features']['ai_user_use']);
 }
-if ($wo['config']['ai_blog_system'] == 0 && in_array('ai_blog_use', array_keys($wo['available_pro_features']))) {
+if ($wo['config']['ai_blog_system'] == 0 && in_array('ai_blog_use',array_keys($wo['available_pro_features']))) {
     unset($wo['available_pro_features']['ai_blog_use']);
 }
 if (!$wo['config']['can_use_ai_image']) {
@@ -518,16 +518,17 @@ if (!$wo['config']['can_use_ai_blog']) {
     $wo['config']['ai_blog_system'] = 0;
 }
 
-$wo['config']['report_reasons'] = json_decode($wo['config']['report_reasons'], true);
+$wo['config']['report_reasons'] = json_decode($wo['config']['report_reasons'],true);
 
 
-$wo['config']['filesVersion'] = "4.3";
+$wo['config']['filesVersion'] = "4.3.4";
 
 if ($wo['config']['filesVersion'] != $wo['config']['version']) {
     ini_set('display_errors', 0);
     ini_set('display_startup_errors', 0);
     error_reporting(0);
 }
+
 $wo['reserved_usernames'] = array();
 if (!empty($wo['config']['reserved_usernames'])) {
     $wo['reserved_usernames'] = explode(',', $wo['config']['reserved_usernames']);
@@ -535,10 +536,13 @@ if (!empty($wo['config']['reserved_usernames'])) {
 
 // $wo['countries_ads'] = getCountriesAds();
 
-$wo['have_reels'] = 0;
-if ($wo['config']['reels_upload'] == 1) {
-    $reel = $db->where('is_reel', 1)->getOne(T_POSTS);
-    if (!empty($reel)) {
-        $wo['have_reels'] = 1;
-    }
+$wo['watched_reels'] = array();
+if (!empty($_COOKIE['watched_reels'])) {
+    $wo['watched_reels'] = json_decode($_COOKIE['watched_reels'],true);
+}
+
+$wo['hiddenConfig'] = $wo['config'];
+$wo['have_monetization'] = 0;
+if ($wo['config']['monetization'] == 1 && $wo["loggedin"]) {
+    $wo['have_monetization'] = $wo['user']['have_monetization'];
 }

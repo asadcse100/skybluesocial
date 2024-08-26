@@ -1,4 +1,13 @@
 <?php
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com   
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2017 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 require_once('assets/init.php');
 $provider = "";
 $types = array(
@@ -34,16 +43,19 @@ if (!empty($provider)) {
         setcookie('provider', '', -1, '/');
     }
     setcookie('provider', $provider, time() + (60 * 60), '/');
-} else if (!empty($_COOKIE['provider']) && in_array($_COOKIE['provider'], $types)) {
-
+}
+else if(!empty($_COOKIE['provider']) && in_array($_COOKIE['provider'], $types)){
+    
     $provider = Wo_Secure($_COOKIE['provider']);
 }
 if (!empty($provider) && $provider != 'OkRu') {
     require_once('assets/libraries/social-login/config.php');
     require_once('assets/libraries/social-login/vendor/autoload.php');
-} else if ($provider == 'OkRu') {
+}
+
+else if($provider == 'OkRu'){
     if (empty($_GET['code'])) {
-        header("Location: https://connect.ok.ru/oauth/authorize?client_id=" . $wo['config']['OkAppId'] . "&scope=VALUABLE_ACCESS&response_type=code&redirect_uri=" . $wo['config']['site_url'] . "/login-with.php&layout=w&state=OkRu");
+        header("Location: https://connect.ok.ru/oauth/authorize?client_id=".$wo['config']['OkAppId']."&scope=VALUABLE_ACCESS&response_type=code&redirect_uri=".$wo['config']['site_url']."/login-with.php&layout=w&state=OkRu");
         exit();
     }
     require_once('assets/libraries/odnoklassniki_sdk.php');
@@ -51,13 +63,12 @@ if (!empty($provider) && $provider != 'OkRu') {
 
 use Hybridauth\Hybridauth;
 use Hybridauth\HttpClient;
-
 if (isset($provider) && in_array($provider, $types)) {
     try {
         if ($provider == 'OkRu') {
             OdnoklassnikiSDK::SetOkInfo();
-            if (!is_null(OdnoklassnikiSDK::getCode())) {
-                if (OdnoklassnikiSDK::changeCodeToToken(OdnoklassnikiSDK::getCode())) {
+            if (!is_null(OdnoklassnikiSDK::getCode())){
+                if(OdnoklassnikiSDK::changeCodeToToken(OdnoklassnikiSDK::getCode())){
                     $current_user = OdnoklassnikiSDK::makeRequest("users.getCurrentUser", null);
                     if (!empty($current_user)) {
                         $user_profile = ToObject($current_user);
@@ -65,28 +76,34 @@ if (isset($provider) && in_array($provider, $types)) {
                         $user_profile->lastName = $user_profile->last_name;
                         if (!empty($user_profile->pic_3)) {
                             $user_profile->photoURL = $user_profile->pic_3;
-                        } else if (!empty($user_profile->pic_2)) {
+                        }
+                        else if (!empty($user_profile->pic_2)) {
                             $user_profile->photoURL = $user_profile->pic_2;
-                        } else if (!empty($user_profile->pic_1)) {
+                        }
+                        else if (!empty($user_profile->pic_1)) {
                             $user_profile->photoURL = $user_profile->pic_1;
                         }
-                    } else {
+                    }
+                    else{
                         echo " <b><a href='" . Wo_SeoLink('index.php?link1=welcome') . "'>Try again<a></b>";
                         exit();
                     }
-                } else {
+                }
+                else{
                     echo " <b><a href='" . Wo_SeoLink('index.php?link1=welcome') . "'>Try again<a></b>";
                     exit();
                 }
-            } else {
+            }
+            else{
                 echo " <b><a href='" . Wo_SeoLink('index.php?link1=welcome') . "'>Try again<a></b>";
                 exit();
             }
-        } else if ($provider == 'TikTok') {
+        }
+        else if ($provider == 'TikTok') {
             require_once('./assets/libraries/tiktok/src/Connector.php');
             $callback = $site_url_login . '/tiktok_callback';
             $_TK = new Connector($wo['config']['tiktok_client_key'], $wo['config']['tiktok_client_secret'], $callback);
-            if (Connector::receivingResponse()) {
+            if (Connector::receivingResponse()) { 
                 try {
                     $token = $_TK->verifyCode($_GET[Connector::CODE_PARAM]);
                     // Your logic to store the access token
@@ -104,21 +121,24 @@ if (isset($provider) && in_array($provider, $types)) {
                     //$videos = $_TK->getUserVideoPages();
                     // Your logic to manage the Video info
                 } catch (Exception $e) {
-                    echo "Error: " . $e->getMessage();
-                    echo '<br /><a href="' . $_TK->getRedirect() . '">Retry</a>';
+                    echo "Error: ".$e->getMessage();
+                    echo '<br /><a href="'.$_TK->getRedirect().'">Retry</a>';
                     exit();
                 }
             } else {
                 header("Location: " . $_TK->getRedirect());
                 exit();
             }
-        } else {
-            $hybridauth = new Hybridauth($LoginWithConfig);
+        }
+        else{
+            $hybridauth = new Hybridauth( $LoginWithConfig );
 
 
             $authProvider = $hybridauth->authenticate($provider);
             $tokens = $authProvider->getAccessToken();
             $user_profile = $authProvider->getUserProfile();
+
+
         }
 
         if ($user_profile && isset($user_profile->identifier)) {
@@ -167,7 +187,7 @@ if (isset($provider) && in_array($provider, $types)) {
             $user_email = $user_name . $notfound_email_com;
             if (!empty($user_profile->email)) {
                 $user_email = $user_profile->email;
-                if (empty($user_profile->emailVerified) && $provider == 'Discord') {
+                if(empty($user_profile->emailVerified) && $provider == 'Discord') {
                     exit("Your E-mail is not verfied on Discord.");
                 }
             }
@@ -265,10 +285,10 @@ if (isset($provider) && in_array($provider, $types)) {
                     die($wo['lang']['email_provider_banned']);
                 }
                 if (Wo_RegisterUser($re_data) === true) {
-                    Wo_SetLoginWithSession($user_email);
+                                        Wo_SetLoginWithSession($user_email);
                     $user_id = Wo_UserIdFromEmail($user_email);
                     if (!empty($re_data['referrer']) && is_numeric($wo['config']['affiliate_level']) && $wo['config']['affiliate_level'] > 1) {
-                        AddNewRef($re_data['referrer'], $user_id, $wo['config']['amount_ref']);
+                        AddNewRef($re_data['referrer'],$user_id,$wo['config']['amount_ref']);
                     }
                     if (!empty($wo['config']['auto_friend_users'])) {
                         $autoFollow = Wo_AutoFollow($user_id);
@@ -305,7 +325,8 @@ if (isset($provider) && in_array($provider, $types)) {
                 }
             }
         }
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
         echo $e->getMessage();
         echo " <b><a href='" . Wo_SeoLink('index.php?link1=welcome') . "'>Try again<a></b>";
     }

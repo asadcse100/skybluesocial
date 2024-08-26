@@ -1,6 +1,7 @@
 <?php
 if (!empty($_POST['postText'])) {
 
+
     if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $_POST["postText"], $match)) {
         $youtube_video = Wo_Secure($match[1]);
         $api_request   = file_get_contents('https://www.googleapis.com/youtube/v3/videos?id=' . $youtube_video . '&key=AIzaSyDoOC41IwRzX5XvP7bNiCJXJfcK14HalM0&part=snippet,contentDetails,statistics,status');
@@ -56,7 +57,8 @@ if (!empty($_POST['postText'])) {
                     $get_image = getimagesize($get_url);
                     $image_urls[] = $get_url;
                     $page_title   = 'Image';
-                } else {
+                }
+                else {
                     include_once("assets/libraries/simple_html_dom.inc.php");
                     $get_content = file_get_html($get_url);
                     foreach ($get_content->find('title') as $element) {
@@ -100,6 +102,7 @@ if (!empty($_POST['postText'])) {
             }
         }
     }
+
 }
 
 
@@ -144,8 +147,8 @@ if (isset($_FILES['postFile']['name'])) {
         $mediaName     = $media['name'];
     }
     if (empty($mediaFilename)) {
-        $error_code    = 7;
-        $error_message = 'invalid file';
+    	$error_code    = 7;
+		$error_message = 'invalid file';
     }
 }
 $not_video = true;
@@ -211,11 +214,11 @@ if (isset($_FILES['postVideo']['name']) && empty($mediaFilename)) {
             $ffmpeg_convert_video = $mediaFilename;
         }
         $img_types = array(
-            'image/png',
-            'image/jpeg',
-            'image/jpg',
-            'image/gif'
-        );
+                        'image/png',
+                        'image/jpeg',
+                        'image/jpg',
+                        'image/gif'
+                    );
         if (!empty($_FILES['video_thumb']) && in_array($_FILES["video_thumb"]["type"], $img_types)) {
             $fileInfo = array(
                 'file' => $_FILES["video_thumb"]["tmp_name"],
@@ -235,8 +238,8 @@ if (isset($_FILES['postVideo']['name']) && empty($mediaFilename)) {
         }
     }
     if (empty($mediaFilename)) {
-        $error_code    = 8;
-        $error_message = 'invalid file';
+    	$error_code    = 8;
+		$error_message = 'invalid file';
     }
 }
 if (isset($_FILES['postMusic']['name']) && empty($mediaFilename)) {
@@ -253,13 +256,13 @@ if (isset($_FILES['postMusic']['name']) && empty($mediaFilename)) {
         $mediaName     = $media['name'];
     }
     if (empty($mediaFilename)) {
-        $error_code    = 9;
-        $error_message = 'invalid file';
+    	$error_code    = 9;
+		$error_message = 'invalid file';
     }
 }
 $multi = 0;
 if (isset($_FILES['postPhotos']['name']) && empty($mediaFilename) && empty($_POST['album_name'])) {
-
+    
     if (count($_FILES['postPhotos']['name']) == 1) {
         if ($_FILES['postPhotos']['size'][0] > $wo['config']['maxUpload']) {
             $invalid_file = 1;
@@ -278,8 +281,8 @@ if (isset($_FILES['postPhotos']['name']) && empty($mediaFilename) && empty($_POS
                 $mediaName     = $media['name'];
             }
             if (empty($mediaFilename)) {
-                $error_code    = 10;
-                $error_message = 'invalid file';
+            	$error_code    = 10;
+				$error_message = 'invalid file';
             }
         }
     } else {
@@ -384,8 +387,8 @@ if (isset($_FILES['postPhotos']['name'])) {
             $new_string = pathinfo($_FILES['postPhotos']['name'][0]);
         }
         if (!in_array(strtolower($new_string['extension']), $allowed)) {
-            $error_code    = 11;
-            $error_message = 'please check details';
+        	$error_code    = 11;
+			$error_message = 'please check details';
         }
     }
 }
@@ -393,13 +396,13 @@ if (!empty($_POST['answer']) && array_filter($_POST['answer'])) {
     if (!empty($_POST['postText'])) {
         foreach ($_POST['answer'] as $key => $value) {
             if (empty($value) || ctype_space($value)) {
-                $error_code    = 12;
-                $error_message = 'Answer #' . ($key + 1) . ' is empty.';
+            	$error_code    = 12;
+				$error_message = 'Answer #' . ($key + 1) . ' is empty.';
             }
         }
     } else {
-        $error_code    = 13;
-        $error_message = 'Please write the question.';
+    	$error_code    = 13;
+		$error_message = 'Please write the question.';
     }
 }
 if (empty($error_message)) {
@@ -508,7 +511,7 @@ if (empty($error_message)) {
     } else {
         $id = Wo_RegisterPost($post_data);
     }
-
+    
     if ($id) {
         if ($is_option == true) {
             foreach ($_POST['answer'] as $key => $value) {
@@ -550,17 +553,19 @@ if (empty($error_message)) {
 
         if (!empty($wo['story']['publisher'])) {
             foreach ($non_allowed as $key4 => $value4) {
-                unset($wo['story']['publisher'][$value4]);
+              unset($wo['story']['publisher'][$value4]);
             }
-        } else {
+        }
+        else{
             $wo['story']['publisher'] = null;
         }
 
         if (!empty($wo['story']['user_data'])) {
             foreach ($non_allowed as $key4 => $value4) {
-                unset($wo['story']['user_data'][$value4]);
+              unset($wo['story']['user_data'][$value4]);
             }
-        } else {
+        }
+        else{
             $wo['story']['user_data'] = null;
         }
 
@@ -569,17 +574,19 @@ if (empty($error_message)) {
             if (!empty($shared_info)) {
                 if (!empty($shared_info['publisher'])) {
                     foreach ($non_allowed as $key4 => $value4) {
-                        unset($shared_info['publisher'][$value4]);
+                      unset($shared_info['publisher'][$value4]);
                     }
-                } else {
+                }
+                else{
                     $shared_info['publisher'] = null;
                 }
 
                 if (!empty($shared_info['user_data'])) {
                     foreach ($non_allowed as $key4 => $value4) {
-                        unset($shared_info['user_data'][$value4]);
+                      unset($shared_info['user_data'][$value4]);
                     }
-                } else {
+                }
+                else{
                     $shared_info['user_data'] = null;
                 }
 
@@ -587,7 +594,7 @@ if (empty($error_message)) {
                     foreach ($shared_info['get_post_comments'] as $key3 => $comment) {
 
                         foreach ($non_allowed as $key5 => $value5) {
-                            unset($shared_info['get_post_comments'][$key3]['publisher'][$value5]);
+                          unset($shared_info['get_post_comments'][$key3]['publisher'][$value5]);
                         }
                     }
                 }
@@ -599,25 +606,25 @@ if (empty($error_message)) {
             foreach ($value['get_post_comments'] as $key3 => $comment) {
 
                 foreach ($non_allowed as $key5 => $value5) {
-                    unset($wo['story']['get_post_comments'][$key3]['publisher'][$value5]);
+                  unset($wo['story']['get_post_comments'][$key3]['publisher'][$value5]);
                 }
             }
         }
         if ($post_active == 1) {
-            $response_data = array(
-                'api_status' => 200,
-                'post_html' => $html,
-                'post_data' => $wo['story']
-            );
-        } else {
-            $response_data = array(
-                'api_status' => 200,
-                'message' => 'Post is under review',
-                'code' => 'review'
-            );
+            $response_data = array('api_status' => 200,
+                                   'post_html' => $html,
+                                   'post_data' => $wo['story']);
         }
-    } else {
-        $error_code    = 14;
-        $error_message = 'something went wrong';
+        else{
+            $response_data = array('api_status' => 200,
+                                   'message' => 'Post is under review',
+                                   'code' => 'review');
+        }
+
+            
+    }
+    else{
+    	$error_code    = 14;
+		$error_message = 'something went wrong';
     }
 }

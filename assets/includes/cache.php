@@ -1,8 +1,6 @@
 <?php
-class Cache
-{
-    function Wo_OpenCacheDir()
-    {
+class Cache {
+    function Wo_OpenCacheDir() {
         if (!file_exists('cache')) {
             $oldmask = umask(0);
             @mkdir('cache', 0777, true);
@@ -32,8 +30,7 @@ class Cache
             }
         }
     }
-    function read($fileName)
-    {
+    function read($fileName) {
         $fileName = 'cache/' . $fileName;
         if (file_exists($fileName)) {
             $handle   = fopen($fileName, 'rb');
@@ -47,8 +44,7 @@ class Cache
             return null;
         }
     }
-    function write($fileName, $variable)
-    {
+    function write($fileName, $variable) {
         $fileName = 'cache/' . $fileName;
         $handle   = fopen($fileName, 'a');
         if ($handle) {
@@ -56,9 +52,9 @@ class Cache
             fclose($handle);
         }
     }
-    function delete($fileName)
-    {
+    function delete($fileName) {
         $fileName = 'cache/' . $fileName;
         @unlink($fileName);
     }
 }
+?>

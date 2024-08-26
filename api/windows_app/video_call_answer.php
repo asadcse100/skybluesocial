@@ -1,4 +1,13 @@
 <?php
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com   
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2016 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 
 $json_error_data     = array();
 $json_success_data   = array();
@@ -47,17 +56,17 @@ if ($type == 'video_call_answer') {
             exit();
         } else {
             if (!empty($_POST['answer_type'])) {
-                if (!empty($_POST['call_id'])) {
-                    if ($_POST['answer_type'] == 'answer') {
-                        $id = Wo_Secure($_POST['call_id']);
-                        $query = mysqli_query($sqlConnect, "UPDATE " . T_VIDEOS_CALLES . " SET `active` = 1 WHERE `id` = '$id'");
-                        if ($query) {
-                            $data = array(
-                                'status' => 200,
+            	if (!empty($_POST['call_id'])) {
+            		if ($_POST['answer_type'] == 'answer') {
+            			$id = Wo_Secure($_POST['call_id']);
+				        $query = mysqli_query($sqlConnect, "UPDATE " . T_VIDEOS_CALLES . " SET `active` = 1 WHERE `id` = '$id'");
+				        if ($query) {
+				            $data = array(
+				                'status' => 200,
                                 'url' => $wo['config']['site_url'] . '/video-call-api/' . $id . '?c_id=' . $_POST['s'] . '&user_id=' . $user_id,
-                            );
-                        }
-                    } else if ($_POST['answer_type'] == 'close') {
+				            );
+				        }
+            		} else if ($_POST['answer_type'] == 'close') {
                         $query   = mysqli_query($sqlConnect, "DELETE FROM " . T_VIDEOS_CALLES . " WHERE `from_id` = '$user_id'");
                         if ($query) {
                             $data = array(
@@ -65,18 +74,18 @@ if ($type == 'video_call_answer') {
                             );
                         }
                     } else {
-                        $id = Wo_Secure($_POST['call_id']);
-                        $query = mysqli_query($sqlConnect, "UPDATE " . T_VIDEOS_CALLES . " SET `declined` = 1 WHERE `id` = '$id'");
-                        if ($query) {
-                            $data = array(
-                                'status' => 200
-                            );
-                        }
-                    }
-                    header("Content-type: application/json");
-                    echo json_encode($data, JSON_PRETTY_PRINT);
-                    exit();
-                }
+            			$id = Wo_Secure($_POST['call_id']);
+				        $query = mysqli_query($sqlConnect, "UPDATE " . T_VIDEOS_CALLES . " SET `declined` = 1 WHERE `id` = '$id'");
+				        if ($query) {
+				            $data = array(
+				                'status' => 200
+				            );
+				        }
+            		}
+            		header("Content-type: application/json");
+			        echo json_encode($data, JSON_PRETTY_PRINT);
+			        exit();
+			    }
             }
         }
     } else {
@@ -88,3 +97,4 @@ if ($type == 'video_call_answer') {
 header("Content-type: application/json");
 echo json_encode($json_success_data);
 exit();
+?>

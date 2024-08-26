@@ -1,4 +1,13 @@
 <?php
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2022 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 /* Script Main Functions (File 2) */
 // functions_tww.php
 require_once "app_start.php";
@@ -1002,9 +1011,9 @@ function Wo_RegisterTyping($recipient_id, $isTyping = 1) {
     } elseif ($isTyping == 2) {
         $typing = 2;
     }
-    if (Wo_IsFollowing($user_id, $recipient_id) === false) {
-        return false;
-    }
+    // if (Wo_IsFollowing($user_id, $recipient_id) === false) {
+    //     return false;
+    // }
     $query = mysqli_query($sqlConnect, "UPDATE " . T_FOLLOWERS . " SET `is_typing` = '$typing' WHERE following_id = '{$user_id}' AND follower_id = {$recipient_id}");
     if ($query) {
         return true;
@@ -5090,7 +5099,7 @@ function Wo_CanSenEmails() {
     return true;
 }
 function Wo_SendMessageFromDB() {
-    global $wo, $sqlConnect;
+    global $wo, $sqlConnect,$siteEncryptKey;
     include_once "assets/libraries/PHPMailer-Master/vendor/autoload.php";
     $mail = new PHPMailer\PHPMailer\PHPMailer();
     if ($wo["loggedin"] == false) {
@@ -5114,7 +5123,7 @@ function Wo_SendMessageFromDB() {
         $mail->SMTPAuth      = true;
         $mail->SMTPKeepAlive = true;
         $mail->Username      = $wo["config"]["smtp_username"]; // SMTP username
-        $mail->Password      = openssl_decrypt($wo["config"]["smtp_password"], "AES-128-ECB", "mysecretkey1234"); // SMTP password
+        $mail->Password      = getSMTPPassword($wo["config"]["smtp_password"]);
         $mail->SMTPSecure    = $wo["config"]["smtp_encryption"]; // Enable TLS encryption, `ssl` also accepted
         $mail->Port          = $wo["config"]["smtp_port"];
         $mail->SMTPOptions   = array(
@@ -5166,7 +5175,7 @@ function Wo_AddPostVideoView($post_id = false) {
     return false;
 }
 function Wo_SendMessage($data = array()) {
-    global $wo, $sqlConnect;
+    global $wo, $sqlConnect,$siteEncryptKey;
     include_once "assets/libraries/PHPMailer-Master/vendor/autoload.php";
     $mail = new PHPMailer\PHPMailer\PHPMailer();
     if (strpos($data["to_email"], "@google.com") || strpos($data["to_email"], "@facebook.com") || strpos($data["to_email"], "@twitter.com") || strpos($data["to_email"], "@linkedIn.com") || strpos($data["to_email"], "@vk.com") || strpos($data["to_email"], "@instagram.com")) {
@@ -5200,7 +5209,7 @@ function Wo_SendMessage($data = array()) {
             $mail->Host        = $wo["config"]["smtp_host"]; // Specify main and backup SMTP servers
             $mail->SMTPAuth    = true; // Enable SMTP authentication
             $mail->Username    = $wo["config"]["smtp_username"]; // SMTP username
-            $mail->Password    = openssl_decrypt($wo["config"]["smtp_password"], "AES-128-ECB", "mysecretkey1234"); // SMTP password
+            $mail->Password      = getSMTPPassword($wo["config"]["smtp_password"]);
             $mail->SMTPSecure  = $wo["config"]["smtp_encryption"]; // Enable TLS encryption, `ssl` also accepted
             $mail->Port        = $wo["config"]["smtp_port"];
             $mail->SMTPOptions = array(
@@ -5251,6 +5260,24 @@ function Wo_SendMessage($data = array()) {
         }
         return false;
     }
+}
+function getSMTPPassword($smtp_password)
+{
+    global $wo, $sqlConnect,$siteEncryptKey;
+
+    if (strpos($smtp_password,'$Ap1_') !== false) {
+        $tx = str_replace('$Ap1_', '', $smtp_password);
+        $smtp_password = openssl_decrypt($tx, "AES-128-ECB", $siteEncryptKey);
+    }
+
+    $smtp_password      = openssl_decrypt($smtp_password, "AES-128-ECB", "mysecretkey1234");
+
+    if (strpos($smtp_password,'$Ap1_') !== false) {
+        $tx = str_replace('$Ap1_', '', $smtp_password);
+        $smtp_password = openssl_decrypt($tx, "AES-128-ECB", $siteEncryptKey);
+    }
+
+    return $smtp_password;
 }
 function Wo_CheckBirthdays($user_id = 0) {
     global $wo, $sqlConnect;

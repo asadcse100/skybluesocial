@@ -1,5 +1,13 @@
 <?php
-
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com   
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2018 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $response_data   = array(
     'api_status' => 400
 );
@@ -26,9 +34,9 @@ foreach ($required_fields as $key => $value) {
     }
 }
 if (empty($error_code)) {
-    $confirm_code = $_POST['code'];
-    $user_id      = $_POST['user_id'];
-    $confirm_code = $db->where('user_id', $user_id)->where('email_code', md5($confirm_code))->getValue(T_USERS, 'count(*)');
+	$confirm_code = $_POST['code'];
+	$user_id      = $_POST['user_id'];
+	$confirm_code = $db->where('user_id', $user_id)->where('email_code', md5($confirm_code))->getValue(T_USERS, 'count(*)');
     if (empty($confirm_code)) {
         $json_error_data = array(
             'api_status' => '400',
@@ -42,7 +50,8 @@ if (empty($error_code)) {
         header("Content-type: application/json");
         echo json_encode($json_error_data, JSON_PRETTY_PRINT);
         exit();
-    } else {
+    }
+    else{
         $time           = time();
         $cookie         = '';
         $access_token   = sha1(rand(111111111, 999999999)) . md5(microtime()) . rand(11111111, 99999999) . md5(rand(5555, 9999));
@@ -82,5 +91,10 @@ if (empty($error_code)) {
             echo json_encode($json_error_data, JSON_PRETTY_PRINT);
             exit();
         }
+
+
+
+
     }
+
 }

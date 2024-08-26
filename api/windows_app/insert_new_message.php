@@ -1,5 +1,13 @@
 <?php
-
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com   
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2016 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $json_error_data     = array();
 $json_success_data   = array();
 $json_success_data_2 = array();
@@ -84,7 +92,8 @@ if ($type == 'insert_new_message' || $type == 'new_message') {
                 header("Content-type: application/json");
                 echo json_encode($json_error_data, JSON_PRETTY_PRINT);
                 exit();
-            } else {
+            }
+            else {
                 if (empty($_POST['product_id'])) {
 
                     $mediaFilename = '';
@@ -131,9 +140,10 @@ if ($type == 'insert_new_message' || $type == 'new_message') {
                         'lng' => $lng,
                         'lat' => $lat,
                     );
-                    if (!empty($_POST['text']) || (isset($_POST['text']) && $_POST['text'] === '0')) {
+                    if (!empty($_POST['text']) || (isset($_POST['text']) && $_POST['text'] === '0') ) {
                         $message_data['text'] = Wo_Secure($_POST['text']);
-                    } else {
+                    }
+                    else{
                         if (empty($lng) && empty($lat) && empty($_FILES['file']['name']) && empty($_POST['image_url']) && empty($_POST['gif'])) {
 
                             $json_error_data = array(
@@ -151,14 +161,15 @@ if ($type == 'insert_new_message' || $type == 'new_message') {
                         }
                     }
                     $last_id      = Wo_RegisterMessage($message_data);
-                } else {
+                }
+                else{
                     $last_id = Wo_RegisterMessage(array(
-                        'from_id' => Wo_Secure($wo['user']['user_id']),
-                        'to_id' => $recipient_id,
-                        'time' => time(),
-                        'stickers' => '',
-                        'product_id' => Wo_Secure($_POST['product_id'])
-                    ));
+                                    'from_id' => Wo_Secure($wo['user']['user_id']),
+                                    'to_id' => $recipient_id,
+                                    'time' => time(),
+                                    'stickers' => '',
+                                    'product_id' => Wo_Secure($_POST['product_id'])
+                                ));
                 }
                 if (!empty($last_id)) {
                     $message_info = array(
@@ -167,7 +178,7 @@ if ($type == 'insert_new_message' || $type == 'new_message') {
                     );
                     $message_info = Wo_GetMessages($message_info);
                     foreach ($non_allowed as $key => $value) {
-                        unset($message_info[0]['messageUser'][$value]);
+                       unset($message_info[0]['messageUser'][$value]);
                     }
                     if (empty($wo['user']['timezone'])) {
                         $wo['user']['timezone'] = 'UTC';
@@ -225,7 +236,8 @@ if ($type == 'insert_new_message' || $type == 'new_message') {
                         echo json_encode($json_success_data22);
                         exit();
                     }
-                } else {
+                }
+                else{
                     $json_error_data = array(
                         'api_status' => '400',
                         'api_text' => 'failed',
@@ -368,3 +380,4 @@ $json_success_data22 = array(
 header("Content-type: application/json");
 echo json_encode($json_success_data22);
 exit();
+?>

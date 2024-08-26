@@ -9,12 +9,14 @@ if (empty($_POST['comment_id'])) {
 }
 if (empty($error_code)) {
 
-    $post_data = array(
+	$post_data = array(
         'comment_id' => $_POST['comment_id']
     );
     $code = Wo_ReportPost($post_data);
     $response_data = array(
-        'api_status' => 200,
-        'code' => $code
-    );
+			            'api_status' => 200,
+			            'code' => $code
+			        );
 }
+
+

@@ -1,4 +1,13 @@
 <?php
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2018 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $users = array();
 $pages = array();
 $groups = array();
@@ -24,7 +33,7 @@ $get_users = Wo_GetSearchFilter($options, $options['limit'], $user_offset);
 
 foreach ($get_users as $key => $user) {
     foreach ($non_allowed as $key => $value) {
-        unset($user[$value]);
+       unset($user[$value]);
     }
     $user['is_following'] = (Wo_IsFollowing($user['user_id'], $wo['user']['user_id'])) ? 1 : 0;
     $users[] = $user;

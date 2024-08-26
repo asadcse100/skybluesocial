@@ -1,7 +1,7 @@
 <?php
 $url = "https://api-m.sandbox.paypal.com";
 if ($wo["config"]["paypal_mode"] == 'live') {
-  $url = "https://api-m.paypal.com";
+    $url = "https://api-m.paypal.com";
 }
 
 $wo['paypal_access_token'] = null;

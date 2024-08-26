@@ -1,5 +1,13 @@
 <?php
-
+// +--------------------------------------\----------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2017 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 require_once('assets/init.php');
 
 if (!empty($auto_redirect)) {
@@ -82,9 +90,9 @@ if ((!isset($_GET['link1']) && $wo['loggedin'] == false) || (isset($_GET['link1'
     }
 
     $landingPage = $wo['config']['directory_landing_page'];
-    if ($landingPage == 'home') {
+    if($landingPage == 'home') {
         //$page = 'welcome';
-    } else {
+    } else  {
         header("Location: " . Wo_SeoLink("index.php?link1=$landingPage"));
         exit();
     }
@@ -106,7 +114,7 @@ if ($wo['config']['maintenance_mode'] == 1) {
 }
 if (!empty($_GET['m'])) {
     $page = 'welcome';
-    setcookie('maintenance_access', '1', time() + 31556926, '/');
+    setcookie('maintenance_access','1', time() + 31556926, '/');
 }
 if ($page != 'admincp' && $page != 'admin-cp') {
     if ($wo["loggedin"] && !empty($wo['user']) && $wo['user']['is_pro'] && !empty($wo["pro_packages"][$wo['user']['pro_type']]) && !empty($wo["pro_packages"][$wo['user']['pro_type']]['max_upload'])) {
@@ -127,7 +135,7 @@ foreach ($all_langs as $key => $value) {
     if (!empty($wo['iso'][$value])) {
         $iso = $wo['iso'][$value]->iso;
     }
-    $wo['lang_og_meta'] .= '<link rel="alternate" href="' . $wo['config']['site_url'] . '?lang=' . $value . '" hreflang="' . $iso . '" />';
+    $wo['lang_og_meta'] .= '<link rel="alternate" href="'.$wo['config']['site_url'].'?lang='.$value.'" hreflang="'.$iso.'" />';
 }
 
 if ((!$wo['loggedin'] || ($wo['loggedin'] && $wo['user']['banned'] != 1))) {
@@ -1437,3 +1445,6 @@ if (empty($wo['content'])) {
 echo Wo_Loadpage('container');
 mysqli_close($sqlConnect);
 unset($wo);
+?>
+
+

@@ -1,6 +1,8 @@
 <?php
-if ($_POST['type'] == 'create') {
-    try {
+if ($_POST['type'] == 'create')
+{
+    try
+    {
         yoomoneyCreateValidation();
         $amount = Wo_Secure($_POST['amount']);
         $order_id = uniqid();
@@ -28,13 +30,18 @@ if ($_POST['type'] == 'create') {
             'successURL' => $successURL,
             'label' => $wo['user']['user_id'],
         );
-    } catch (Exception $e) {
+
+    }
+    catch(Exception $e)
+    {
         $error_code = 5;
         $error_message = $e->getMessage();
     }
 }
-if ($_POST['type'] == 'success') {
-    try {
+if ($_POST['type'] == 'success')
+{
+    try
+    {
         yoomoneySuccessValidation();
 
         $amount = Wo_Secure($_POST['amount']);
@@ -54,8 +61,12 @@ if ($_POST['type'] == 'success') {
             'wallet' => $user['wallet'],
             'balance' => $user['balance'],
         );
-    } catch (Exception $e) {
+
+    }
+    catch(Exception $e)
+    {
         $error_code = 5;
         $error_message = $e->getMessage();
     }
 }
+

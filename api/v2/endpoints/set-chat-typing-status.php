@@ -1,5 +1,13 @@
 <?php
-
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2018 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $response_data = array(
     'api_status' => 400,
 );
@@ -18,15 +26,15 @@ if (empty($error_code)) {
         $error_code    = 6;
         $error_message = 'Recipient user not found';
     } else {
-        $typing = ($_POST['status'] == 'typing') ? 1 : 0;
+    	$typing = ($_POST['status'] == 'typing') ? 1 : 0;
         if ($_POST['status'] == 'recording') {
             $typing = 2;
         }
-        $register = Wo_RegisterTyping($recipient_id, $typing);
-        if ($register) {
-            $response_data = array(
-                'api_status' => 200,
-            );
-        }
+    	$register = Wo_RegisterTyping($recipient_id, $typing);
+    	if ($register) {
+    		$response_data = array(
+			    'api_status' => 200,
+			);
+    	}
     }
 }

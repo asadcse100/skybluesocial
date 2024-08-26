@@ -1,17 +1,17 @@
-<?php
+<?php 
 if ($wo['loggedin'] == false) {
-	//  header("Location: " . Wo_SeoLink('index.php?link1=welcome'));
-	//  exit();
+//  header("Location: " . Wo_SeoLink('index.php?link1=welcome'));
+//  exit();
 }
 if (!isset($_GET['film-id']) || $wo['config']['movies'] == 0 || !$wo['config']['can_use_movies']) {
-	header("Location: " . Wo_SeoLink('index.php?link1=welcome'));
-	exit();
+  header("Location: " . Wo_SeoLink('index.php?link1=welcome'));
+  exit();
 }
 $id = Wo_Secure($_GET['film-id']);
 $id = Wo_GetPostIdFromUrl($id);
 if (empty($id) || !is_numeric($id)) {
-	header("Location: " . $wo['config']['site_url']);
-	exit();
+    header("Location: " . $wo['config']['site_url']);
+    exit();
 }
 $source = Wo_GetMovies(array('id' => $id));
 if (count($source) > 0) {

@@ -1,5 +1,13 @@
 <?php
-
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com   
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2016 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $json_error_data   = array();
 $json_success_data = array();
 $json_success_data_2 = array();
@@ -93,10 +101,10 @@ if ($type == 'get_users_friends') {
                         }
                     }
                 }
-                $json_data['is_following_me'] = (Wo_IsFollowing($wo['user']['user_id'], $json_data['user_id'])) ? 1 : 0;
+                $json_data['is_following_me'] = (Wo_IsFollowing( $wo['user']['user_id'], $json_data['user_id'])) ? 1 : 0;
                 $json_data['lastseen_time_text'] = Wo_Time_Elapsed_String($json_data['lastseen']);
                 $json_data['is_blocked']         = Wo_IsBlocked($json_data['user_id']);
-                // array_push($json_success_data['users'], $json_data);
+               // array_push($json_success_data['users'], $json_data);
                 $users[] = $json_data;
             }
             $online = array();
@@ -128,7 +136,7 @@ if ($type == 'get_users_friends') {
                         }
                     }
                 }
-                $json_data['is_following_me'] = (Wo_IsFollowing($wo['user']['user_id'], $json_data['user_id'])) ? 1 : 0;
+                $json_data['is_following_me'] = (Wo_IsFollowing( $wo['user']['user_id'], $json_data['user_id'])) ? 1 : 0;
                 $json_data['lastseen_time_text'] = Wo_Time_Elapsed_String($json_data['lastseen']);
                 $json_data['is_blocked']         = Wo_IsBlocked($json_data['user_id']);
                 //array_push($json_success_data_2, $json_data);
@@ -153,3 +161,4 @@ if ($type == 'get_users_friends') {
 header("Content-type: application/json");
 echo json_encode($json_success_data);
 exit();
+?>

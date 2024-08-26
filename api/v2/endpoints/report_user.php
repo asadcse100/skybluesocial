@@ -13,7 +13,8 @@ if (isset($_POST['user']) && is_numeric($_POST['user']) && isset($_POST['text'])
         $response_data['api_status'] = 200;
         $response_data['code']   = 1;
     }
-} else {
-    $error_code    = 3;
+}
+else{
+	$error_code    = 3;
     $error_message = 'user , text can not be empty';
 }

@@ -1,5 +1,13 @@
 <?php
-
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com   
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2016 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $json_error_data   = array();
 $search_users = array();
 $pages = array();
@@ -34,7 +42,7 @@ if ($type == 'search_public_users') {
     if (empty($json_error_data)) {
         $user_id         = $_POST['user_id'];
         $user_login_data = Wo_UserData($user_id);
-
+        
         if (empty($user_login_data)) {
             $json_error_data = array(
                 'api_status' => '400',
@@ -82,7 +90,7 @@ if ($type == 'search_public_users') {
                 $image = $_POST['image'];
             }
             $fetch_array = array(
-                'query' => $search_key,
+                'query' => $search_key, 
                 'gender' => $gender,
                 'image' => $image,
                 'status' => $status,
@@ -145,3 +153,4 @@ if ($type == 'search_public_users') {
 header("Content-type: application/json");
 echo json_encode($json_success_data);
 exit();
+?>

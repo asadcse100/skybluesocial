@@ -1,6 +1,6 @@
 <?php
 if ($wo['config']['website_mode'] != 'instagram') {
-    $error_code    = 5;
+	$error_code    = 5;
     $error_message = 'instagram mode not enabled';
     $response_data       = array(
         'api_status'     => '404',
@@ -25,10 +25,10 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $types)) {
             $limit = (!empty($_POST['limit']) && is_numeric($_POST['limit']) && $_POST['limit'] > 0 && $_POST['limit'] <= 50 ? Wo_Secure($_POST['limit']) : 20);
 
             if (!empty($offset)) {
-                $db->where('id', $offset, '<');
+                $db->where('id',$offset,'<');
             }
 
-            $explore_posts = $db->where('postPrivacy', '0')->where('multi_image_post', '0')->where('active', 1)->where("((postFile LIKE '%.jpg%' || postFile LIKE '%.jpeg%' || postFile LIKE '%.png%' || postFile LIKE '%.gif%' || postFile LIKE '%.mp4%' || postFile LIKE '%.mkv%' || postFile LIKE '%.avi%' || postFile LIKE '%.webm%' || postFile LIKE '%.mov%' || postFile LIKE '%.m3u8%' || postSticker != '' || postPhoto != '' || album_name != '' || multi_image = '1'))")->orderBy('id', 'DESC')->get(T_POSTS, $limit, array('id'));
+            $explore_posts = $db->where('postPrivacy','0')->where('multi_image_post','0')->where('active',1)->where("((postFile LIKE '%.jpg%' || postFile LIKE '%.jpeg%' || postFile LIKE '%.png%' || postFile LIKE '%.gif%' || postFile LIKE '%.mp4%' || postFile LIKE '%.mkv%' || postFile LIKE '%.avi%' || postFile LIKE '%.webm%' || postFile LIKE '%.mov%' || postFile LIKE '%.m3u8%' || postSticker != '' || postPhoto != '' || album_name != '' || multi_image = '1'))")->orderBy('id','DESC')->get(T_POSTS,$limit,array('id'));
 
             foreach ($explore_posts as $key => $value) {
 
@@ -50,17 +50,19 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $types)) {
 
                 if (!empty($post['publisher'])) {
                     foreach ($non_allowed as $key4 => $value4) {
-                        unset($post['publisher'][$value4]);
+                      unset($post['publisher'][$value4]);
                     }
-                } else {
+                }
+                else{
                     $post['publisher'] = null;
                 }
 
                 if (!empty($post['user_data'])) {
                     foreach ($non_allowed as $key4 => $value4) {
-                        unset($post['user_data'][$value4]);
+                      unset($post['user_data'][$value4]);
                     }
-                } else {
+                }
+                else{
                     $post['user_data'] = null;
                 }
 
@@ -69,17 +71,19 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $types)) {
                     if (!empty($shared_info)) {
                         if (!empty($shared_info['publisher'])) {
                             foreach ($non_allowed as $key4 => $value4) {
-                                unset($shared_info['publisher'][$value4]);
+                              unset($shared_info['publisher'][$value4]);
                             }
-                        } else {
+                        }
+                        else{
                             $shared_info['publisher'] = null;
                         }
 
                         if (!empty($shared_info['user_data'])) {
                             foreach ($non_allowed as $key4 => $value4) {
-                                unset($shared_info['user_data'][$value4]);
+                              unset($shared_info['user_data'][$value4]);
                             }
-                        } else {
+                        }
+                        else{
                             $shared_info['user_data'] = null;
                         }
 
@@ -87,7 +91,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $types)) {
                             foreach ($shared_info['get_post_comments'] as $key3 => $comment) {
 
                                 foreach ($non_allowed as $key5 => $value5) {
-                                    unset($shared_info['get_post_comments'][$key3]['publisher'][$value5]);
+                                  unset($shared_info['get_post_comments'][$key3]['publisher'][$value5]);
                                 }
                             }
                         }
@@ -99,7 +103,7 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $types)) {
                     foreach ($post['get_post_comments'] as $key3 => $comment) {
 
                         foreach ($non_allowed as $key5 => $value5) {
-                            unset($post['get_post_comments'][$key3]['publisher'][$value5]);
+                          unset($post['get_post_comments'][$key3]['publisher'][$value5]);
                         }
                     }
                 }
@@ -110,12 +114,15 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $types)) {
                 'api_status' => 200,
                 'data' => $posts
             );
+
         } catch (Exception $e) {
             $error_code    = 5;
             $error_message = $e->getMessage();
         }
     }
-} else {
+
+}
+else{
     $error_code    = 4;
     $error_message = 'type can not be empty';
 }

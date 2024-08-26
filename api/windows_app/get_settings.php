@@ -1,5 +1,13 @@
 <?php
-
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com   
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2016 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $json_error_data   = array();
 $json_success_data = array();
 if (empty($_GET['type']) || !isset($_GET['type'])) {
@@ -130,8 +138,8 @@ if ($type == 'get_settings') {
     $get_config['update_available'] = false;
     if (!empty($_POST['windows_app_version'])) {
         if ($get_config['windows_app_version'] > $_POST['windows_app_version']) {
-            $get_config['update_available'] = true;
-        }
+           $get_config['update_available'] = true;
+        } 
     }
     $get_config['windows_app_version'] = '1.0';
     $get_config['logo_url'] = $config['theme_url'] . '/img/logo.' . $get_config['logo_extension'];
@@ -148,3 +156,4 @@ if ($type == 'get_settings') {
 header("Content-type: application/json");
 echo json_encode($json_success_data);
 exit();
+?>

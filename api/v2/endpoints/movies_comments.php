@@ -5,15 +5,15 @@ $response_data = array(
 );
 
 $required_fields =  array(
-    'get_comments',
-    'add_comment',
-    'like',
-    'delete',
-    'add_reply',
-    'reply_like',
-    'reply_delete',
-    'reply_fetch'
-);
+                        'get_comments',
+                        'add_comment',
+                        'like',
+                        'delete',
+                        'add_reply',
+                        'reply_like',
+                        'reply_delete',
+                        'reply_fetch'
+                    );
 
 $limit = (!empty($_POST['limit']) && is_numeric($_POST['limit']) && $_POST['limit'] > 0 && $_POST['limit'] <= 50 ? Wo_Secure($_POST['limit']) : 20);
 $offset = (!empty($_POST['offset']) && is_numeric($_POST['offset']) && $_POST['offset'] > 0 ? Wo_Secure($_POST['offset']) : 0);
@@ -24,15 +24,13 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
 
         if (!empty($_POST['movie_id']) && is_numeric($_POST['movie_id']) && $_POST['movie_id'] > 0) {
             $movie_id = Wo_Secure($_POST['movie_id']);
-            $comments = Wo_GetMovieComments(array(
-                'movie_id' => $movie_id,
-                'limit'    => $limit,
-                'offset'   => $offset
-            ));
+            $comments = Wo_GetMovieComments(array('movie_id' => $movie_id,
+                                                  'limit'    => $limit,
+                                                  'offset'   => $offset));
             foreach ($comments as $key2 => $comment) {
                 if (!empty($comment['user_data'])) {
                     foreach ($non_allowed as $key4 => $value4) {
-                        unset($comments[$key2]['user_data'][$value4]);
+                      unset($comments[$key2]['user_data'][$value4]);
                     }
                 }
                 if (!empty($comment['replies'])) {
@@ -61,10 +59,11 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                 }
             }
             $response_data = array(
-                'api_status' => 200,
-                'data' => $comments
-            );
-        } else {
+                                'api_status' => 200,
+                                'data' => $comments
+                            );
+        }
+        else{
             $error_code    = 5;
             $error_message = 'movie_id can not be empty';
         }
@@ -86,23 +85,25 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                     foreach ($comments as $key => $value) {
                         if (!empty($value['user_data'])) {
                             foreach ($non_allowed as $key4 => $value4) {
-                                unset($comments[$key]['user_data'][$value4]);
+                              unset($comments[$key]['user_data'][$value4]);
                             }
                         }
                     }
                     $response_data = array(
-                        'api_status' => 200,
-                        'data' => $comments
-                    );
+                                            'api_status' => 200,
+                                            'data' => $comments
+                                        );
+
                 }
             }
-        } else {
+        }
+        else{
             $error_code    = 6;
             $error_message = 'Please check your details';
         }
     }
     if ($_POST['type'] == 'like') {
-        if (isset($_POST['movie_id']) && is_numeric(($_POST['movie_id'])) && $_POST['movie_id'] > 0 && isset($_POST['comment_id']) && is_numeric(($_POST['comment_id'])) && $_POST['comment_id'] > 0 && !empty($_POST['reaction_type']) && in_array($_POST['reaction_type'], array('like', 'dislike'))) {
+        if (isset($_POST['movie_id']) && is_numeric(($_POST['movie_id'])) && $_POST['movie_id'] > 0 && isset($_POST['comment_id']) && is_numeric(($_POST['comment_id'])) && $_POST['comment_id'] > 0 && !empty($_POST['reaction_type']) && in_array($_POST['reaction_type'], array('like','dislike'))) {
             $movie_id = Wo_Secure($_POST['movie_id']);
             $comment_id = Wo_Secure($_POST['comment_id']);
             if ($_POST['reaction_type'] == 'like') {
@@ -112,23 +113,25 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                     $code = 1;
                 }
                 $response_data = array(
-                    'api_status' => 200,
-                    'code' => $code,
-                    'type' => 'like'
-                );
-            } else {
+                                        'api_status' => 200,
+                                        'code' => $code,
+                                        'type' => 'like'
+                                    );
+            }
+            else{
                 Wo_AddMovieCommentDisLikes($comment_id, $movie_id);
                 $code = 0;
                 if (Wo_IsMovieCommentDisLikeExists($comment_id)) {
                     $code = 1;
                 }
                 $response_data = array(
-                    'api_status' => 200,
-                    'code' => $code,
-                    'type' => 'dislike'
-                );
+                                        'api_status' => 200,
+                                        'code' => $code,
+                                        'type' => 'dislike'
+                                    );
             }
-        } else {
+        }
+        else{
             $error_code    = 7;
             $error_message = 'Please check your details';
         }
@@ -139,9 +142,10 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
             $comment_id = Wo_Secure($_POST['comment_id']);
             Wo_DeleteMovieComment($comment_id, $movie_id);
             $response_data = array(
-                'api_status' => 200
-            );
-        } else {
+                                    'api_status' => 200
+                                );
+        }
+        else{
             $error_code    = 7;
             $error_message = 'Please check your details';
         }
@@ -166,24 +170,25 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                     foreach ($comments as $key => $value) {
                         if (!empty($value['user_data'])) {
                             foreach ($non_allowed as $key4 => $value4) {
-                                unset($comments[$key]['user_data'][$value4]);
+                              unset($comments[$key]['user_data'][$value4]);
                             }
                         }
                     }
 
                     $response_data = array(
-                        'api_status' => 200,
-                        'data' => $comments
-                    );
+                                        'api_status' => 200,
+                                        'data' => $comments
+                                    );
                 }
             }
-        } else {
+        }
+        else{
             $error_code    = 7;
             $error_message = 'Please check your details';
         }
     }
     if ($_POST['type'] == 'reply_like') {
-        if (isset($_POST['movie_id']) && is_numeric(($_POST['movie_id'])) && $_POST['movie_id'] > 0 && isset($_POST['comment_id']) && is_numeric(($_POST['comment_id'])) && $_POST['comment_id'] > 0 && !empty($_POST['reaction_type']) && in_array($_POST['reaction_type'], array('like', 'dislike'))) {
+        if (isset($_POST['movie_id']) && is_numeric(($_POST['movie_id'])) && $_POST['movie_id'] > 0 && isset($_POST['comment_id']) && is_numeric(($_POST['comment_id'])) && $_POST['comment_id'] > 0 && !empty($_POST['reaction_type']) && in_array($_POST['reaction_type'], array('like','dislike'))) {
 
             $movie_id = Wo_Secure($_POST['movie_id']);
             $comment_id = Wo_Secure($_POST['comment_id']);
@@ -194,23 +199,25 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                     $code = 1;
                 }
                 $response_data = array(
-                    'api_status' => 200,
-                    'code' => $code,
-                    'type' => 'like'
-                );
-            } else {
+                                        'api_status' => 200,
+                                        'code' => $code,
+                                        'type' => 'like'
+                                    );
+            }
+            else{
                 Wo_AddMovieCommReplyDisLikes($comment_id, $movie_id);
                 $code = 0;
                 if (Wo_IsMovieCommentReplyDisLikeExists($comment_id)) {
                     $code = 1;
                 }
                 $response_data = array(
-                    'api_status' => 200,
-                    'code' => $code,
-                    'type' => 'dislike'
-                );
+                                        'api_status' => 200,
+                                        'code' => $code,
+                                        'type' => 'dislike'
+                                    );
             }
-        } else {
+        }
+        else{
             $error_code    = 7;
             $error_message = 'Please check your details';
         }
@@ -221,9 +228,10 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
             $comment_id = Wo_Secure($_POST['comment_id']);
             Wo_DeleteMovieCommReply($comment_id, $movie_id);
             $response_data = array(
-                'api_status' => 200
-            );
-        } else {
+                                    'api_status' => 200
+                                );
+        }
+        else{
             $error_code    = 7;
             $error_message = 'Please check your details';
         }
@@ -232,15 +240,15 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
         if (isset($_POST['comment_id']) && is_numeric(($_POST['comment_id'])) && $_POST['comment_id'] > 0) {
             $comment_id = Wo_Secure($_POST['comment_id']);
             $comments = Wo_GetMovieCommentReplies(array(
-                'comm_id' => $comment_id,
-                'limit'   => $limit,
-                'offset'  => $offset
-            ));
+                                                    'comm_id' => $comment_id,
+                                                    'limit'   => $limit,
+                                                    'offset'  => $offset
+                                                ));
             if ($comments && count($comments) > 0) {
                 foreach ($comments as $key => $value) {
                     if (!empty($value['user_data'])) {
                         foreach ($non_allowed as $key4 => $value4) {
-                            unset($comments[$key]['user_data'][$value4]);
+                          unset($comments[$key]['user_data'][$value4]);
                         }
                     }
                     $comments[$key]['is_comment_wondered'] = false;
@@ -254,15 +262,18 @@ if (!empty($_POST['type']) && in_array($_POST['type'], $required_fields)) {
                 }
             }
             $response_data = array(
-                'api_status' => 200,
-                'data' => $comments
-            );
-        } else {
+                                    'api_status' => 200,
+                                    'data' => $comments
+                                );
+        }
+        else{
             $error_code    = 8;
             $error_message = 'comment_id can not be empty';
         }
+
     }
-} else {
+}
+else{
     $error_code    = 4;
     $error_message = 'type can not be empty';
 }

@@ -1,4 +1,4 @@
-<?php
+<?php 
 $response_data = array(
     'api_status' => 400,
 );
@@ -6,22 +6,28 @@ $response_data = array(
 if (empty($_POST['name'])) {
     $error_code    = 3;
     $error_message = 'name (POST) is missing';
-} elseif (empty($_POST['text'])) {
+}
+elseif (empty($_POST['text'])) {
     $error_code    = 4;
     $error_message = 'text (POST) is missing';
-} elseif (empty($_FILES['passport'])) {
+}
+elseif (empty($_FILES['passport'])) {
     $error_code    = 5;
     $error_message = 'passport (POST) is missing';
-} elseif (empty($_FILES['photo'])) {
+}
+elseif (empty($_FILES['photo'])) {
     $error_code    = 6;
     $error_message = 'photo (POST) is missing';
-} elseif (strlen($_POST['name']) < 5 || strlen($_POST['name']) > 50) {
+}
+elseif (strlen($_POST['name']) < 5 || strlen($_POST['name']) > 50) {
     $error_code    = 7;
     $error_message = 'name must be between 5 / 50';
-} elseif (!file_exists($_FILES['passport']['tmp_name']) || !file_exists($_FILES['photo']['tmp_name'])) {
+}
+elseif (!file_exists($_FILES['passport']['tmp_name']) || !file_exists($_FILES['photo']['tmp_name'])) {
     $error_code    = 8;
     $error_message = 'images can not be empty';
-} else {
+}
+else{
 
     if (file_exists($_FILES["passport"]["tmp_name"])) {
         $image = getimagesize($_FILES["passport"]["tmp_name"]);

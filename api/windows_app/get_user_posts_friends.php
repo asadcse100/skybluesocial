@@ -1,5 +1,13 @@
 <?php
-
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com   
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2016 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $json_error_data     = array();
 $json_success_data   = array();
 $json_success_data_2 = array();
@@ -106,7 +114,7 @@ if ($type == 'get_user_posts') {
                         }
                     }
                     foreach ($non_allowed as $value) {
-                        unset($story['publisher'][$value]);
+                        unset($story['publisher'][$value]); 
                     }
                     $story['get_post_comments'] = [];
                     $story['postFile'] = Wo_GetMedia($story['postFile']);
@@ -153,3 +161,4 @@ $json_success_data22 = array(
 header("Content-type: application/json");
 echo json_encode($json_success_data22);
 exit();
+?>

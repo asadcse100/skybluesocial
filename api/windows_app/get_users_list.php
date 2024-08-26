@@ -1,5 +1,13 @@
 <?php
-
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com   
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2016 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $json_error_data       = array();
 $json_success_data     = array();
 $json_success_data_n  = array();
@@ -45,7 +53,7 @@ if ($type == 'get_users_list') {
         $user_id         = $_POST['user_id'];
         $s               = Wo_Secure($_POST['access_token']);
         $user_login_data = Wo_UserData($user_id);
-
+        
         if (empty($user_login_data)) {
             $json_error_data = array(
                 'api_status' => '400',
@@ -234,7 +242,7 @@ if ($type == 'get_users_list') {
                         $wo['notification']['type_text'] = str_replace('{page_name}', $page['name'], $wo['lang']['accepted_invited_page']);
                         $wo['notification']['icon'] .= 'user-plus';
                     }
-
+                    
                     if ($wo['notification']['type'] == 'invited_page') {
                         $page_id                         = @end(explode('/', $wo['notification']['url']));
                         $page                            = Wo_PageData(Wo_PageIdFromPagename($page_id));
@@ -299,7 +307,7 @@ if ($type == 'get_users_list') {
                 $search_key = $_POST['search_key'];
             }
             if (!empty($_POST['list_type'])) {
-
+                
                 $list_type = $_POST['list_type'];
             }
             if ($list_type == 'online' || $list_type == 'offline') {
@@ -434,3 +442,4 @@ if ($type == 'get_users_list') {
 header("Content-type: application/json");
 echo json_encode($json_success_data);
 exit();
+?>

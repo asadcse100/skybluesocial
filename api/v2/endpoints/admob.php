@@ -3,7 +3,8 @@ $response_data = array(
     'api_status' => 400
 );
 
-try {
+try
+{
 
     admobAddValidation();
 
@@ -13,7 +14,11 @@ try {
         'api_status' => 200,
         'message' => 'Point added successfully'
     );
-} catch (Exception $e) {
+
+}
+catch(Exception $e)
+{
     $error_code = 5;
     $error_message = $e->getMessage();
 }
+

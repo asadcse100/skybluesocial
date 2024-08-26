@@ -1,8 +1,15 @@
 <?php
-
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com   
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2016 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 use Hybridauth\Hybridauth;
 use Hybridauth\HttpClient;
-
 $types = array(
     'Google',
     'Facebook',
@@ -13,7 +20,7 @@ $types = array(
 );
 if (isset($_GET['provider']) && in_array($_GET['provider'], $types) && !empty($_GET['hash'])) {
     $hash = Wo_Secure($_GET['hash']);
-    if (empty($_SESSION['hash']) or !isset($_SESSION['hash'])) {
+    if (empty($_SESSION['hash']) OR !isset($_SESSION['hash'])) {
         $query = mysqli_query($sqlConnect, "INSERT INTO " . T_APPS_HASH . " (`hash_id`, `active`) VALUES ('{$hash}', '0')");
         if ($query) {
             $_SESSION['hash'] = $_GET['hash'];
@@ -118,7 +125,8 @@ if (isset($_GET['provider']) && in_array($_GET['provider'], $types) && !empty($_
                 }
             }
         }
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
         switch ($e->getCode()) {
             case 0:
                 echo "Unspecified error.";

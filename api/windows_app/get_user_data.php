@@ -1,5 +1,13 @@
 <?php
-
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com   
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2016 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $json_error_data   = array();
 $json_success_data = array();
 if (empty($_GET['type']) || !isset($_GET['type'])) {
@@ -77,21 +85,21 @@ if ($type == 'get_user_data') {
                 $user_profile_data = $user_data;
             }
             if (empty($user_profile_data)) {
-                $json_error_data = array(
-                    'api_status' => '400',
-                    'api_text' => 'failed',
-                    'api_version' => $api_version,
-                    'errors' => array(
-                        'error_id' => '6',
-                        'error_text' => 'User profile is not exists.'
-                    )
-                );
-                header("Content-type: application/json");
-                echo json_encode($json_error_data, JSON_PRETTY_PRINT);
-                exit();
+            	 $json_error_data = array(
+                'api_status' => '400',
+                'api_text' => 'failed',
+                'api_version' => $api_version,
+                'errors' => array(
+                    'error_id' => '6',
+                    'error_text' => 'User profile is not exists.'
+                )
+            );
+            header("Content-type: application/json");
+            echo json_encode($json_error_data, JSON_PRETTY_PRINT);
+            exit();
             }
             foreach ($non_allowed as $key => $value) {
-                unset($user_profile_data[$value]);
+            	unset($user_profile_data[$value]);
             }
             $user_profile_data['is_following'] = 0;
             $user_profile_data['can_follow'] = 0;
@@ -113,11 +121,11 @@ if ($type == 'get_user_data') {
                     }
                 }
             }
-            $user_profile_data['is_following_me'] = (Wo_IsFollowing($wo['user']['user_id'], $user_profile_data['user_id'])) ? 1 : 0;
+            $user_profile_data['is_following_me'] = (Wo_IsFollowing( $wo['user']['user_id'], $user_profile_data['user_id'])) ? 1 : 0;
             $user_profile_data['lastseen_time_text'] = Wo_Time_Elapsed_String($user_profile_data['lastseen']);
             $user_profile_data['is_blocked']         = Wo_IsBlocked($user_profile_data['user_id']);
 
-            $user_profile_data['gender'] = ($user_profile_data['gender'] == 'male') ? $wo['lang']['male'] : $wo['lang']['female'];
+            $user_profile_data['gender'] = ($user_profile_data['gender'] == 'male') ? $wo['lang']['male']: $wo['lang']['female'];
             $json_success_data = array(
                 'api_status' => '200',
                 'api_text' => 'success',
@@ -137,3 +145,4 @@ if ($type == 'get_user_data') {
 header("Content-type: application/json");
 echo json_encode($json_success_data);
 exit();
+?>

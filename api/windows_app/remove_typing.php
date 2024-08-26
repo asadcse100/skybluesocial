@@ -1,5 +1,13 @@
 <?php
-
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com   
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2016 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 $json_error_data     = array();
 $json_success_data   = array();
 $type                = Wo_Secure($_GET['type'], 0);
@@ -74,7 +82,7 @@ if ($type == 'remove_typing') {
             }
             $remove_typing = Wo_RegisterTyping($recipient_id, 0);
             if ($remove_typing) {
-                $json_success_data = array(
+            	$json_success_data = array(
                     'api_status' => '200',
                     'api_text' => 'success',
                     'api_version' => $api_version
@@ -83,7 +91,7 @@ if ($type == 'remove_typing') {
                 echo json_encode($json_success_data);
                 exit();
             } else {
-                $json_error_data = array(
+            	$json_error_data = array(
                     'api_status' => '400',
                     'api_text' => 'failed',
                     'api_version' => $api_version,
@@ -106,3 +114,4 @@ if ($type == 'remove_typing') {
 header("Content-type: application/json");
 echo json_encode($json_success_data);
 exit();
+?>

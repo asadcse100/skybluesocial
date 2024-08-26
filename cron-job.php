@@ -91,6 +91,7 @@ foreach ($users as $key => $value) {
                 $points_amount = ($wo['config']['point_allow_withdrawal'] == 0) ? ($wo["user"]['points'] - $points) : $wo["user"]['points'];
                 $query_one = mysqli_query($sqlConnect, "UPDATE " . T_USERS . " SET `points` = '{$points_amount}', `wallet` = '{$wallet_amount}' WHERE `user_id` = {$wo['user']['user_id']} ");
                 cache($wo['user']['user_id'], 'users', 'delete');
+
             } else {
                 $update = Wo_UpdateUserData($wo["user"]["id"], array(
                     "is_pro" => 0,
@@ -103,6 +104,7 @@ foreach ($users as $key => $value) {
                 $mysql_query = mysqli_query($sqlConnect, "UPDATE " . T_POSTS . " SET `boosted` = '0' WHERE `user_id` = {$user_id}");
                 $mysql_query = mysqli_query($sqlConnect, "UPDATE " . T_POSTS . " SET `boosted` = '0' WHERE `page_id` IN (SELECT `page_id` FROM " . T_PAGES . " WHERE `user_id` = {$user_id})");
             }
+
         }
     }
 }
@@ -143,18 +145,18 @@ if ($wo['config']['live_video'] == 1) {
                 $posts = $db->where('live_time', '0', '!=')->where('live_time', time() - 11, '<=')->get(T_POSTS);
                 foreach ($posts as $key => $post) {
                     if ($wo['config']['agora_live_video'] == 1 && !empty($wo['config']['agora_app_id']) && !empty($wo['config']['agora_customer_id']) && !empty($wo['config']['agora_customer_certificate']) && $wo['config']['live_video_save'] == 1) {
-                        StopCloudRecording(array(
-                            'resourceId' => $post->agora_resource_id,
+                        StopCloudRecording(array('resourceId' => $post->agora_resource_id,
                             'sid' => $post->agora_sid,
                             'cname' => $post->stream_name,
                             'post_id' => $post->post_id,
-                            'uid' => explode('_', $post->stream_name)[2]
-                        ));
+                            'uid' => explode('_', $post->stream_name)[2]));
                     }
                     Wo_DeletePost(Wo_Secure($post->id), 'shared');
                 }
             } catch (Exception $e) {
+
             }
+
         } else {
             if ($wo['config']['agora_live_video'] == 1 && $wo['config']['amazone_s3_2'] != 1) {
                 try {
@@ -163,6 +165,7 @@ if ($wo['config']['live_video'] == 1) {
                         Wo_DeletePost(Wo_Secure($post->id), 'shared');
                     }
                 } catch (Exception $e) {
+
                 }
             }
         }

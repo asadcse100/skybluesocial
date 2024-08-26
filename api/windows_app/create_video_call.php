@@ -1,8 +1,15 @@
 <?php
-
+// +------------------------------------------------------------------------+
+// | @author Deen Doughouz (DoughouzForest)
+// | @author_url 1: http://www.wowonder.com
+// | @author_url 2: http://codecanyon.net/user/doughouzforest
+// | @author_email: wowondersocial@gmail.com   
+// +------------------------------------------------------------------------+
+// | WoWonder - The Ultimate Social Networking Platform
+// | Copyright (c) 2016 WoWonder. All rights reserved.
+// +------------------------------------------------------------------------+
 use Twilio\Jwt\AccessToken;
 use Twilio\Jwt\Grants\VideoGrant;
-
 $json_error_data     = array();
 $json_success_data   = array();
 $type                = Wo_Secure($_GET['type'], 0);
@@ -77,32 +84,32 @@ if ($type == 'create_video_call') {
             }
             //
             $user_1       = $user_login_data;
-            $user_2       = $user_login_data2;
-            $room_script  = sha1(rand(1111111, 9999999999));
-            $accountSid   = $wo['config']['video_accountSid'];
-            $apiKeySid    = $wo['config']['video_apiKeySid'];
-            $apiKeySecret = $wo['config']['video_apiKeySecret'];
-            $call_id      = substr(md5(microtime()), 0, 15);
-            $call_id_2    = substr(md5(time()), 0, 15);
-            $token        = new AccessToken($accountSid, $apiKeySid, $apiKeySecret, 3600, $call_id);
-            $grant        = new VideoGrant();
-            $grant->setRoom($room_script);
-            $token->addGrant($grant);
-            $token_ = $token->toJWT();
-            $token2 = new AccessToken($accountSid, $apiKeySid, $apiKeySecret, 3600, $call_id_2);
-            $grant2 = new VideoGrant();
-            $grant2->setRoom($room_script);
-            $token2->addGrant($grant2);
-            $token_2    = $token2->toJWT();
-            $insertData = Wo_CreateNewVideoCall(array(
-                'access_token' => Wo_Secure($token_),
-                'from_id' => Wo_Secure($user_id),
-                'to_id' => Wo_Secure($recipient_id),
-                'access_token_2' => Wo_Secure($token_2),
+		    $user_2       = $user_login_data2;
+		    $room_script  = sha1(rand(1111111, 9999999999));
+		    $accountSid   = $wo['config']['video_accountSid'];
+		    $apiKeySid    = $wo['config']['video_apiKeySid'];
+		    $apiKeySecret = $wo['config']['video_apiKeySecret'];
+		    $call_id      = substr(md5(microtime()), 0, 15);
+		    $call_id_2    = substr(md5(time()), 0, 15);
+		    $token        = new AccessToken($accountSid, $apiKeySid, $apiKeySecret, 3600, $call_id);
+		    $grant        = new VideoGrant();
+		    $grant->setRoom($room_script);
+		    $token->addGrant($grant);
+		    $token_ = $token->toJWT();
+		    $token2 = new AccessToken($accountSid, $apiKeySid, $apiKeySecret, 3600, $call_id_2);
+		    $grant2 = new VideoGrant();
+		    $grant2->setRoom($room_script);
+		    $token2->addGrant($grant2);
+		    $token_2    = $token2->toJWT();
+		    $insertData = Wo_CreateNewVideoCall(array(
+		        'access_token' => Wo_Secure($token_),
+		        'from_id' => Wo_Secure($user_id),
+		        'to_id' => Wo_Secure($recipient_id),
+		        'access_token_2' => Wo_Secure($token_2),
                 'room_name' => $room_script
-            ));
-            if ($insertData > 0) {
-                $wo['calling_user'] = Wo_UserData($recipient_id);
+		    ));
+		    if ($insertData > 0) {
+		        $wo['calling_user'] = Wo_UserData($recipient_id);
                 if (!empty($wo['calling_user']['ios_m_device_id']) && $wo['config']['ios_push_messages'] == 1) {
                     $send_array = array(
                         'send_to' => array(
@@ -120,7 +127,7 @@ if ($type == 'create_video_call') {
                             )
                         )
                     );
-                    Wo_SendPushNotification($send_array, 'ios_messenger');
+                    Wo_SendPushNotification($send_array,'ios_messenger');
                 }
                 if (!empty($wo['calling_user']['android_m_device_id']) && $wo['config']['android_push_messages'] == 1) {
                     $send_array = array(
@@ -139,7 +146,7 @@ if ($type == 'create_video_call') {
                             )
                         )
                     );
-                    Wo_SendPushNotification($send_array, 'android_messenger');
+                    Wo_SendPushNotification($send_array,'android_messenger');
                 }
 
 
@@ -162,20 +169,20 @@ if ($type == 'create_video_call') {
                 //     );
                 //     Wo_SendPushNotification($send_array);
                 // }
-                $data               = array(
-                    'status' => 200,
-                    'access_token' => $token_,
-                    'id' => $insertData,
-                    'url' => $wo['config']['site_url'] . '/video-call-api/' . $insertData . '?c_id=' . $_POST['s'] . '&user_id=' . $user_id,
-                );
-                header("Content-type: application/json");
-                echo json_encode($data, JSON_PRETTY_PRINT);
-                exit();
-            } else {
-                header("Content-type: application/json");
-                echo json_encode(array('error' => 'Can\'t create a video call'), JSON_PRETTY_PRINT);
-                exit();
-            }
+		        $data               = array(
+		            'status' => 200,
+		            'access_token' => $token_,
+		            'id' => $insertData,
+		            'url' => $wo['config']['site_url'] . '/video-call-api/' . $insertData . '?c_id=' . $_POST['s'] . '&user_id=' . $user_id,
+		        );
+		        header("Content-type: application/json");
+		        echo json_encode($data, JSON_PRETTY_PRINT);
+		        exit();
+		    } else {
+		    	header("Content-type: application/json");
+		        echo json_encode(array('error' => 'Can\'t create a video call'), JSON_PRETTY_PRINT);
+		        exit();
+		    }
         }
     } else {
         header("Content-type: application/json");
@@ -186,3 +193,4 @@ if ($type == 'create_video_call') {
 header("Content-type: application/json");
 echo json_encode($json_success_data);
 exit();
+?>
