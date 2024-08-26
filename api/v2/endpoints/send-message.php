@@ -1,66 +1,60 @@
 <?php
 // +------------------------------------------------------------------------+
-// | @author Deen Doughouz (DoughouzForest)
-// | @author_url 1: http://www.wowonder.com
-// | @author_url 2: http://codecanyon.net/user/doughouzforest
-// | @author_email: wowondersocial@gmail.com   
-// +------------------------------------------------------------------------+
-// | WoWonder - The Ultimate Social Networking Platform
-// | Copyright (c) 2018 WoWonder. All rights reserved.
+// | Softravine - The Ultimate Social Networking Platform
+// | Copyright (c) 2024 Softravine. All rights reserved.
 // +------------------------------------------------------------------------+
 $response_data = array(
-    'api_status' => 400
+    'api_status' => 400,
 );
 
 $required_fields = array(
     'user_id',
-    'message_hash_id'
+    'message_hash_id',
 );
 
 if (empty($_POST['product_id'])) {
     if (empty($_POST['text']) && $_POST['text'] != 0 && empty($_POST['lat']) && empty($_POST['lng'])) {
-    	if (empty($_FILES['file']['name']) && empty($_POST['image_url']) && empty($_POST['gif'])) {
-    	    $error_code    = 3;
-    	    $error_message = 'file (STREAM FILE) AND text (POST) AND image_url AND gif (POST) are missing, at least one is required';
-    	}
+        if (empty($_FILES['file']['name']) && empty($_POST['image_url']) && empty($_POST['gif'])) {
+            $error_code = 3;
+            $error_message = 'file (STREAM FILE) AND text (POST) AND image_url AND gif (POST) are missing, at least one is required';
+        }
     }
 }
 
 foreach ($required_fields as $key => $value) {
     if (empty($_POST[$value]) && empty($error_code)) {
-        $error_code    = 4;
+        $error_code = 4;
         $error_message = $value . ' (POST) is missing';
     }
 }
 
-
 if (empty($error_code)) {
-    $recipient_id   = Wo_Secure($_POST['user_id']);
+    $recipient_id = Wo_Secure($_POST['user_id']);
     $recipient_data = Wo_UserData($recipient_id);
     if (empty($recipient_data)) {
-        $error_code    = 6;
+        $error_code = 6;
         $error_message = 'Recipient user not found';
     } else {
         if (empty($_POST['product_id'])) {
 
-    	    $mediaFilename = '';
-            $mediaName     = '';
+            $mediaFilename = '';
+            $mediaName = '';
             if (isset($_FILES['file']['name'])) {
-                $fileInfo      = array(
+                $fileInfo = array(
                     'file' => $_FILES["file"]["tmp_name"],
                     'name' => $_FILES['file']['name'],
                     'size' => $_FILES["file"]["size"],
-                    'type' => $_FILES["file"]["type"]
+                    'type' => $_FILES["file"]["type"],
                 );
-                $media         = Wo_ShareFile($fileInfo);
+                $media = Wo_ShareFile($fileInfo);
                 $mediaFilename = $media['filename'];
-                $mediaName     = $_FILES['file']['name'];
+                $mediaName = $_FILES['file']['name'];
             }
             if (!empty($_POST['image_url'])) {
-            	$fileend = '_url_image';
-            	if (!empty($_POST['sticker_id'])) {
-            		$fileend =  '_sticker_' . Wo_Secure($_POST['sticker_id']);
-            	}
+                $fileend = '_url_image';
+                if (!empty($_POST['sticker_id'])) {
+                    $fileend = '_sticker_' . Wo_Secure($_POST['sticker_id']);
+                }
                 $mediaFilename = Wo_ImportImageFromUrl($_POST['image_url'], $fileend);
             }
             $gif = '';
@@ -75,7 +69,7 @@ if (empty($error_code)) {
                 $lng = Wo_Secure($_POST['lng']);
                 $lat = Wo_Secure($_POST['lat']);
             }
-        	$message_data = array(
+            $message_data = array(
                 'from_id' => Wo_Secure($wo['user']['user_id']),
                 'to_id' => Wo_Secure($recipient_id),
                 'media' => Wo_Secure($mediaFilename),
@@ -87,12 +81,11 @@ if (empty($error_code)) {
                 'lng' => $lng,
                 'lat' => $lat,
             );
-    		if (!empty($_POST['text']) || (isset($_POST['text']) && $_POST['text'] === '0') ) {
-    		 	$message_data['text'] = Wo_Secure($_POST['text']);
-    		}
-            else{
+            if (!empty($_POST['text']) || (isset($_POST['text']) && $_POST['text'] === '0')) {
+                $message_data['text'] = Wo_Secure($_POST['text']);
+            } else {
                 if (empty($lng) && empty($lat) && empty($_FILES['file']['name']) && empty($_POST['image_url']) && empty($_POST['gif'])) {
-                    $error_code    = 5;
+                    $error_code = 5;
                     $error_message = 'Please check your details.';
                 }
             }
@@ -100,69 +93,68 @@ if (empty($error_code)) {
                 $message_data['type_two'] = Wo_Secure($_POST['message_type']);
             }
             if (empty($error_message)) {
-                $last_id      = Wo_RegisterMessage($message_data);
+                $last_id = Wo_RegisterMessage($message_data);
             }
-        }
-        else{
+        } else {
             $last_id = Wo_RegisterMessage(array(
-                            'from_id' => Wo_Secure($wo['user']['user_id']),
-                            'to_id' => $recipient_id,
-                            'time' => time(),
-                            'stickers' => '',
-                            'product_id' => Wo_Secure($_POST['product_id'])
-                        ));
+                'from_id' => Wo_Secure($wo['user']['user_id']),
+                'to_id' => $recipient_id,
+                'time' => time(),
+                'stickers' => '',
+                'product_id' => Wo_Secure($_POST['product_id']),
+            ));
         }
         if (!empty($last_id)) {
             if (!empty($_POST['reply_id']) && is_numeric($_POST['reply_id']) && $_POST['reply_id'] > 0) {
                 $reply_id = Wo_Secure($_POST['reply_id']);
-                $db->where('id',$last_id)->update(T_MESSAGES,array('reply_id' => $reply_id));
+                $db->where('id', $last_id)->update(T_MESSAGES, array('reply_id' => $reply_id));
             }
             if (!empty($_POST['story_id']) && is_numeric($_POST['story_id']) && $_POST['story_id'] > 0) {
                 $story_id = Wo_Secure($_POST['story_id']);
-                $db->where('id',$last_id)->update(T_MESSAGES,array('story_id' => $story_id));
+                $db->where('id', $last_id)->update(T_MESSAGES, array('story_id' => $story_id));
             }
-        	$message_info = array(
+            $message_info = array(
                 'user_id' => $recipient_id,
-                'message_id' => $last_id
+                'message_id' => $last_id,
             );
             $message_info = Wo_GetMessages($message_info);
             foreach ($non_allowed as $key => $value) {
-	           unset($message_info[0]['messageUser'][$value]);
-	        }
-	        if (empty($wo['user']['timezone'])) {
+                unset($message_info[0]['messageUser'][$value]);
+            }
+            if (empty($wo['user']['timezone'])) {
                 $wo['user']['timezone'] = 'UTC';
             }
-	        $timezone = new DateTimeZone($wo['user']['timezone']);
-	        $messages = array();
-	        foreach ($message_info as $key => $message) {
+            $timezone = new DateTimeZone($wo['user']['timezone']);
+            $messages = array();
+            foreach ($message_info as $key => $message) {
                 $message['text'] = Wo_Markup($message['or_text']);
-	        	$message['time_text'] = Wo_Time_Elapsed_String($message['time']);
-                $message_po           = 'left';
+                $message['time_text'] = Wo_Time_Elapsed_String($message['time']);
+                $message_po = 'left';
                 if ($message['from_id'] == $wo['user']['user_id']) {
                     $message_po = 'right';
                 }
                 $message['position'] = $message_po;
-                $message['type']     = Wo_GetFilePosition($message['media']);
+                $message['type'] = Wo_GetFilePosition($message['media']);
                 if (!empty($message['stickers']) && strpos($message['stickers'], '.gif') !== false) {
                     $message['type'] = 'gif';
                 }
                 if ($message['type_two'] == 'contact') {
-                    $message['type']   = 'contact';
+                    $message['type'] = 'contact';
                 }
                 if (!empty($message['lng']) && !empty($message['lat'])) {
-                    $message['type']   = 'map';
+                    $message['type'] = 'map';
                 }
                 if (!empty($message['type_two'])) {
-                    $message['type']   = $message['type_two'];
+                    $message['type'] = $message['type_two'];
                 }
-                $message['type']     = $message_po . '_' . $message['type'];
+                $message['type'] = $message_po . '_' . $message['type'];
                 $message['file_size'] = 0;
                 if (!empty($message['media'])) {
                     $message['file_size'] = '0MB';
                     if (file_exists($message['file_size'])) {
                         $message['file_size'] = Wo_SizeFormat(filesize($message['media']));
                     }
-                    $message['media']     = Wo_GetMedia($message['media']);
+                    $message['media'] = Wo_GetMedia($message['media']);
                 }
                 if (!empty($message['time'])) {
                     $time_today = time() - 86400;
@@ -179,35 +171,35 @@ if (empty($error_code)) {
                 unset($message['or_text']);
                 if (!empty($message['reply'])) {
                     foreach ($non_allowed as $key => $value) {
-                       unset($message['reply']['messageUser'][$value]);
+                        unset($message['reply']['messageUser'][$value]);
                     }
 
                     $message['reply']['text'] = Wo_Markup($message['reply']['or_text']);
                     unset($message['reply']['or_text']);
                     $message['reply']['time_text'] = Wo_Time_Elapsed_String($message['reply']['time']);
-                    $message_po           = 'left';
+                    $message_po = 'left';
                     if ($message['reply']['from_id'] == $wo['user']['user_id']) {
                         $message_po = 'right';
                     }
                     $message['reply']['position'] = $message_po;
-                    $message['reply']['type']     = Wo_GetFilePosition($message['reply']['media']);
+                    $message['reply']['type'] = Wo_GetFilePosition($message['reply']['media']);
                     if (!empty($message['reply']['stickers']) && strpos($message['reply']['stickers'], '.gif') !== false) {
                         $message['reply']['type'] = 'gif';
                     }
                     if ($message['reply']['type_two'] == 'contact') {
-                        $message['reply']['type']   = 'contact';
+                        $message['reply']['type'] = 'contact';
                     }
                     if (!empty($message['reply']['lng']) && !empty($message['reply']['lat'])) {
-                        $message['reply']['type']   = 'map';
+                        $message['reply']['type'] = 'map';
                     }
-                    $message['reply']['type']     = $message_po . '_' . $message['reply']['type'];
+                    $message['reply']['type'] = $message_po . '_' . $message['reply']['type'];
                     $message['reply']['file_size'] = 0;
                     if (!empty($message['reply']['media'])) {
                         $message['reply']['file_size'] = '0MB';
                         if (file_exists($message['reply']['file_size'])) {
                             $message['reply']['file_size'] = Wo_SizeFormat(filesize($message['reply']['media']));
                         }
-                        $message['reply']['media']     = Wo_GetMedia($message['reply']['media']);
+                        $message['reply']['media'] = Wo_GetMedia($message['reply']['media']);
                     }
                     if (!empty($message['reply']['time'])) {
                         $time_today = time() - 86400;
@@ -222,7 +214,7 @@ if (empty($error_code)) {
                 }
                 if (!empty($message['story'])) {
                     foreach ($non_allowed as $key => $value) {
-                       unset($message['story']['user_data'][$value]);
+                        unset($message['story']['user_data'][$value]);
                     }
                     if (!empty($message['story']['thumb']['filename'])) {
                         $message['story']['thumbnail'] = $message['story']['thumb']['filename'];
@@ -231,21 +223,19 @@ if (empty($error_code)) {
                         $message['story']['thumbnail'] = $message['story']['user_data']['avatar'];
                     }
                     $message['story']['time_text'] = Wo_Time_Elapsed_String($message['story']['posted']);
-                    $message['story']['view_count'] = $db->where('story_id',$message['story']['id'])->where('user_id',$message['story']['user_id'],'!=')->getValue(T_STORY_SEEN,'COUNT(*)');
+                    $message['story']['view_count'] = $db->where('story_id', $message['story']['id'])->where('user_id', $message['story']['user_id'], '!=')->getValue(T_STORY_SEEN, 'COUNT(*)');
                 }
                 array_push($messages, $message);
-	        }
-	        if (!empty($messages)) {
-	        	$response_data = array(
-	                'api_status' => 200,
-	                'message_data' => $messages
-	            );
-	        }
-        }
-        else{
-            $error_code    = 6;
+            }
+            if (!empty($messages)) {
+                $response_data = array(
+                    'api_status' => 200,
+                    'message_data' => $messages,
+                );
+            }
+        } else {
+            $error_code = 6;
             $error_message = 'something went wrong.';
         }
     }
 }
-

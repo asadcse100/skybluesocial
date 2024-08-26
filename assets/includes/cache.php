@@ -1,6 +1,12 @@
 <?php
-class Cache {
-    function Wo_OpenCacheDir() {
+// +------------------------------------------------------------------------+
+// | Softravine - The Ultimate Social Networking Platform
+// | Copyright (c) 2024 Softravine. All rights reserved.
+// +------------------------------------------------------------------------+
+class Cache
+{
+    public function Wo_OpenCacheDir()
+    {
         if (!file_exists('cache')) {
             $oldmask = umask(0);
             @mkdir('cache', 0777, true);
@@ -30,10 +36,11 @@ class Cache {
             }
         }
     }
-    function read($fileName) {
+    public function read($fileName)
+    {
         $fileName = 'cache/' . $fileName;
         if (file_exists($fileName)) {
-            $handle   = fopen($fileName, 'rb');
+            $handle = fopen($fileName, 'rb');
             if ($handle) {
                 $variable = fread($handle, filesize($fileName));
                 fclose($handle);
@@ -44,17 +51,18 @@ class Cache {
             return null;
         }
     }
-    function write($fileName, $variable) {
+    public function write($fileName, $variable)
+    {
         $fileName = 'cache/' . $fileName;
-        $handle   = fopen($fileName, 'a');
+        $handle = fopen($fileName, 'a');
         if ($handle) {
             fwrite($handle, serialize($variable));
             fclose($handle);
         }
     }
-    function delete($fileName) {
+    public function delete($fileName)
+    {
         $fileName = 'cache/' . $fileName;
         @unlink($fileName);
     }
 }
-?>

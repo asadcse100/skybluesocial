@@ -11,11 +11,11 @@ $pagination = '';
 $wo['page_id'] = isset($_GET['page-id']) ? $_GET['page-id'] : 1;
 $db->pageLimit = 20;
 
-$wo['events']    = $db->objectbuilder()->orderBy('id', 'DESC')->paginate(T_EVENTS, $wo['page_id']);
+$wo['events'] = $db->objectbuilder()->orderBy('id', 'DESC')->paginate(T_EVENTS, $wo['page_id']);
 $wo['totalPages'] = $db->totalPages;
 
 if (count($wo['events']) != 0) {
-    $pagination = loadHTMLPage('directory/includes/pagination',[
+    $pagination = loadHTMLPage('directory/includes/pagination', [
         'link' => 'directory/events',
         'ajax_link' => '?link1=directory-events',
     ]);
@@ -34,7 +34,7 @@ $wo['keywords'] = $wo['config']['siteKeywords'];
 $wo['page'] = 'events';
 $wo['title'] = $wo['config']['siteTitle'];
 
-$wo['content'] = loadHTMLPage('directory/events',[
+$wo['content'] = loadHTMLPage('directory/events', [
     'html' => $html,
     'pagination' => $pagination,
     'sidebar' => Wo_LoadPage("directory/left-sidebar"),

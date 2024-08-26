@@ -1,12 +1,7 @@
 <?php
 // +------------------------------------------------------------------------+
-// | @author Deen Doughouz (DoughouzForest)
-// | @author_url 1: http://www.wowonder.com
-// | @author_url 2: http://codecanyon.net/user/doughouzforest
-// | @author_email: wowondersocial@gmail.com
-// +------------------------------------------------------------------------+
-// | WoWonder - The Ultimate Social Networking Platform
-// | Copyright (c) 2018 WoWonder. All rights reserved.
+// | Softravine - The Ultimate Social Networking Platform
+// | Copyright (c) 2024 Softravine. All rights reserved.
 // +------------------------------------------------------------------------+
 $options['limit'] = (!empty($_POST['limit'])) ? (int) $_POST['limit'] : 35;
 $options['offset'] = (!empty($_POST['offset'])) ? (int) $_POST['offset'] : false;
@@ -28,16 +23,16 @@ $nearby = Wo_GetNearbyUsers($options);
 $users = array();
 
 foreach ($nearby as $key => $nearbyuser) {
-	foreach ($non_allowed as $key => $value) {
-	   unset($nearbyuser['user_data'][$value]);
-	   $nearbyuser['user_data']['distance'] = $nearbyuser['distance'];
-	   $nearbyuser['user_data']['user_geoinfo'] = $nearbyuser['user_geoinfo'];
-	   $nearbyuser['user_data']['is_following'] = (Wo_IsFollowing($nearbyuser['user_id'],$wo['user']['user_id'])) ? 'yes' : 'no';
-	}
-	$users[] = $nearbyuser['user_data'];
+    foreach ($non_allowed as $key => $value) {
+        unset($nearbyuser['user_data'][$value]);
+        $nearbyuser['user_data']['distance'] = $nearbyuser['distance'];
+        $nearbyuser['user_data']['user_geoinfo'] = $nearbyuser['user_geoinfo'];
+        $nearbyuser['user_data']['is_following'] = (Wo_IsFollowing($nearbyuser['user_id'], $wo['user']['user_id'])) ? 'yes' : 'no';
+    }
+    $users[] = $nearbyuser['user_data'];
 }
 
 $response_data = array(
     'api_status' => 200,
-    'nearby_users' => $users
+    'nearby_users' => $users,
 );

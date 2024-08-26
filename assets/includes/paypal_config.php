@@ -1,4 +1,8 @@
 <?php
+// +------------------------------------------------------------------------+
+// | Softravine - The Ultimate Social Networking Platform
+// | Copyright (c) 2024 Softravine. All rights reserved.
+// +------------------------------------------------------------------------+
 $url = "https://api-m.sandbox.paypal.com";
 if ($wo["config"]["paypal_mode"] == 'live') {
     $url = "https://api-m.paypal.com";
@@ -21,5 +25,5 @@ $result = curl_exec($ch);
 curl_close($ch);
 $result = json_decode($result);
 if (!empty($result->access_token)) {
-  $wo['paypal_access_token'] = $result->access_token;
+    $wo['paypal_access_token'] = $result->access_token;
 }

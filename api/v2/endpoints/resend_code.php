@@ -1,19 +1,21 @@
 <?php
+// +------------------------------------------------------------------------+
+// | Softravine - The Ultimate Social Networking Platform
+// | Copyright (c) 2024 Softravine. All rights reserved.
+// +------------------------------------------------------------------------+
 if ($wo['user']['code_sent'] > 0 && $wo['user']['code_sent'] > (time() - 120)) {
-	$error_code    = 4;
+    $error_code = 4;
     $error_message = 'you must wait for 2 min';
-}
-else{
-	if (!Wo_TwoFactor($wo['user']['username'])) {
-		$db->where('user_id',$wo['user']['id'])->update(T_USERS,array('code_sent' => time()));
-		cache($wo['user']['id'], 'users', 'delete');
-		$response_data = array(
-                'status' => 200,
-                'message' => 'code is sent'
-            );
-	}
-	else{
-		$error_code    = 5;
-	    $error_message = 'something went wrong';
-	}
+} else {
+    if (!Wo_TwoFactor($wo['user']['username'])) {
+        $db->where('user_id', $wo['user']['id'])->update(T_USERS, array('code_sent' => time()));
+        cache($wo['user']['id'], 'users', 'delete');
+        $response_data = array(
+            'status' => 200,
+            'message' => 'code is sent',
+        );
+    } else {
+        $error_code = 5;
+        $error_message = 'something went wrong';
+    }
 }

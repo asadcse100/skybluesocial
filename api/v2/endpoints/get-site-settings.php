@@ -1,12 +1,7 @@
 <?php
 // +------------------------------------------------------------------------+
-// | @author Deen Doughouz (DoughouzForest)
-// | @author_url 1: http://www.wowonder.com
-// | @author_url 2: http://codecanyon.net/user/doughouzforest
-// | @author_email: wowondersocial@gmail.com
-// +------------------------------------------------------------------------+
-// | WoWonder - The Ultimate Social Networking Platform
-// | Copyright (c) 2018 WoWonder. All rights reserved.
+// | Softravine - The Ultimate Social Networking Platform
+// | Copyright (c) 2024 Softravine. All rights reserved.
 // +------------------------------------------------------------------------+
 $get_config = Wo_GetConfig();
 foreach ($non_allowed_config as $key => $value) {
@@ -22,15 +17,15 @@ $get_config['genders'] = $wo['genders'];
 $get_config['currency_array'] = (Array) json_decode($get_config['currency_array']);
 $get_config['currency_symbol_array'] = (Array) json_decode($get_config['currency_symbol_array']);
 foreach ($wo['family'] as $key => $value) {
-	$wo['family'][$key] = $wo['lang'][$value];
+    $wo['family'][$key] = $wo['lang'][$value];
 }
 $get_config['family'] = $wo['family'];
 if (!empty($wo['post_colors'])) {
-	foreach ($wo['post_colors'] as $key => $color) {
-		if (!empty($color->image)) {
-			$wo['post_colors'][$key]->image = Wo_GetMedia($color->image);
-		}
-	}
+    foreach ($wo['post_colors'] as $key => $color) {
+        if (!empty($color->image)) {
+            $wo['post_colors'][$key]->image = Wo_GetMedia($color->image);
+        }
+    }
 }
 $get_config['fields'] = Wo_GetUserCustomFields();
 $get_config['movie_category'] = $wo['film-genres'];
@@ -49,7 +44,7 @@ $get_config['pro_packages'] = $wo['pro_packages'];
 $get_config = json_encode($get_config, JSON_PRETTY_PRINT);
 $get_config = openssl_encrypt($get_config, "AES-128-ECB", $siteEncryptKey);
 
-$response_data      = array(
+$response_data = array(
     'api_status' => 200,
-    'config' => $get_config
+    'config' => $get_config,
 );

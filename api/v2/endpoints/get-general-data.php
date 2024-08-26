@@ -1,63 +1,54 @@
 <?php
 // +------------------------------------------------------------------------+
-// | @author Deen Doughouz (DoughouzForest)
-// | @author_url 1: http://www.wowonder.com
-// | @author_url 2: http://codecanyon.net/user/doughouzforest
-// | @author_email: wowondersocial@gmail.com
-// +------------------------------------------------------------------------+
-// | WoWonder - The Ultimate Social Networking Platform
-// | Copyright (c) 2018 WoWonder. All rights reserved.
+// | Softravine - The Ultimate Social Networking Platform
+// | Copyright (c) 2024 Softravine. All rights reserved.
 // +------------------------------------------------------------------------+
 $response_data = array(
-    'api_status' => 400
+    'api_status' => 400,
 );
 
 if (empty($_POST['fetch'])) {
-    $error_code    = 3;
+    $error_code = 3;
     $error_message = 'fetch (POST) is missing';
 }
 
 $user_id = $wo['user']['user_id'];
 
-// if (!empty($_POST['device_id'])) {
-//     $device_id  = Wo_Secure($_POST['device_id']);
-//     $update  = mysqli_query($sqlConnect, "UPDATE " . T_USERS . " SET `device_id` = '{$device_id}' WHERE `user_id` = '{$user_id}'");
-// }
 if (!empty($_POST['android_m_device_id'])) {
-    $device_id  = Wo_Secure($_POST['android_m_device_id']);
-    $update  = mysqli_query($sqlConnect, "UPDATE " . T_USERS . " SET `android_m_device_id` = '{$device_id}' WHERE `user_id` = '{$user_id}'");
+    $device_id = Wo_Secure($_POST['android_m_device_id']);
+    $update = mysqli_query($sqlConnect, "UPDATE " . T_USERS . " SET `android_m_device_id` = '{$device_id}' WHERE `user_id` = '{$user_id}'");
 }
 if (!empty($_POST['ios_m_device_id'])) {
-    $device_id  = Wo_Secure($_POST['ios_m_device_id']);
-    $update  = mysqli_query($sqlConnect, "UPDATE " . T_USERS . " SET `ios_m_device_id` = '{$device_id}' WHERE `user_id` = '{$user_id}'");
+    $device_id = Wo_Secure($_POST['ios_m_device_id']);
+    $update = mysqli_query($sqlConnect, "UPDATE " . T_USERS . " SET `ios_m_device_id` = '{$device_id}' WHERE `user_id` = '{$user_id}'");
 }
 if (!empty($_POST['android_n_device_id'])) {
-    $device_id  = Wo_Secure($_POST['android_n_device_id']);
-    $update  = mysqli_query($sqlConnect, "UPDATE " . T_USERS . " SET `android_n_device_id` = '{$device_id}' WHERE `user_id` = '{$user_id}'");
+    $device_id = Wo_Secure($_POST['android_n_device_id']);
+    $update = mysqli_query($sqlConnect, "UPDATE " . T_USERS . " SET `android_n_device_id` = '{$device_id}' WHERE `user_id` = '{$user_id}'");
 }
 if (!empty($_POST['ios_n_device_id'])) {
-    $device_id  = Wo_Secure($_POST['ios_n_device_id']);
-    $update  = mysqli_query($sqlConnect, "UPDATE " . T_USERS . " SET `ios_n_device_id` = '{$device_id}' WHERE `user_id` = '{$user_id}'");
+    $device_id = Wo_Secure($_POST['ios_n_device_id']);
+    $update = mysqli_query($sqlConnect, "UPDATE " . T_USERS . " SET `ios_n_device_id` = '{$device_id}' WHERE `user_id` = '{$user_id}'");
 }
 
 if (empty($error_code)) {
     cache($user_id, 'users', 'delete');
     $response_data = array(
-        'api_status' => 200
+        'api_status' => 200,
     );
-    
+
     $fetch = explode(',', $_POST['fetch']);
-    $data  = array();
+    $data = array();
     foreach ($fetch as $key => $value) {
         $data[$value] = $value;
     }
     if (empty($wo['user']['timezone'])) {
         $wo['user']['timezone'] = 'UTC';
     }
-    $timezone      = new DateTimeZone($wo['user']['timezone']);
+    $timezone = new DateTimeZone($wo['user']['timezone']);
 
     if (!empty($data['notifications'])) {
-    	$final_notifications= array();
+        $final_notifications = array();
         $offset = (!empty($_POST['offset']) && is_numeric($_POST['offset']) && $_POST['offset'] > 0 ? Wo_Secure($_POST['offset']) : 0);
         $notifications = Wo_GetNotifications(array(
             'remove_notification' => array(
@@ -68,9 +59,9 @@ if (empty($error_code)) {
                 'forum_reply',
                 'admin_notification',
             ),
-            'offset' => $offset
+            'offset' => $offset,
         ));
-        
+
         foreach ($notifications as $notification) {
             $wo['notification'] = $notification;
             if ($wo['notification']['seen'] == 0 && !empty($_GET['seen'])) {
@@ -81,8 +72,8 @@ if (empty($error_code)) {
                 $unread_class = ' unread';
             }
             $wo['notification']['type_text'] = '';
-            $wo['notification']['icon']      = '';
-            $notificationText                = $wo['notification']['text'];
+            $wo['notification']['icon'] = '';
+            $notificationText = $wo['notification']['text'];
             if (isset($notificationText) && !empty($notificationText)) {
                 $notificationText = '"' . $wo['notification']['text'] . '"';
             }
@@ -108,26 +99,26 @@ if (empty($error_code)) {
             } else {
                 $type2 = $wo['lang']['post_n_label'];
             }
-            $orginal_txt  = array(
+            $orginal_txt = array(
                 "{postType}",
-                "{post}"
+                "{post}",
             );
             $replaced_txt = array(
                 $type2,
-                $notificationText
+                $notificationText,
             );
             if (!empty($wo['notification']['type'])) {
                 if ($wo['notification']['type'] == 'viewed_story') {
                     $wo['notification']['type_text'] = $wo['lang']['viewed_your_story'];
-                    $wo['notification']['url']       = $wo['notification']['url']; 
-                    $wo['notification']['icon']     .= 'story';
+                    $wo['notification']['url'] = $wo['notification']['url'];
+                    $wo['notification']['icon'] .= 'story';
                 }
                 if ($wo['notification']['type'] == "reaction") {
-                    if( $wo['notification']['text'] == "post" ){
+                    if ($wo['notification']['text'] == "post") {
                         $wo['notification']['type_text'] .= $wo['lang']['reacted_to_your_post'];
-                    }else if( $wo['notification']['text'] == "comment" ){
+                    } else if ($wo['notification']['text'] == "comment") {
                         $wo['notification']['type_text'] .= $wo['lang']['reacted_to_your_comment'];
-                    }else if( $wo['notification']['text'] == "replay" ){
+                    } else if ($wo['notification']['text'] == "replay") {
                         $wo['notification']['type_text'] .= $wo['lang']['reacted_to_your_replay'];
                     }
                     $wo['notification']['icon'] = strtolower($notificationType2);
@@ -149,7 +140,7 @@ if (empty($error_code)) {
                     $wo['notification']['icon'] .= 'thumbs-up';
                 }
                 if ($wo['notification']['type'] == 'wondered_post') {
-                    $lang_type                       = ($wo['config']['second_post_button'] == 'wonder') ? $wo['lang']['wondered_post'] : $wo['lang']['disliked_post'];
+                    $lang_type = ($wo['config']['second_post_button'] == 'wonder') ? $wo['lang']['wondered_post'] : $wo['lang']['disliked_post'];
                     $wo['notification']['type_text'] = str_replace($orginal_txt, $replaced_txt, $lang_type);
                     $wo['notification']['icon'] .= $wo['second_post_button_icon'];
                 }
@@ -178,7 +169,7 @@ if (empty($error_code)) {
                     $wo['notification']['icon'] .= 'thumbs-up';
                 }
                 if ($wo['notification']['type'] == 'wondered_comment') {
-                    $lang_type                       = ($wo['config']['second_post_button'] == 'wonder') ? $wo['lang']['wondered_comment'] : $wo['lang']['disliked_comment'];
+                    $lang_type = ($wo['config']['second_post_button'] == 'wonder') ? $wo['lang']['wondered_comment'] : $wo['lang']['disliked_comment'];
                     $wo['notification']['type_text'] = str_replace('{comment}', $wo['notification']['text'], $lang_type);
                     $wo['notification']['icon'] .= $wo['second_post_button_icon'];
                 }
@@ -187,7 +178,7 @@ if (empty($error_code)) {
                     $wo['notification']['icon'] .= 'thumbs-up';
                 }
                 if ($wo['notification']['type'] == 'wondered_reply_comment') {
-                    $lang_type                       = ($wo['config']['second_post_button'] == 'wonder') ? $wo['lang']['wondered_reply_comment'] : $wo['lang']['disliked_reply_comment'];
+                    $lang_type = ($wo['config']['second_post_button'] == 'wonder') ? $wo['lang']['wondered_reply_comment'] : $wo['lang']['disliked_reply_comment'];
                     $wo['notification']['type_text'] = str_replace('{comment}', $wo['notification']['text'], $lang_type);
                     $wo['notification']['icon'] .= $wo['second_post_button_icon'];
                 }
@@ -200,37 +191,37 @@ if (empty($error_code)) {
                     $wo['notification']['icon'] .= 'eye';
                 }
                 if ($wo['notification']['type'] == 'liked_page') {
-                    $page                            = Wo_PageData($wo['notification']['page_id']);
+                    $page = Wo_PageData($wo['notification']['page_id']);
                     $wo['notification']['type_text'] = str_replace('{page_name}', $page['name'], $wo['lang']['liked_page']);
                     $wo['notification']['icon'] .= 'thumbs-up';
                 }
                 if ($wo['notification']['type'] == 'joined_group') {
-                    $group                           = Wo_GroupData($wo['notification']['group_id']);
+                    $group = Wo_GroupData($wo['notification']['group_id']);
                     $wo['notification']['type_text'] = str_replace('{group_name}', $group['name'], $wo['lang']['joined_group']);
                     $wo['notification']['icon'] .= 'users';
                 }
                 if ($wo['notification']['type'] == 'accepted_invite') {
-                    $page_id                         = @end(explode('/', $wo['notification']['url']));
-                    $page                            = Wo_PageData(Wo_PageIdFromPagename($page_id));
+                    $page_id = @end(explode('/', $wo['notification']['url']));
+                    $page = Wo_PageData(Wo_PageIdFromPagename($page_id));
                     $wo['notification']['type_text'] = str_replace('{page_name}', $page['name'], $wo['lang']['accepted_invited_page']);
                     $wo['notification']['icon'] .= 'user-plus';
                 }
-                
+
                 if ($wo['notification']['type'] == 'invited_page') {
-                    $page_id                         = @end(explode('/', $wo['notification']['url']));
-                    $page                            = Wo_PageData(Wo_PageIdFromPagename($page_id));
+                    $page_id = @end(explode('/', $wo['notification']['url']));
+                    $page = Wo_PageData(Wo_PageIdFromPagename($page_id));
                     $wo['notification']['type_text'] = str_replace('{page_name}', $page['name'], $wo['lang']['invited_page']);
                     $wo['notification']['icon'] .= 'user-plus';
                 }
                 if ($wo['notification']['type'] == 'accepted_join_request') {
-                    $group_id                        = @end(explode('/', $wo['notification']['url']));
-                    $group                           = Wo_GroupData(Wo_GroupIdFromGroupname($group_id));
+                    $group_id = @end(explode('/', $wo['notification']['url']));
+                    $group = Wo_GroupData(Wo_GroupIdFromGroupname($group_id));
                     $wo['notification']['type_text'] = str_replace('{group_name}', $group['name'], $wo['lang']['accepted_join_request']);
                     $wo['notification']['icon'] .= 'user-plus';
                 }
                 if ($wo['notification']['type'] == 'added_you_to_group') {
-                    $group_id                        = @end(explode('/', $wo['notification']['url']));
-                    $group                           = Wo_GroupData(Wo_GroupIdFromGroupname($group_id));
+                    $group_id = @end(explode('/', $wo['notification']['url']));
+                    $group = Wo_GroupData(Wo_GroupIdFromGroupname($group_id));
                     $wo['notification']['type_text'] = str_replace('{group_name}', $group['name'], $wo['lang']['added_you_to_group']);
                     $wo['notification']['icon'] .= 'user-plus';
                 }
@@ -247,22 +238,22 @@ if (empty($error_code)) {
                     $wo['notification']['icon'] .= 'user-plus';
                 }
                 if ($wo['notification']['type'] == 'interested_event') {
-                    $event_data                      = Wo_EventData($wo['notification']['event_id']);
+                    $event_data = Wo_EventData($wo['notification']['event_id']);
                     $wo['notification']['type_text'] = str_replace('{event_name}', $event_data['name'], $wo['lang']['is_interested']);
                     $wo['notification']['icon'] .= 'eye';
                 }
                 if ($wo['notification']['type'] == 'going_event') {
-                    $event_data                      = Wo_EventData($wo['notification']['event_id']);
+                    $event_data = Wo_EventData($wo['notification']['event_id']);
                     $wo['notification']['type_text'] = str_replace('{event_name}', $event_data['name'], $wo['lang']['is_going']);
                     $wo['notification']['icon'] .= 'calendar-o';
                 }
                 if ($wo['notification']['type'] == 'invited_event') {
-                    $event_data                      = Wo_EventData($wo['notification']['event_id']);
+                    $event_data = Wo_EventData($wo['notification']['event_id']);
                     $wo['notification']['type_text'] = str_replace('{event_name}', $event_data['name'], $wo['lang']['invited_you_event']);
                     $wo['notification']['icon'] .= 'calendar-o';
                 }
                 if ($wo['notification']['type'] == 'poke') {
-                    $page                            = Wo_PageData($wo['notification']['page_id']);
+                    $page = Wo_PageData($wo['notification']['page_id']);
                     $wo['notification']['type_text'] = $wo['lang']['poked_you'];
                     $wo['notification']['icon'] .= 'thumbs-up';
                 }
@@ -274,7 +265,7 @@ if (empty($error_code)) {
                     $wo['notification']['type_text'] = $wo['lang']['shared_a_post_in_timeline'];
                     $wo['notification']['icon'] .= 'share';
                 }
-                // ************************ 
+                // ************************
                 if ($wo['notification']['type'] == "gift") {
                     $wo['notification']['type_text'] .= $wo['lang']['send_gift_to_you'];
                     $wo['notification']['icon'] .= 'gift';
@@ -297,27 +288,27 @@ if (empty($error_code)) {
                 }
                 if ($wo['notification']['type'] == 'page_admin') {
                     $wo['notification']['type_text'] = $wo['lang']['added_page_admin'];
-                    $wo['notification']['icon']     .= 'page_admin';
+                    $wo['notification']['icon'] .= 'page_admin';
                 }
                 if ($wo['notification']['type'] == 'group_admin') {
                     $wo['notification']['type_text'] = $wo['lang']['added_group_admin'];
-                    $wo['notification']['icon']     .= 'group_admin';
+                    $wo['notification']['icon'] .= 'group_admin';
                 }
                 if ($wo['notification']['type'] == 'added_u_as') {
                     $wo['notification']['type_text'] = $wo['notification']['text'];
-                    $wo['notification']['icon']     .= 'added_u_as';
+                    $wo['notification']['icon'] .= 'added_u_as';
                 }
                 if ($wo['notification']['type'] == 'accept_u_as') {
                     $wo['notification']['type_text'] = $wo['notification']['text'];
-                    $wo['notification']['icon']     .= 'accept_u_as';
+                    $wo['notification']['icon'] .= 'accept_u_as';
                 }
                 if ($wo['notification']['type'] == 'rejected_u_as') {
                     $wo['notification']['type_text'] = $wo['notification']['text'];
-                    $wo['notification']['icon']     .= 'rejected_u_as';
+                    $wo['notification']['icon'] .= 'rejected_u_as';
                 }
                 if ($wo['notification']['type'] == 'sent_u_money') {
                     $wo['notification']['type_text'] = $wo['notification']['text'];
-                    $wo['notification']['icon']     .= 'sent_u_money';
+                    $wo['notification']['icon'] .= 'sent_u_money';
                 }
                 if ($wo['notification']['type'] == 'blog_commented') {
                     $wo['notification']['type_text'] = $wo['lang']['commented_on_blog'];
@@ -360,13 +351,13 @@ if (empty($error_code)) {
                     $wo['notification']['icon'] .= 'new_post';
                 }
                 if ($wo['notification']['type2'] == 'anonymous') {
-                    $wo['notification']['notifier']['name']   = $wo['lang']['anonymous']; 
+                    $wo['notification']['notifier']['name'] = $wo['lang']['anonymous'];
                     $wo['notification']['notifier']['avatar'] = Wo_GetMedia('upload/photos/incognito.png');
                 }
-                // ************************ 
+                // ************************
             }
             $wo['notification']['time_text_string'] = Wo_Time_Elapsed_String($wo['notification']['time']);
-            $wo['notification']['time_text']        = Wo_Time_Elapsed_String($wo['notification']['time']);
+            $wo['notification']['time_text'] = Wo_Time_Elapsed_String($wo['notification']['time']);
             if (!empty($wo['notification']['time'])) {
                 $time_today = time() - 86400;
                 if ($wo['notification']['time'] < $time_today) {
@@ -379,8 +370,8 @@ if (empty($error_code)) {
             }
             if (!empty($notification_ids)) {
                 $query_where = '\'' . implode('\', \'', $notification_ids) . '\'';
-                $query       = "UPDATE " . T_NOTIFICATION . " SET `seen` = " . time() . " WHERE `id` IN ($query_where)";
-                $sql_query   = mysqli_query($sqlConnect, $query);
+                $query = "UPDATE " . T_NOTIFICATION . " SET `seen` = " . time() . " WHERE `id` IN ($query_where)";
+                $sql_query = mysqli_query($sqlConnect, $query);
             }
             foreach ($non_allowed as $key => $value) {
                 unset($wo['notification']['notifier'][$value]);
@@ -389,7 +380,7 @@ if (empty($error_code)) {
                 $event = Wo_EventData($wo['notification']['event_id']);
 
                 foreach ($non_allowed as $key => $value) {
-                   unset($event['user_data'][$value]);
+                    unset($event['user_data'][$value]);
                 }
                 $event['is_going'] = Wo_EventGoingExists($event['id']);
                 $event['is_interested'] = Wo_EventInterestedExists($event['id']);
@@ -403,19 +394,19 @@ if (empty($error_code)) {
         }
         $count_notifications = Wo_CountNotifications(array(
             'unread' => true,
-            'remove_notification' => array('requested_to_join_group', 'interested_event', 'going_event', 'invited_event', 'forum_reply', 'admin_notification')
+            'remove_notification' => array('requested_to_join_group', 'interested_event', 'going_event', 'invited_event', 'forum_reply', 'admin_notification'),
         ));
         $response_data['notifications'] = $final_notifications;
         $response_data['new_notifications_count'] = $count_notifications;
     }
-    
+
     if (!empty($data['friend_requests'])) {
-    	$final_friend_requests = array();
-    	$friend_requests = Wo_GetFollowRequests();
-    	if (!empty($friend_requests)) {
+        $final_friend_requests = array();
+        $friend_requests = Wo_GetFollowRequests();
+        if (!empty($friend_requests)) {
             foreach ($friend_requests as $key => $friend_request) {
                 foreach ($non_allowed as $key => $value) {
-                   unset($friend_request[$value]);
+                    unset($friend_request[$value]);
                 }
                 $final_friend_requests[] = $friend_request;
             }
@@ -430,9 +421,9 @@ if (empty($error_code)) {
         if (!empty($group_chat_requests)) {
             foreach ($group_chat_requests as $key => $group_chat_request) {
                 foreach ($non_allowed as $key => $value) {
-                   unset($group_chat_request->{$value});
+                    unset($group_chat_request->{$value});
                 }
-                $group_chat_request->group_tab = Wo_GroupTabData($group_chat_request->group_id,false);
+                $group_chat_request->group_tab = Wo_GroupTabData($group_chat_request->group_id, false);
                 unset($group_chat_request->group_tab['messages']);
                 $group_chat_request->group_tab['avatar'] = $group_chat_request->group_tab['avatar'];
                 $group_chat_request->group_tab['time_text'] = Wo_Time_Elapsed_String($group_chat_request->group_tab['time']);
@@ -444,12 +435,12 @@ if (empty($error_code)) {
     }
 
     if (!empty($data['pro_users'])) {
-    	$final_pro_users = array();
-    	$pro_users = Wo_FeaturedUsers(9);
-    	if (!empty($pro_users)) {
+        $final_pro_users = array();
+        $pro_users = Wo_FeaturedUsers(9);
+        if (!empty($pro_users)) {
             foreach ($pro_users as $key => $pro_user) {
                 foreach ($non_allowed as $key => $value) {
-                   unset($pro_user[$value]);
+                    unset($pro_user[$value]);
                 }
                 $final_pro_users[] = $pro_user;
             }
@@ -469,13 +460,13 @@ if (empty($error_code)) {
     }
 
     if (!empty($data['count_new_messages'])) {
-        $response_data['count_new_messages'] =  Wo_CountMessages(array('new' => true), 'interval');
+        $response_data['count_new_messages'] = Wo_CountMessages(array('new' => true), 'interval');
     }
     if (!empty($data['announcement'])) {
-        $response_data['announcement'] =  Wo_GetHomeAnnouncements();
+        $response_data['announcement'] = Wo_GetHomeAnnouncements();
         if (!empty($response_data['announcement'])) {
             $response_data['announcement']['text_decode'] = strip_tags($response_data['announcement']['text']);
             $response_data['announcement']['time_text'] = Wo_Time_Elapsed_String($response_data['announcement']['time']);
-        } 
+        }
     }
 }

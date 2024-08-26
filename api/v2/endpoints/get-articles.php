@@ -1,12 +1,7 @@
 <?php
 // +------------------------------------------------------------------------+
-// | @author Deen Doughouz (DoughouzForest)
-// | @author_url 1: http://www.wowonder.com
-// | @author_url 2: http://codecanyon.net/user/doughouzforest
-// | @author_email: wowondersocial@gmail.com
-// +------------------------------------------------------------------------+
-// | WoWonder - The Ultimate Social Networking Platform
-// | Copyright (c) 2018 WoWonder. All rights reserved.
+// | Softravine - The Ultimate Social Networking Platform
+// | Copyright (c) 2024 Softravine. All rights reserved.
 // +------------------------------------------------------------------------+
 $articles = array();
 
@@ -20,7 +15,7 @@ $get_articles = Wo_GetBlogs($options);
 
 foreach ($get_articles as $key => $article) {
     foreach ($non_allowed as $key => $value) {
-       unset($article['author'][$value]);
+        unset($article['author'][$value]);
     }
     $article['category'] = $wo['page_categories'][$article['category']];
     $article['posted'] = Wo_Time_Elapsed_String($article['posted']);
@@ -29,5 +24,5 @@ foreach ($get_articles as $key => $article) {
 
 $response_data = array(
     'api_status' => 200,
-    'articles' => $articles
+    'articles' => $articles,
 );

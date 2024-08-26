@@ -1,5 +1,5 @@
 <?php
-if(!$wo['config']['directory_system']) {
+if (!$wo['config']['directory_system']) {
     header("Location: " . Wo_SeoLink('index.php?link1=welcome'));
     exit();
 }
@@ -10,11 +10,11 @@ $pagination = '';
 
 $wo['page_id'] = isset($_GET['page-id']) ? $_GET['page-id'] : 1;
 $db->pageLimit = 10;
-$wo['posts'] = $db->objectbuilder()->where('postPrivacy','0')->orderBy('id', 'DESC')->paginate(T_POSTS, $wo['page_id']);
+$wo['posts'] = $db->objectbuilder()->where('postPrivacy', '0')->orderBy('id', 'DESC')->paginate(T_POSTS, $wo['page_id']);
 $wo['totalPages'] = $db->totalPages;
 
 if (count($wo['posts']) != 0) {
-    $pagination = loadHTMLPage('directory/includes/pagination',[
+    $pagination = loadHTMLPage('directory/includes/pagination', [
         'link' => 'directory',
         'ajax_link' => '?link1=directory',
     ]);
@@ -28,11 +28,11 @@ if (count($wo['posts']) != 0) {
 }
 
 $wo['description'] = $wo['config']['siteDesc'];
-$wo['keywords']    = $wo['config']['siteKeywords'];
-$wo['page']        = 'directory';
-$wo['title']       = $wo['config']['siteTitle'];
+$wo['keywords'] = $wo['config']['siteKeywords'];
+$wo['page'] = 'directory';
+$wo['title'] = $wo['config']['siteTitle'];
 
-$wo['content']     = loadHTMLPage('directory/content',[
+$wo['content'] = loadHTMLPage('directory/content', [
     'html' => $html,
     'pagination' => $pagination,
     'sidebar' => Wo_LoadPage("directory/left-sidebar"),

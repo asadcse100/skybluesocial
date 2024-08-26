@@ -1,12 +1,7 @@
 <?php
 // +------------------------------------------------------------------------+
-// | @author Deen Doughouz (DoughouzForest)
-// | @author_url 1: http://www.wowonder.com
-// | @author_url 2: http://codecanyon.net/user/doughouzforest
-// | @author_email: wowondersocial@gmail.com
-// +------------------------------------------------------------------------+
-// | WoWonder - The Ultimate Social Networking Platform
-// | Copyright (c) 2018 WoWonder. All rights reserved.
+// | Softravine - The Ultimate Social Networking Platform
+// | Copyright (c) 2024 Softravine. All rights reserved.
 // +------------------------------------------------------------------------+
 $products = array();
 
@@ -20,14 +15,14 @@ $options['length'] = (!empty($_POST['distance'])) ? $_POST['distance'] : '';
 $get_products = Wo_GetProducts($options);
 foreach ($get_products as $key => $product) {
     foreach ($non_allowed as $key => $value) {
-       unset($product['seller'][$value]);
+        unset($product['seller'][$value]);
     }
     if (!empty($product['post_id']) && !empty($product['images'])) {
-    	$products[] = $product;
+        $products[] = $product;
     }
 }
 
 $response_data = array(
     'api_status' => 200,
-    'products' => $products
+    'products' => $products,
 );

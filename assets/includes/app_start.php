@@ -111,10 +111,10 @@ $wo["actual_link"] = $http_header . $_SERVER["HTTP_HOST"] . urlencode($_SERVER["
 // Define Cache Vireble
 $cache             = new Cache();
 $cache->Wo_OpenCacheDir();
-$wo["purchase_code"] = "";
-if (!empty($purchase_code)) {
-    $wo["purchase_code"] = $purchase_code;
-}
+// $wo["purchase_code"] = "";
+// if (!empty($purchase_code)) {
+//     $wo["purchase_code"] = $purchase_code;
+// }
 // Login With Url
 $wo["facebookLoginUrl"]   = $config["site_url"] . "/login-with.php?provider=Facebook";
 $wo["twitterLoginUrl"]    = $config["site_url"] . "/login-with.php?provider=Twitter";

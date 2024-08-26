@@ -1,12 +1,7 @@
 <?php
 // +------------------------------------------------------------------------+
-// | @author Deen Doughouz (DoughouzForest)
-// | @author_url 1: http://www.wowonder.com
-// | @author_url 2: http://codecanyon.net/user/doughouzforest
-// | @author_email: wowondersocial@gmail.com
-// +------------------------------------------------------------------------+
-// | WoWonder - The Ultimate Social Networking Platform
-// | Copyright (c) 2018 WoWonder. All rights reserved.
+// | Softravine - The Ultimate Social Networking Platform
+// | Copyright (c) 2024 Softravine. All rights reserved.
 // +------------------------------------------------------------------------+
 $users = array();
 $pages = array();
@@ -16,13 +11,13 @@ $channels = array();
 $options['limit'] = (!empty($_POST['limit'])) ? (int) $_POST['limit'] : 35;
 $options['query'] = (!empty($_POST['search_key'])) ? Wo_Secure($_POST['search_key']) : '';
 $options['gender'] = (!empty($_POST['gender'])) ? Wo_Secure($_POST['gender']) : '';
-$options['status'] = (!empty($_POST['status'])) ?  Wo_Secure($_POST['status']) : '';
-$options['image'] = (!empty($_POST['image'])) ?  Wo_Secure($_POST['image']) : '';
-$options['country'] = (!empty($_POST['country'])) ?  Wo_Secure($_POST['country']) : '';
-$options['verified'] = (!empty($_POST['verified'])) ?  Wo_Secure($_POST['verified']) : '';
-$options['filterbyage'] = (!empty($_POST['filterbyage'])) ?  Wo_Secure($_POST['filterbyage']) : '';
-$options['age_from'] = (!empty($_POST['age_from'])) ?  Wo_Secure($_POST['age_from']) : '';
-$options['age_to'] = (!empty($_POST['age_to'])) ?  Wo_Secure($_POST['age_to']) : '';
+$options['status'] = (!empty($_POST['status'])) ? Wo_Secure($_POST['status']) : '';
+$options['image'] = (!empty($_POST['image'])) ? Wo_Secure($_POST['image']) : '';
+$options['country'] = (!empty($_POST['country'])) ? Wo_Secure($_POST['country']) : '';
+$options['verified'] = (!empty($_POST['verified'])) ? Wo_Secure($_POST['verified']) : '';
+$options['filterbyage'] = (!empty($_POST['filterbyage'])) ? Wo_Secure($_POST['filterbyage']) : '';
+$options['age_from'] = (!empty($_POST['age_from'])) ? Wo_Secure($_POST['age_from']) : '';
+$options['age_to'] = (!empty($_POST['age_to'])) ? Wo_Secure($_POST['age_to']) : '';
 
 $user_offset = (!empty($_POST['user_offset'])) ? (int) $_POST['user_offset'] : 0;
 $page_offset = (!empty($_POST['page_offset'])) ? (int) $_POST['page_offset'] : 0;
@@ -33,7 +28,7 @@ $get_users = Wo_GetSearchFilter($options, $options['limit'], $user_offset);
 
 foreach ($get_users as $key => $user) {
     foreach ($non_allowed as $key => $value) {
-       unset($user[$value]);
+        unset($user[$value]);
     }
     $user['is_following'] = (Wo_IsFollowing($user['user_id'], $wo['user']['user_id'])) ? 1 : 0;
     $users[] = $user;
@@ -66,5 +61,5 @@ $response_data = array(
     'users' => $users,
     'pages' => $pages,
     'groups' => $groups,
-    'channels' => $channels
+    'channels' => $channels,
 );

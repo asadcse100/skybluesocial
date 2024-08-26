@@ -1,14 +1,9 @@
 <?php
 // +------------------------------------------------------------------------+
-// | @author Deen Doughouz (DoughouzForest)
-// | @author_url 1: http://www.wowonder.com
-// | @author_url 2: http://codecanyon.net/user/doughouzforest
-// | @author_email: wowondersocial@gmail.com
+// | Softravine - The Ultimate Social Networking Platform
+// | Copyright (c) 2024 Softravine. All rights reserved.
 // +------------------------------------------------------------------------+
-// | WoWonder - The Ultimate Social Networking Platform
-// | Copyright (c) 2022 WoWonder. All rights reserved.
-// +------------------------------------------------------------------------+
-define('T_USERS','Wo_Users');
+define('T_USERS', 'Wo_Users');
 define('T_COUNTRIES', 'Wo_Countries');
 define('T_FOLLOWERS', 'Wo_Followers');
 define('T_NOTIFICATION', 'Wo_Notifications');
@@ -150,5 +145,3 @@ define('T_PENDING_PAYMENTS', 'Wo_PendingPayments');
 define('T_UPLOADED_MEDIA', 'Wo_UploadedMedia');
 define('T_BACKUP_CODES', 'Wo_Backup_Codes');
 // define('T_COUNTRIES_ADS', 'Wo_CountriesAds');
-
-?>

@@ -1,31 +1,28 @@
 <?php
 // +------------------------------------------------------------------------+
-// | @author Deen Doughouz (DoughouzForest)
-// | @author_url 1: http://www.wowonder.com
-// | @author_url 2: http://codecanyon.net/user/doughouzforest
-// | @author_email: wowondersocial@gmail.com
+// | Softravine - The Ultimate Social Networking Platform
+// | Copyright (c) 2024 Softravine. All rights reserved.
 // +------------------------------------------------------------------------+
-// | WoWonder - The Ultimate Social Networking Platform
-// | Copyright (c) 2022 WoWonder. All rights reserved.
-// +------------------------------------------------------------------------+
-function sanitize_output($buffer) {
-    $search  = array(
+function sanitize_output($buffer)
+{
+    $search = array(
         '/\>[^\S ]+/s', // strip whitespaces after tags, except space
         '/[^\S ]+\</s', // strip whitespaces before tags, except space
         '/(\s)+/s', // shorten multiple whitespace sequences
-        '/<!--(.|\s)*?-->/'
+        '/<!--(.|\s)*?-->/',
         // Remove HTML comments
     );
     $replace = array(
         '>',
         '<',
         '\\1',
-        ''
+        '',
     );
-    $buffer  = preg_replace($search, $replace, $buffer);
+    $buffer = preg_replace($search, $replace, $buffer);
     return $buffer;
 }
-function Wo_LoadPage($page_url = '') {
+function Wo_LoadPage($page_url = '')
+{
     global $wo, $db;
     $create_file = false;
     if ($page_url == 'sidebar/content' && $wo['loggedin'] == true && $wo['config']['cache_sidebar'] == 1) {
@@ -39,10 +36,10 @@ function Wo_LoadPage($page_url = '') {
             $create_file = true;
         }
     }
-    $page         = './themes/' . $wo['config']['theme'] . '/layout/' . $page_url . '.phtml';
+    $page = './themes/' . $wo['config']['theme'] . '/layout/' . $page_url . '.phtml';
     $page_content = '';
     ob_start();
-    require($page);
+    require $page;
     $page_content = ob_get_contents();
     ob_end_clean();
     if ($create_file == true && $wo['config']['cache_sidebar'] == 1) {
@@ -51,7 +48,8 @@ function Wo_LoadPage($page_url = '') {
     }
     return $page_content;
 }
-function loadHTMLPage($page_url = '', $data = array(), $set_lang = true) {
+function loadHTMLPage($page_url = '', $data = array(), $set_lang = true)
+{
     global $wo, $db;
 
     $create_file = false;
@@ -67,58 +65,58 @@ function loadHTMLPage($page_url = '', $data = array(), $set_lang = true) {
         }
     }
 
-    $page         = './themes/' . $wo['config']['theme'] . '/layout/' . $page_url . '.phtml';
+    $page = './themes/' . $wo['config']['theme'] . '/layout/' . $page_url . '.phtml';
     if (!file_exists($page)) {
         die("File not Exists : $page");
     }
     $page_content = '';
     ob_start();
-    require($page);
+    require $page;
     $page_content = ob_get_contents();
     ob_end_clean();
     if (!empty($data) && is_array($data)) {
         foreach ($data as $key => $replace) {
             if ($key == 'USER_DATA') {
                 $replace = ToArray($replace);
-                $page_content = preg_replace_callback("/{{USER (.*?)}}/", function($m) use ($replace) {
+                $page_content = preg_replace_callback("/{{USER (.*?)}}/", function ($m) use ($replace) {
                     return (isset($replace[$m[1]])) ? $replace[$m[1]] : '';
                 }, $page_content);
             } else {
-                if( is_array($replace) || is_object($replace) ){
-                    $arr = explode('_',$key);
+                if (is_array($replace) || is_object($replace)) {
+                    $arr = explode('_', $key);
                     $k = strtoupper($arr[0]);
                     $replace = ToArray($replace);
-                    $page_content = preg_replace_callback("/{{".$k." (.*?)}}/", function($m) use ($replace) {
+                    $page_content = preg_replace_callback("/{{" . $k . " (.*?)}}/", function ($m) use ($replace) {
                         return (isset($replace[$m[1]])) ? $replace[$m[1]] : '';
                     }, $page_content);
-                }else{
+                } else {
                     $object_to_replace = "{{" . $key . "}}";
-                    $page_content      = str_replace($object_to_replace, $replace, $page_content);
+                    $page_content = str_replace($object_to_replace, $replace, $page_content);
                 }
             }
         }
     }
     if ($set_lang == true) {
         $replaceLang = ToArray($wo['lang']);
-        $page_content = preg_replace_callback("/{{LANG (.*?)}}/", function($m) use ($replaceLang) {
+        $page_content = preg_replace_callback("/{{LANG (.*?)}}/", function ($m) use ($replaceLang) {
             return (isset($replaceLang[$m[1]])) ? $replaceLang[$m[1]] : $m[1];
         }, $page_content);
     }
     if ($wo['loggedin'] == true) {
         $replace = ToArray($wo['user']);
-        $page_content = preg_replace_callback("/{{ME (.*?)}}/", function($m) use ($replace) {
+        $page_content = preg_replace_callback("/{{ME (.*?)}}/", function ($m) use ($replace) {
             return (isset($replace[$m[1]])) ? $replace[$m[1]] : '';
         }, $page_content);
     }
-    
+
     $page_content = preg_replace("/{{LINK (.*?)}}/", getLink("$1"), $page_content);
 
-    $page_content = preg_replace_callback("/{{LOAD (.*?)}}/", function($m) {
+    $page_content = preg_replace_callback("/{{LOAD (.*?)}}/", function ($m) {
         return (!empty($m[1])) ? loadHTMLPage($m[1]) : '';
     }, $page_content);
 
     $replaceConfig = ToArray($wo['config']);
-    $page_content = preg_replace_callback("/{{CONFIG (.*?)}}/", function($m) use ($replaceConfig) {
+    $page_content = preg_replace_callback("/{{CONFIG (.*?)}}/", function ($m) use ($replaceConfig) {
         return (isset($replaceConfig[$m[1]])) ? $replaceConfig[$m[1]] : '';
     }, $page_content);
 
@@ -129,11 +127,13 @@ function loadHTMLPage($page_url = '', $data = array(), $set_lang = true) {
 
     return $page_content;
 }
-function getLink($string = '') {
+function getLink($string = '')
+{
     global $wo;
-    return rtrim($wo['site_url'] . "/" . $string,"/");
+    return rtrim($wo['site_url'] . "/" . $string, "/");
 }
-function Wo_CleanCache($user_id = '', $where = 'sidebar') {
+function Wo_CleanCache($user_id = '', $where = 'sidebar')
+{
     global $wo;
     if ($wo['config']['cache_sidebar'] == 0 || $wo['loggedin'] == false) {
         return false;
@@ -143,15 +143,16 @@ function Wo_CleanCache($user_id = '', $where = 'sidebar') {
         unlink($file_path);
     }
 }
-function Wo_CustomCode($a = false, $code = array()) {
+function Wo_CustomCode($a = false, $code = array())
+{
     global $wo;
-    $theme       = $wo['config']['theme'];
-    $data        = array();
-    $result      = false;
+    $theme = $wo['config']['theme'];
+    $data = array();
+    $result = false;
     $custom_code = array(
         "themes/$theme/custom/js/head.js",
         "themes/$theme/custom/js/footer.js",
-        "themes/$theme/custom/css/style.css"
+        "themes/$theme/custom/css/style.css",
     );
     if ($a == 'g') {
         foreach ($custom_code as $key => $filepath) {
@@ -170,25 +171,29 @@ function Wo_CustomCode($a = false, $code = array()) {
     }
     return $result;
 }
-function Wo_LoadAdminPage($page_url = '') {
+function Wo_LoadAdminPage($page_url = '')
+{
     global $wo, $db;
-    $page         = './admin-panel/pages/' . $page_url . '.phtml';
+    $page = './admin-panel/pages/' . $page_url . '.phtml';
     $page_content = '';
     ob_start();
-    require($page);
+    require $page;
     $page_content = ob_get_contents();
     ob_end_clean();
     return $page_content;
 }
-function Wo_LoadAdminLinkSettings($link = '') {
+function Wo_LoadAdminLinkSettings($link = '')
+{
     global $site_url;
     return $site_url . '/admin-cp/' . $link;
 }
-function Wo_LoadAdminLink($link = '') {
+function Wo_LoadAdminLink($link = '')
+{
     global $site_url;
     return $site_url . '/admin-panel/' . $link;
 }
-function Wo_SizeUnits($bytes = 0) {
+function Wo_SizeUnits($bytes = 0)
+{
     if ($bytes >= 1073741824) {
         $bytes = round(($bytes / 1073741824)) . ' GB';
     } elseif ($bytes >= 1048576) {
@@ -198,13 +203,14 @@ function Wo_SizeUnits($bytes = 0) {
     }
     return $bytes;
 }
-function Wo_MultipleArrayFiles($file_post) {
+function Wo_MultipleArrayFiles($file_post)
+{
     if (!is_array($file_post)) {
         return array();
     }
     $wo_file_array = array();
     $wo_file_count = count($file_post['name']);
-    $wo_file_keys  = array_keys($file_post);
+    $wo_file_keys = array_keys($file_post);
     for ($i = 0; $i < $wo_file_count; $i++) {
         foreach ($wo_file_keys as $key) {
             $wo_file_array[$i][$key] = $file_post[$key][$i];
@@ -212,7 +218,8 @@ function Wo_MultipleArrayFiles($file_post) {
     }
     return $wo_file_array;
 }
-function Wo_IsValidMimeType($mimeTypes = array()) {
+function Wo_IsValidMimeType($mimeTypes = array())
+{
     if (!is_array($mimeTypes) || empty($mimeTypes)) {
         return false;
     }
@@ -226,18 +233,19 @@ function Wo_IsValidMimeType($mimeTypes = array()) {
     }
     return $result;
 }
-function url_slug($str, $options = array()) {
+function url_slug($str, $options = array())
+{
     // Make sure string is in UTF-8 and strip invalid UTF-8 characters
-    $str      = mb_convert_encoding((string) $str, 'UTF-8', mb_list_encodings());
+    $str = mb_convert_encoding((string) $str, 'UTF-8', mb_list_encodings());
     $defaults = array(
         'delimiter' => '-',
         'limit' => null,
         'lowercase' => true,
         'replacements' => array(),
-        'transliterate' => true
+        'transliterate' => true,
     );
     // Merge options
-    $options  = array_merge($defaults, $options);
+    $options = array_merge($defaults, $options);
     $char_map = array(
         // Latin
         'À' => 'A',
@@ -527,10 +535,10 @@ function url_slug($str, $options = array()) {
         'ņ' => 'n',
         'š' => 's',
         'ū' => 'u',
-        'ž' => 'z'
+        'ž' => 'z',
     );
     // Make custom replacements
-    $str      = preg_replace(array_keys($options['replacements']), $options['replacements'], $str);
+    $str = preg_replace(array_keys($options['replacements']), $options['replacements'], $str);
     // Transliterate characters to ASCII
     if ($options['transliterate']) {
         $str = str_replace(array_keys($char_map), $char_map, $str);
@@ -545,7 +553,8 @@ function url_slug($str, $options = array()) {
     $str = trim($str, $options['delimiter']);
     return $options['lowercase'] ? mb_strtolower($str, 'UTF-8') : $str;
 }
-function Wo_SeoLink($query = '') {
+function Wo_SeoLink($query = '')
+{
     global $wo, $config;
     if ($wo['config']['seoLink'] == 1) {
         $query = preg_replace(array(
@@ -654,7 +663,7 @@ function Wo_SeoLink($query = '') {
             '/^index\.php\?link1=subscriptions-monetization/i',
             '/^index\.php\?link1=manage-content-monetization/i',
             '/^index\.php\?link1=([^\/]+)$/i',
-            '/^index\.php\?link1=welcome$/i'
+            '/^index\.php\?link1=welcome$/i',
         ), array(
             $config['site_url'] . '/search/$1',
             $config['site_url'] . '/developers?page=$1',
@@ -761,14 +770,15 @@ function Wo_SeoLink($query = '') {
             $config['site_url'] . '/subscriptions/monetizations',
             $config['site_url'] . '/content/monetizations',
             $config['site_url'] . '/$1',
-            $config['site_url']
+            $config['site_url'],
         ), $query);
     } else {
         $query = $config['site_url'] . '/' . $query;
     }
     return $query;
 }
-function Wo_IsLogged() {
+function Wo_IsLogged()
+{
     if (isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])) {
         $id = Wo_GetUserFromSessionID($_SESSION['user_id']);
         if (is_numeric($id) && !empty($id)) {
@@ -783,14 +793,17 @@ function Wo_IsLogged() {
         return false;
     }
 }
-function Wo_Redirect($url) {
+function Wo_Redirect($url)
+{
     return header("Location: {$url}");
 }
-function Wo_Link($string) {
+function Wo_Link($string)
+{
     global $site_url;
     return $site_url . '/' . $string;
 }
-function Wo_Sql_Result($res, $row = 0, $col = 0) {
+function Wo_Sql_Result($res, $row = 0, $col = 0)
+{
     $numrows = mysqli_num_rows($res);
     if ($numrows && $row <= ($numrows - 1) && $row >= 0) {
         mysqli_data_seek($res, $row);
@@ -801,7 +814,8 @@ function Wo_Sql_Result($res, $row = 0, $col = 0) {
     }
     return false;
 }
-function Wo_UrlDomain($url) {
+function Wo_UrlDomain($url)
+{
     $host = @parse_url($url, PHP_URL_HOST);
     if (!$host) {
         $host = $url;
@@ -814,7 +828,8 @@ function Wo_UrlDomain($url) {
     }
     return $host;
 }
-function Wo_Secure($string, $censored_words = 0, $br = true, $strip = 0,$cleanString = true) {
+function Wo_Secure($string, $censored_words = 0, $br = true, $strip = 0, $cleanString = true)
+{
     global $sqlConnect;
     $string = trim($string);
     if ($cleanString) {
@@ -842,12 +857,13 @@ function Wo_Secure($string, $censored_words = 0, $br = true, $strip = 0,$cleanSt
         $censored_words = @explode(",", $config['censored_words']);
         foreach ($censored_words as $censored_word) {
             $censored_word = trim($censored_word);
-            $string        = str_replace($censored_word, '****', $string);
+            $string = str_replace($censored_word, '****', $string);
         }
     }
     return $string;
 }
-function Wo_BbcodeSecure($string) {
+function Wo_BbcodeSecure($string)
+{
     global $sqlConnect;
     $string = trim($string);
     $string = mysqli_real_escape_string($sqlConnect, $string);
@@ -861,10 +877,12 @@ function Wo_BbcodeSecure($string) {
     $string = stripslashes($string);
     return $string;
 }
-function Wo_Decode($string) {
+function Wo_Decode($string)
+{
     return htmlspecialchars_decode($string);
 }
-function Wo_GenerateKey($minlength = 20, $maxlength = 20, $uselower = true, $useupper = true, $usenumbers = true, $usespecial = false) {
+function Wo_GenerateKey($minlength = 20, $maxlength = 20, $uselower = true, $useupper = true, $usenumbers = true, $usespecial = false)
+{
     $charset = '';
     if ($uselower) {
         $charset .= "abcdefghijklmnopqrstuvwxyz";
@@ -890,7 +908,8 @@ function Wo_GenerateKey($minlength = 20, $maxlength = 20, $uselower = true, $use
     return $key;
 }
 $can = 0;
-function Wo_CropAvatarImage($file = '', $data = array()) {
+function Wo_CropAvatarImage($file = '', $data = array())
+{
     global $wo;
     if (empty($file)) {
         return false;
@@ -908,12 +927,12 @@ function Wo_CropAvatarImage($file = '', $data = array()) {
     if (empty($imgsize)) {
         return false;
     }
-    $width    = $data['w'];
-    $height   = $data['h'];
+    $width = $data['w'];
+    $height = $data['h'];
     $source_x = $data['x'];
     $source_y = $data['y'];
-    $mime     = $imgsize['mime'];
-    $image    = "imagejpeg";
+    $mime = $imgsize['mime'];
+    $image = "imagejpeg";
     switch ($mime) {
         case 'image/gif':
             $image_create = "imagecreatefromgif";
@@ -929,27 +948,28 @@ function Wo_CropAvatarImage($file = '', $data = array()) {
             break;
     }
     $dest = imagecreatetruecolor($width, $height);
-    $src  = $image_create($file);
+    $src = $image_create($file);
     $file = str_replace('_full', '', $file);
     imagecopy($dest, $src, 30, 30, $source_x, $source_y, $width, $height);
     $to_crop_array = array(
         'x' => $source_x,
         'y' => $source_y,
         'width' => $width,
-        'height' => $height
+        'height' => $height,
     );
-    $dest          = imagecrop($src, $to_crop_array);
+    $dest = imagecrop($src, $to_crop_array);
     imagejpeg($dest, $file, 100);
     Wo_Resize_Crop_Image($wo['profile_picture_width_crop'], $wo['profile_picture_height_crop'], $file, $file, $wo['config']['images_quality']);
     $s3 = Wo_UploadToS3($file);
     return true;
 }
-function Wo_Resize_Crop_Image($max_width, $max_height, $source_file, $dst_dir, $quality = 80) {
+function Wo_Resize_Crop_Image($max_width, $max_height, $source_file, $dst_dir, $quality = 80)
+{
     $imgsize = @getimagesize($source_file);
-    $width   = $imgsize[0];
-    $height  = $imgsize[1];
-    $mime    = $imgsize['mime'];
-    $image   = "imagejpeg";
+    $width = $imgsize[0];
+    $height = $imgsize[1];
+    $mime = $imgsize['mime'];
+    $image = "imagejpeg";
     switch ($mime) {
         case 'image/gif':
             $image_create = "imagecreatefromgif";
@@ -970,7 +990,7 @@ function Wo_Resize_Crop_Image($max_width, $max_height, $source_file, $dst_dir, $
     $dst_img = @imagecreatetruecolor($max_width, $max_height);
     $src_img = @$image_create($source_file);
     if (function_exists('exif_read_data')) {
-        $exif          = @exif_read_data($source_file);
+        $exif = @exif_read_data($source_file);
         $another_image = false;
         if (!empty($exif['Orientation'])) {
             switch ($exif['Orientation']) {
@@ -994,7 +1014,7 @@ function Wo_Resize_Crop_Image($max_width, $max_height, $source_file, $dst_dir, $
         if ($another_image == true) {
             $imgsize = @getimagesize($dst_dir);
             if ($width > 0 && $height > 0) {
-                $width  = $imgsize[0];
+                $width = $imgsize[0];
                 $height = $imgsize[1];
             }
         }
@@ -1009,20 +1029,26 @@ function Wo_Resize_Crop_Image($max_width, $max_height, $source_file, $dst_dir, $
         @imagecopyresampled($dst_img, $src_img, 0, 0, $w_point, 0, $max_width, $max_height, $width_new, $height);
     }
     @imagejpeg($dst_img, $dst_dir, $quality);
-    if ($dst_img)
+    if ($dst_img) {
         @imagedestroy($dst_img);
-    if ($src_img)
+    }
+
+    if ($src_img) {
         @imagedestroy($src_img);
+    }
+
     return true;
 }
-function str_replace_first($search, $replace, $subject) {
+function str_replace_first($search, $replace, $subject)
+{
     $pos = strpos($subject, $search);
     if ($pos !== false) {
         return substr_replace($subject, $replace, $pos, strlen($search));
     }
     return $subject;
 }
-function substitute($stringOrFunction, $number) {
+function substitute($stringOrFunction, $number)
+{
     //$string = $stringOrFunction;
     return $number . ' ' . $stringOrFunction;
 }
@@ -1033,13 +1059,13 @@ function Wo_Time_Elapsed_String_word($ptime)
     if ($etime < 1) {
         return '0 seconds';
     }
-    $a        = array(
+    $a = array(
         365 * 24 * 60 * 60 => $wo['lang']['year'],
         30 * 24 * 60 * 60 => $wo['lang']['month'],
         24 * 60 * 60 => $wo['lang']['day'],
         60 * 60 => $wo['lang']['hour'],
         60 => $wo['lang']['minute'],
-        1 => $wo['lang']['second']
+        1 => $wo['lang']['second'],
     );
     $a_plural = array(
         $wo['lang']['year'] => $wo['lang']['years'],
@@ -1047,7 +1073,7 @@ function Wo_Time_Elapsed_String_word($ptime)
         $wo['lang']['day'] => $wo['lang']['days'],
         $wo['lang']['hour'] => $wo['lang']['hours'],
         $wo['lang']['minute'] => $wo['lang']['minutes'],
-        $wo['lang']['second'] => $wo['lang']['seconds']
+        $wo['lang']['second'] => $wo['lang']['seconds'],
     );
     foreach ($a as $secs => $str) {
         $d = $etime / $secs;
@@ -1062,7 +1088,8 @@ function Wo_Time_Elapsed_String_word($ptime)
         }
     }
 }
-function Wo_Time_Elapsed_String($ptime) {
+function Wo_Time_Elapsed_String($ptime)
+{
     global $wo;
     $etime = (time()) - $ptime;
     if ($etime < 1) {
@@ -1071,10 +1098,10 @@ function Wo_Time_Elapsed_String($ptime) {
     }
     $seconds = abs($etime);
     $minutes = $seconds / 60;
-    $hours   = $minutes / 60;
-    $days    = $hours / 24;
-    $weeks   = $days / 7;
-    $years   = $days / 365;
+    $hours = $minutes / 60;
+    $days = $hours / 24;
+    $weeks = $days / 7;
+    $years = $days / 365;
     if ($seconds < 45) {
         return substitute($wo['lang']['now'], '');
     } elseif ($seconds < 90) {
@@ -1139,15 +1166,16 @@ function Wo_Time_Elapsed_String($ptime) {
     //     }
     // }
 }
-function Wo_FolderSize($dir) {
+function Wo_FolderSize($dir)
+{
     $count_size = 0;
-    $count      = 0;
-    $dir_array  = scandir($dir);
+    $count = 0;
+    $dir_array = scandir($dir);
     foreach ($dir_array as $key => $filename) {
         if ($filename != ".." && $filename != "." && $filename != ".htaccess") {
             if (is_dir($dir . "/" . $filename)) {
                 $new_foldersize = Wo_FolderSize($dir . "/" . $filename);
-                $count_size     = $count_size + $new_foldersize;
+                $count_size = $count_size + $new_foldersize;
             } else if (is_file($dir . "/" . $filename)) {
                 $count_size = $count_size + filesize($dir . "/" . $filename);
                 $count++;
@@ -1156,7 +1184,8 @@ function Wo_FolderSize($dir) {
     }
     return $count_size;
 }
-function Wo_SizeFormat($bytes) {
+function Wo_SizeFormat($bytes)
+{
     $kb = 1024;
     $mb = $kb * 1024;
     $gb = $mb * 1024;
@@ -1175,7 +1204,8 @@ function Wo_SizeFormat($bytes) {
         return $bytes . ' B';
     }
 }
-function Wo_ClearCache() {
+function Wo_ClearCache()
+{
     $path = 'cache';
     if ($handle = opendir($path)) {
         while (false !== ($file = readdir($handle))) {
@@ -1185,13 +1215,15 @@ function Wo_ClearCache() {
         }
     }
 }
-function Wo_GetThemes() {
+function Wo_GetThemes()
+{
     global $wo;
     $themes = glob('themes/*', GLOB_ONLYDIR);
     return $themes;
 }
-function Wo_ReturnBytes($val) {
-    $val  = trim($val);
+function Wo_ReturnBytes($val)
+{
+    $val = trim($val);
     $last = strtolower($val[strlen($val) - 1]);
     switch ($last) {
         case 'g':
@@ -1203,25 +1235,28 @@ function Wo_ReturnBytes($val) {
     }
     return $val;
 }
-function getBaseUrl() {
+function getBaseUrl()
+{
     $currentPath = $_SERVER['PHP_SELF'];
-    $pathInfo    = pathinfo($currentPath);
-    $hostName    = $_SERVER['HTTP_HOST'];
+    $pathInfo = pathinfo($currentPath);
+    $hostName = $_SERVER['HTTP_HOST'];
     return $hostName . $pathInfo['dirname'];
 }
-function Wo_MaxFileUpload() {
+function Wo_MaxFileUpload()
+{
     //select maximum upload size
-    $max_upload   = Wo_ReturnBytes(ini_get('upload_max_filesize'));
+    $max_upload = Wo_ReturnBytes(ini_get('upload_max_filesize'));
     //select post limit
-    $max_post     = Wo_ReturnBytes(ini_get('post_max_size'));
+    $max_post = Wo_ReturnBytes(ini_get('post_max_size'));
     //select memory limit
     $memory_limit = Wo_ReturnBytes(ini_get('memory_limit'));
     // return the smallest of them, this defines the real limit
     return min($max_upload, $max_post, $memory_limit);
 }
-function Wo_CompressImage($source_url, $destination_url, $quality = 50) {
+function Wo_CompressImage($source_url, $destination_url, $quality = 50)
+{
     $imgsize = getimagesize($source_url);
-    $finfof  = $imgsize['mime'];
+    $finfof = $imgsize['mime'];
     $image_c = 'imagejpeg';
     if ($finfof == 'image/jpeg') {
         $image = @imagecreatefromjpeg($source_url);
@@ -1253,43 +1288,72 @@ function Wo_CompressImage($source_url, $destination_url, $quality = 50) {
     @imagejpeg($image, $destination_url, $quality);
     return $destination_url;
 }
-function get_ip_address() {
-    if (!empty($_SERVER['HTTP_X_FORWARDED']) && validate_ip($_SERVER['HTTP_X_FORWARDED']))
+function get_ip_address()
+{
+    if (!empty($_SERVER['HTTP_X_FORWARDED']) && validate_ip($_SERVER['HTTP_X_FORWARDED'])) {
         return $_SERVER['HTTP_X_FORWARDED'];
-    if (!empty($_SERVER['HTTP_X_CLUSTER_CLIENT_IP']) && validate_ip($_SERVER['HTTP_X_CLUSTER_CLIENT_IP']))
+    }
+
+    if (!empty($_SERVER['HTTP_X_CLUSTER_CLIENT_IP']) && validate_ip($_SERVER['HTTP_X_CLUSTER_CLIENT_IP'])) {
         return $_SERVER['HTTP_X_CLUSTER_CLIENT_IP'];
-    if (!empty($_SERVER['HTTP_FORWARDED_FOR']) && validate_ip($_SERVER['HTTP_FORWARDED_FOR']))
+    }
+
+    if (!empty($_SERVER['HTTP_FORWARDED_FOR']) && validate_ip($_SERVER['HTTP_FORWARDED_FOR'])) {
         return $_SERVER['HTTP_FORWARDED_FOR'];
-    if (!empty($_SERVER['HTTP_FORWARDED']) && validate_ip($_SERVER['HTTP_FORWARDED']))
+    }
+
+    if (!empty($_SERVER['HTTP_FORWARDED']) && validate_ip($_SERVER['HTTP_FORWARDED'])) {
         return $_SERVER['HTTP_FORWARDED'];
+    }
+
     return $_SERVER['REMOTE_ADDR'];
 }
-function validate_ip($ip) {
-    if (strtolower($ip) === 'unknown')
+function validate_ip($ip)
+{
+    if (strtolower($ip) === 'unknown') {
         return false;
+    }
+
     $ip = ip2long($ip);
     if ($ip !== false && $ip !== -1) {
         $ip = sprintf('%u', $ip);
-        if ($ip >= 0 && $ip <= 50331647)
+        if ($ip >= 0 && $ip <= 50331647) {
             return false;
-        if ($ip >= 167772160 && $ip <= 184549375)
+        }
+
+        if ($ip >= 167772160 && $ip <= 184549375) {
             return false;
-        if ($ip >= 2130706432 && $ip <= 2147483647)
+        }
+
+        if ($ip >= 2130706432 && $ip <= 2147483647) {
             return false;
-        if ($ip >= 2851995648 && $ip <= 2852061183)
+        }
+
+        if ($ip >= 2851995648 && $ip <= 2852061183) {
             return false;
-        if ($ip >= 2886729728 && $ip <= 2887778303)
+        }
+
+        if ($ip >= 2886729728 && $ip <= 2887778303) {
             return false;
-        if ($ip >= 3221225984 && $ip <= 3221226239)
+        }
+
+        if ($ip >= 3221225984 && $ip <= 3221226239) {
             return false;
-        if ($ip >= 3232235520 && $ip <= 3232301055)
+        }
+
+        if ($ip >= 3232235520 && $ip <= 3232301055) {
             return false;
-        if ($ip >= 4294967040)
+        }
+
+        if ($ip >= 4294967040) {
             return false;
+        }
+
     }
     return true;
 }
-function Wo_Backup($sql_db_host, $sql_db_user, $sql_db_pass, $sql_db_name, $tables = false, $backup_name = false) {
+function Wo_Backup($sql_db_host, $sql_db_user, $sql_db_pass, $sql_db_name, $tables = false, $backup_name = false)
+{
     $mysqli = new mysqli($sql_db_host, $sql_db_user, $sql_db_pass, $sql_db_name);
     $mysqli->select_db($sql_db_name);
     $mysqli->query("SET NAMES 'utf8'");
@@ -1315,12 +1379,12 @@ SET time_zone = \"+00:00\";\n
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;\n\n";
     foreach ($target_tables as $table) {
-        $result        = $mysqli->query('SELECT * FROM ' . $table);
+        $result = $mysqli->query('SELECT * FROM ' . $table);
         $fields_amount = $result->field_count;
-        $rows_num      = $mysqli->affected_rows;
-        $res           = $mysqli->query('SHOW CREATE TABLE ' . $table);
-        $TableMLine    = $res->fetch_row();
-        $content       = (!isset($content) ? '' : $content) . "
+        $rows_num = $mysqli->affected_rows;
+        $res = $mysqli->query('SHOW CREATE TABLE ' . $table);
+        $TableMLine = $res->fetch_row();
+        $content = (!isset($content) ? '' : $content) . "
 -- ---------------------------------------------------------
 --
 -- Table structure for table : `{$table}`
@@ -1388,11 +1452,11 @@ SET time_zone = \"+00:00\";\n
         @fclose($f);
     }
     $folder_name = "script_backups/" . date('d-m-Y') . '/' . time();
-    $put         = @file_put_contents($folder_name . '/SQL-Backup-' . time() . '-' . date('d-m-Y') . '.sql', $content);
+    $put = @file_put_contents($folder_name . '/SQL-Backup-' . time() . '-' . date('d-m-Y') . '.sql', $content);
     if ($put) {
         $rootPath = realpath('./');
-        $zip      = new ZipArchive();
-        $open     = $zip->open($folder_name . '/Files-Backup-' . time() . '-' . date('d-m-Y') . '.zip', ZipArchive::CREATE | ZipArchive::OVERWRITE);
+        $zip = new ZipArchive();
+        $open = $zip->open($folder_name . '/Files-Backup-' . time() . '-' . date('d-m-Y') . '.zip', ZipArchive::CREATE | ZipArchive::OVERWRITE);
         if ($open !== true) {
             return false;
         }
@@ -1400,7 +1464,7 @@ SET time_zone = \"+00:00\";\n
         foreach ($files as $name => $file) {
             if (!preg_match('/\bscript_backups\b/', $file)) {
                 if (!$file->isDir()) {
-                    $filePath     = $file->getRealPath();
+                    $filePath = $file->getRealPath();
                     $relativePath = substr($filePath, strlen($rootPath) + 1);
                     $zip->addFile($filePath, $relativePath);
                 }
@@ -1414,10 +1478,12 @@ SET time_zone = \"+00:00\";\n
         return false;
     }
 }
-function Wo_isSecure() {
+function Wo_isSecure()
+{
     return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443;
 }
-function copy_directory($src, $dst) {
+function copy_directory($src, $dst)
+{
     $dir = opendir($src);
     @mkdir($dst);
     while (false !== ($file = readdir($dir))) {
@@ -1431,24 +1497,32 @@ function copy_directory($src, $dst) {
     }
     closedir($dir);
 }
-function delete_directory($dirname) {
-    if (is_dir($dirname))
+function delete_directory($dirname)
+{
+    if (is_dir($dirname)) {
         $dir_handle = opendir($dirname);
-    if (!$dir_handle)
+    }
+
+    if (!$dir_handle) {
         return false;
+    }
+
     while ($file = readdir($dir_handle)) {
         if ($file != "." && $file != "..") {
-            if (!is_dir($dirname . "/" . $file))
+            if (!is_dir($dirname . "/" . $file)) {
                 unlink($dirname . "/" . $file);
-            else
+            } else {
                 delete_directory($dirname . '/' . $file);
+            }
+
         }
     }
     closedir($dir_handle);
     rmdir($dirname);
     return true;
 }
-function Wo_CheckUserSessionID($user_id = 0, $session_id = '', $platform = 'web') {
+function Wo_CheckUserSessionID($user_id = 0, $session_id = '', $platform = 'web')
+{
     global $wo, $sqlConnect;
     if (empty($user_id) || !is_numeric($user_id) || $user_id < 0) {
         return false;
@@ -1456,68 +1530,74 @@ function Wo_CheckUserSessionID($user_id = 0, $session_id = '', $platform = 'web'
     if (empty($session_id)) {
         return false;
     }
-    $platform  = Wo_Secure($platform);
-    $query     = mysqli_query($sqlConnect, "SELECT COUNT(`id`) as `session` FROM " . T_APP_SESSIONS . " WHERE `user_id` = '{$user_id}' AND `session_id` = '{$session_id}'");
+    $platform = Wo_Secure($platform);
+    $query = mysqli_query($sqlConnect, "SELECT COUNT(`id`) as `session` FROM " . T_APP_SESSIONS . " WHERE `user_id` = '{$user_id}' AND `session_id` = '{$session_id}'");
     $query_sql = mysqli_fetch_assoc($query);
     if ($query_sql['session'] > 0) {
         return true;
     }
     return false;
 }
-function Wo_ValidateAccessToken($access_token = '') {
+function Wo_ValidateAccessToken($access_token = '')
+{
     global $wo, $sqlConnect;
     if (empty($access_token)) {
         return false;
     }
     $access_token = Wo_Secure($access_token);
-    $query        = mysqli_query($sqlConnect, "SELECT user_id FROM " . T_APP_SESSIONS . " WHERE `session_id` = '{$access_token}' LIMIT 1");
-    $query_sql    = mysqli_fetch_assoc($query);
+    $query = mysqli_query($sqlConnect, "SELECT user_id FROM " . T_APP_SESSIONS . " WHERE `session_id` = '{$access_token}' LIMIT 1");
+    $query_sql = mysqli_fetch_assoc($query);
     if ($query_sql['user_id'] > 0) {
         return $query_sql['user_id'];
     }
     return false;
 }
-function ip_in_range($ip, $range) {
+function ip_in_range($ip, $range)
+{
     if (strpos($range, '/') == false) {
         $range .= '/32';
     }
     // $range is in IP/CIDR format eg 127.0.0.1/24
     list($range, $netmask) = explode('/', $range, 2);
-    $range_decimal    = ip2long($range);
-    $ip_decimal       = ip2long($ip);
+    $range_decimal = ip2long($range);
+    $ip_decimal = ip2long($ip);
     $wildcard_decimal = pow(2, (32 - $netmask)) - 1;
-    $netmask_decimal  = ~$wildcard_decimal;
+    $netmask_decimal = ~$wildcard_decimal;
     return (($ip_decimal & $netmask_decimal) == ($range_decimal & $netmask_decimal));
 }
-function br2nl($st) {
+function br2nl($st)
+{
     if (!empty($st)) {
-        $breaks   = array(
+        $breaks = array(
             "\r\n",
             "\r",
-            "\n"
+            "\n",
         );
-        $st       = str_replace($breaks, "", $st);
+        $st = str_replace($breaks, "", $st);
         $st_no_lb = preg_replace("/\r|\n/", "", $st);
         return preg_replace('/<br(\s+)?\/?>/i', "\r", $st_no_lb);
     }
     return $st;
 }
-function br2nlf($st) {
-    $breaks   = array(
+function br2nlf($st)
+{
+    $breaks = array(
         "\r\n",
         "\r",
-        "\n"
+        "\n",
     );
-    $st       = str_replace($breaks, "", $st);
+    $st = str_replace($breaks, "", $st);
     $st_no_lb = preg_replace("/\r|\n/", "", $st);
-    $st       = preg_replace('/<br(\s+)?\/?>/i', "\r", $st_no_lb);
+    $st = preg_replace('/<br(\s+)?\/?>/i', "\r", $st_no_lb);
     return str_replace('[nl]', "\r", $st);
 }
 use Aws\S3\S3Client;
-function makeFTPdir($ftp, $dir) {
+function makeFTPdir($ftp, $dir)
+{
 }
 use Google\Cloud\Storage\StorageClient;
-function Wo_UploadToS3($filename, $config = array()) {
+function Wo_UploadToS3($filename, $config = array())
+{
     global $wo;
     if ($wo['config']['amazone_s3'] == 0 && $wo['config']['ftp_upload'] == 0 && $wo['config']['spaces'] == 0 && $wo['config']['cloud_upload'] == 0 && $wo['config']['wasabi_storage'] == 0 && $wo['config']['backblaze_storage'] == 0) {
         return false;
@@ -1532,7 +1612,7 @@ function Wo_UploadToS3($filename, $config = array()) {
         $config['delete'] = 1;
     }
     if ($wo['config']['ftp_upload'] == 1) {
-        include_once('assets/libraries/ftp/vendor/autoload.php');
+        include_once 'assets/libraries/ftp/vendor/autoload.php';
         $ftp = new \FtpClient\FtpClient();
         $ftp->connect($wo['config']['ftp_host'], false, $wo['config']['ftp_port']);
         $login = $ftp->login($wo['config']['ftp_username'], $wo['config']['ftp_password']);
@@ -1542,9 +1622,9 @@ function Wo_UploadToS3($filename, $config = array()) {
                     $ftp->chdir($wo['config']['ftp_path']);
                 }
             }
-            $file_path      = substr($filename, 0, strrpos($filename, '/'));
+            $file_path = substr($filename, 0, strrpos($filename, '/'));
             $file_path_info = explode('/', $file_path);
-            $path           = '';
+            $path = '';
             if (!$ftp->isDir($file_path)) {
                 foreach ($file_path_info as $key => $value) {
                     if (!empty($path)) {
@@ -1574,21 +1654,21 @@ function Wo_UploadToS3($filename, $config = array()) {
         if (empty($wo['config']['amazone_s3_key']) || empty($wo['config']['amazone_s3_s_key']) || empty($wo['config']['region']) || empty($wo['config']['bucket_name'])) {
             return false;
         }
-        include_once('assets/libraries/s3-lib/vendor/autoload.php');
+        include_once 'assets/libraries/s3-lib/vendor/autoload.php';
         $s3 = new S3Client(array(
             'version' => 'latest',
             'region' => $wo['config']['region'],
             'credentials' => array(
                 'key' => $wo['config']['amazone_s3_key'],
-                'secret' => $wo['config']['amazone_s3_s_key']
-            )
+                'secret' => $wo['config']['amazone_s3_s_key'],
+            ),
         ));
         $s3->putObject(array(
             'Bucket' => $wo['config']['bucket_name'],
             'Key' => $filename,
             'Body' => fopen($filename, 'r+'),
             'ACL' => 'public-read',
-            'CacheControl' => 'max-age=3153600'
+            'CacheControl' => 'max-age=3153600',
         ));
         if (empty($config['delete'])) {
             if ($s3->doesObjectExist($wo['config']['bucket_name'], $filename)) {
@@ -1604,22 +1684,22 @@ function Wo_UploadToS3($filename, $config = array()) {
         if (empty($wo['config']['wasabi_bucket_name']) || empty($wo['config']['wasabi_access_key']) || empty($wo['config']['wasabi_secret_key']) || empty($wo['config']['wasabi_bucket_region'])) {
             return false;
         }
-        include_once('assets/libraries/s3-lib/vendor/autoload.php');
+        include_once 'assets/libraries/s3-lib/vendor/autoload.php';
         $s3 = new S3Client(array(
-                'version' => 'latest',
-                'endpoint' => 'https://s3.'.$wo['config']['wasabi_bucket_region'].'.wasabisys.com',
-                'region' => $wo['config']['wasabi_bucket_region'],
-                'credentials' => array(
-                    'key' => $wo['config']['wasabi_access_key'],
-                    'secret' => $wo['config']['wasabi_secret_key']
-                )
-            ));
+            'version' => 'latest',
+            'endpoint' => 'https://s3.' . $wo['config']['wasabi_bucket_region'] . '.wasabisys.com',
+            'region' => $wo['config']['wasabi_bucket_region'],
+            'credentials' => array(
+                'key' => $wo['config']['wasabi_access_key'],
+                'secret' => $wo['config']['wasabi_secret_key'],
+            ),
+        ));
         $s3->putObject(array(
             'Bucket' => $wo['config']['wasabi_bucket_name'],
             'Key' => $filename,
             'Body' => fopen($filename, 'r+'),
             'ACL' => 'public-read',
-            'CacheControl' => 'max-age=3153600'
+            'CacheControl' => 'max-age=3153600',
         ));
         if (empty($config['delete'])) {
             if ($s3->doesObjectExist($wo['config']['wasabi_bucket_name'], $filename)) {
@@ -1632,26 +1712,25 @@ function Wo_UploadToS3($filename, $config = array()) {
             return true;
         }
     } else if ($wo['config']['spaces'] == 1) {
-        include_once('assets/libraries/s3-lib/vendor/autoload.php');
-        $key        = $wo['config']['spaces_key'];
-        $secret     = $wo['config']['spaces_secret'];
+        include_once 'assets/libraries/s3-lib/vendor/autoload.php';
+        $key = $wo['config']['spaces_key'];
+        $secret = $wo['config']['spaces_secret'];
         $spaceName = $wo['config']['space_name'];
-        $region     = $wo['config']['space_region'];
+        $region = $wo['config']['space_region'];
         $host = "digitaloceanspaces.com";
-        if(!empty($spaceName)) {
-            $endpoint = "https://".$spaceName.".".$region.".".$host;
-        }
-        else {
-            $endpoint = "https://".$region.".".$host;
+        if (!empty($spaceName)) {
+            $endpoint = "https://" . $spaceName . "." . $region . "." . $host;
+        } else {
+            $endpoint = "https://" . $region . "." . $host;
         }
         $s3 = new S3Client(array(
             'region' => $region,
             'version' => 'latest',
             'endpoint' => $endpoint,
             'credentials' => array(
-                      'key'    => $key,
-                      'secret' => $secret,
-                  ),
+                'key' => $key,
+                'secret' => $secret,
+            ),
             'bucket_endpoint' => true,
         ));
         $s3->putObject(array(
@@ -1659,7 +1738,7 @@ function Wo_UploadToS3($filename, $config = array()) {
             'Key' => $filename,
             'Body' => fopen($filename, 'r+'),
             'ACL' => 'public-read',
-            'CacheControl' => 'max-age=3153600'
+            'CacheControl' => 'max-age=3153600',
         ));
         if (empty($config['delete'])) {
             if ($s3->doesObjectExist($wo['config']['space_name'], $filename)) {
@@ -1673,26 +1752,26 @@ function Wo_UploadToS3($filename, $config = array()) {
         }
     } elseif ($wo['config']['backblaze_storage'] == 1) {
         $info = BackblazeConnect(array('apiUrl' => 'https://api.backblazeb2.com',
-                                       'uri' => '/b2api/v2/b2_authorize_account',
-                                ));
+            'uri' => '/b2api/v2/b2_authorize_account',
+        ));
         if (!empty($info)) {
-            $result = json_decode($info,true);
+            $result = json_decode($info, true);
             if (!empty($result['authorizationToken']) && !empty($result['apiUrl']) && !empty($result['accountId'])) {
                 $info = BackblazeConnect(array('apiUrl' => $result['apiUrl'],
-                                               'uri' => '/b2api/v2/b2_get_upload_url',
-                                               'authorizationToken' => $result['authorizationToken'],
-                                        ));
+                    'uri' => '/b2api/v2/b2_get_upload_url',
+                    'authorizationToken' => $result['authorizationToken'],
+                ));
                 if (!empty($info)) {
-                    $info = json_decode($info,true);
+                    $info = json_decode($info, true);
                     if (!empty($info) && !empty($info['uploadUrl'])) {
                         $info = BackblazeConnect(array('apiUrl' => $info['uploadUrl'],
-                                                       'uri' => '',
-                                                       'file' => $filename,
-                                                       'authorizationToken' => $info['authorizationToken'],
-                                                        ));
+                            'uri' => '',
+                            'file' => $filename,
+                            'authorizationToken' => $info['authorizationToken'],
+                        ));
 
                         if (!empty($info)) {
-                            $info = json_decode($info,true);
+                            $info = json_decode($info, true);
                             if (!empty($info) && !empty($info['accountId'])) {
                                 if (empty($config['delete'])) {
                                     @unlink($filename);
@@ -1709,15 +1788,15 @@ function Wo_UploadToS3($filename, $config = array()) {
     } elseif ($wo['config']['cloud_upload'] == 1) {
         require_once 'assets/libraries/google-lib/vendor/autoload.php';
         try {
-            $storage       = new StorageClient(array(
-                'keyFilePath' => $wo['config']['cloud_file_path']
+            $storage = new StorageClient(array(
+                'keyFilePath' => $wo['config']['cloud_file_path'],
             ));
             // set which bucket to work in
-            $bucket        = $storage->bucket($wo['config']['cloud_bucket_name']);
-            $fileContent   = file_get_contents($filename);
+            $bucket = $storage->bucket($wo['config']['cloud_bucket_name']);
+            $fileContent = file_get_contents($filename);
             // upload/replace file
             $storageObject = $bucket->upload($fileContent, array(
-                'name' => $filename
+                'name' => $filename,
             ));
             if (!empty($storageObject)) {
                 if (empty($config['delete'])) {
@@ -1727,8 +1806,7 @@ function Wo_UploadToS3($filename, $config = array()) {
                 }
                 return true;
             }
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             // maybe invalid private key ?
             // print $e;
             // exit();
@@ -1737,7 +1815,8 @@ function Wo_UploadToS3($filename, $config = array()) {
     }
     return false;
 }
-function Wo_DeleteFromToS3($filename, $config = array()) {
+function Wo_DeleteFromToS3($filename, $config = array())
+{
     global $wo;
     if ($wo['config']['amazone_s3'] == 0 && $wo['config']['ftp_upload'] == 0 && $wo['config']['spaces'] == 0 && $wo['config']['cloud_upload'] == 0 && $wo['config']['amazone_s3_2'] == 0 && $wo['config']['wasabi_storage'] == 0 && $wo['config']['backblaze_storage'] == 0) {
         return false;
@@ -1746,7 +1825,7 @@ function Wo_DeleteFromToS3($filename, $config = array()) {
         return false;
     }
     if ($wo['config']['ftp_upload'] == 1) {
-        include_once('assets/libraries/ftp/vendor/autoload.php');
+        include_once 'assets/libraries/ftp/vendor/autoload.php';
         $ftp = new \FtpClient\FtpClient();
         $ftp->connect($wo['config']['ftp_host'], false, $wo['config']['ftp_port']);
         $login = $ftp->login($wo['config']['ftp_username'], $wo['config']['ftp_password']);
@@ -1756,10 +1835,10 @@ function Wo_DeleteFromToS3($filename, $config = array()) {
                     $ftp->chdir($wo['config']['ftp_path']);
                 }
             }
-            $file_path      = substr($filename, 0, strrpos($filename, '/'));
-            $file_name      = substr($filename, strrpos($filename, '/') + 1);
+            $file_path = substr($filename, 0, strrpos($filename, '/'));
+            $file_name = substr($filename, strrpos($filename, '/') + 1);
             $file_path_info = explode('/', $file_path);
-            $path           = '';
+            $path = '';
             if (!$ftp->isDir($file_path)) {
                 return false;
             }
@@ -1770,7 +1849,7 @@ function Wo_DeleteFromToS3($filename, $config = array()) {
             }
         }
     } else if ($wo['config']['amazone_s3'] == 1) {
-        include_once('assets/libraries/s3-lib/vendor/autoload.php');
+        include_once 'assets/libraries/s3-lib/vendor/autoload.php';
         if (empty($wo['config']['amazone_s3_key']) || empty($wo['config']['amazone_s3_s_key']) || empty($wo['config']['region']) || empty($wo['config']['bucket_name'])) {
             return false;
         }
@@ -1779,90 +1858,89 @@ function Wo_DeleteFromToS3($filename, $config = array()) {
             'region' => $wo['config']['region'],
             'credentials' => array(
                 'key' => $wo['config']['amazone_s3_key'],
-                'secret' => $wo['config']['amazone_s3_s_key']
-            )
+                'secret' => $wo['config']['amazone_s3_s_key'],
+            ),
         ));
         $s3->deleteObject(array(
             'Bucket' => $wo['config']['bucket_name'],
-            'Key' => $filename
+            'Key' => $filename,
         ));
         if (!$s3->doesObjectExist($wo['config']['bucket_name'], $filename)) {
             return true;
         }
     } else if ($wo['config']['wasabi_storage'] == 1) {
-        include_once('assets/libraries/s3-lib/vendor/autoload.php');
+        include_once 'assets/libraries/s3-lib/vendor/autoload.php';
         if (empty($wo['config']['wasabi_bucket_name']) || empty($wo['config']['wasabi_access_key']) || empty($wo['config']['wasabi_secret_key']) || empty($wo['config']['wasabi_bucket_region'])) {
             return false;
         }
         $s3 = new S3Client(array(
-                'version' => 'latest',
-                'endpoint' => 'https://s3.'.$wo['config']['wasabi_bucket_region'].'.wasabisys.com',
-                'region' => $wo['config']['wasabi_bucket_region'],
-                'credentials' => array(
-                    'key' => $wo['config']['wasabi_access_key'],
-                    'secret' => $wo['config']['wasabi_secret_key']
-                )
-            ));
+            'version' => 'latest',
+            'endpoint' => 'https://s3.' . $wo['config']['wasabi_bucket_region'] . '.wasabisys.com',
+            'region' => $wo['config']['wasabi_bucket_region'],
+            'credentials' => array(
+                'key' => $wo['config']['wasabi_access_key'],
+                'secret' => $wo['config']['wasabi_secret_key'],
+            ),
+        ));
         $s3->deleteObject(array(
             'Bucket' => $wo['config']['wasabi_bucket_name'],
-            'Key' => $filename
+            'Key' => $filename,
         ));
         if (!$s3->doesObjectExist($wo['config']['wasabi_bucket_name'], $filename)) {
             return true;
         }
     } else if ($wo['config']['spaces'] == 1) {
 
-        include_once('assets/libraries/s3-lib/vendor/autoload.php');
-        $key        = $wo['config']['spaces_key'];
-        $secret     = $wo['config']['spaces_secret'];
+        include_once 'assets/libraries/s3-lib/vendor/autoload.php';
+        $key = $wo['config']['spaces_key'];
+        $secret = $wo['config']['spaces_secret'];
         $spaceName = $wo['config']['space_name'];
-        $region     = $wo['config']['space_region'];
+        $region = $wo['config']['space_region'];
         $host = "digitaloceanspaces.com";
-        if(!empty($spaceName)) {
-            $endpoint = "https://".$spaceName.".".$region.".".$host;
-        }
-        else {
-            $endpoint = "https://".$region.".".$host;
+        if (!empty($spaceName)) {
+            $endpoint = "https://" . $spaceName . "." . $region . "." . $host;
+        } else {
+            $endpoint = "https://" . $region . "." . $host;
         }
         $s3 = new S3Client(array(
             'region' => $region,
             'version' => 'latest',
             'endpoint' => $endpoint,
             'credentials' => array(
-                      'key'    => $key,
-                      'secret' => $secret,
-                  ),
+                'key' => $key,
+                'secret' => $secret,
+            ),
             'bucket_endpoint' => true,
         ));
         $s3->deleteObject(array(
             'Bucket' => $wo['config']['space_name'],
-            'Key' => $filename
+            'Key' => $filename,
         ));
         if (!$s3->doesObjectExist($wo['config']['space_name'], $filename)) {
             return true;
         }
     } else if ($wo['config']['backblaze_storage'] == 1) {
         $info = BackblazeConnect(array('apiUrl' => 'https://api.backblazeb2.com',
-                                       'uri' => '/b2api/v2/b2_authorize_account',
-                                ));
+            'uri' => '/b2api/v2/b2_authorize_account',
+        ));
         if (!empty($info)) {
-            $result = json_decode($info,true);
+            $result = json_decode($info, true);
             if (!empty($result['authorizationToken']) && !empty($result['apiUrl']) && !empty($result['accountId'])) {
                 $info = BackblazeConnect(array('apiUrl' => $result['apiUrl'],
-                                               'uri' => '/b2api/v2/b2_list_file_names',
-                                               'authorizationToken' => $result['authorizationToken'],
-                                        ));
+                    'uri' => '/b2api/v2/b2_list_file_names',
+                    'authorizationToken' => $result['authorizationToken'],
+                ));
                 if (!empty($info)) {
-                    $info = json_decode($info,true);
+                    $info = json_decode($info, true);
                     if (!empty($info) && !empty($info['files'])) {
                         foreach ($info['files'] as $key => $value) {
                             if ($value['fileName'] == $filename) {
                                 $info = BackblazeConnect(array('apiUrl' => $result['apiUrl'],
-                                                               'uri' => '/b2api/v2/b2_delete_file_version',
-                                                               'authorizationToken' => $result['authorizationToken'],
-                                                               'fileId' => $value['fileId'],
-                                                               'fileName' => $value['fileName'],
-                                                        ));
+                                    'uri' => '/b2api/v2/b2_delete_file_version',
+                                    'authorizationToken' => $result['authorizationToken'],
+                                    'fileId' => $value['fileId'],
+                                    'fileName' => $value['fileName'],
+                                ));
                                 return true;
                             }
                         }
@@ -1875,17 +1953,16 @@ function Wo_DeleteFromToS3($filename, $config = array()) {
         require_once 'assets/libraries/google-lib/vendor/autoload.php';
         try {
             $storage = new StorageClient(array(
-                'keyFilePath' => $wo['config']['cloud_file_path']
+                'keyFilePath' => $wo['config']['cloud_file_path'],
             ));
             // set which bucket to work in
-            $bucket  = $storage->bucket($wo['config']['cloud_bucket_name']);
-            $object  = $bucket->object($filename);
-            $delete  = $object->delete();
+            $bucket = $storage->bucket($wo['config']['cloud_bucket_name']);
+            $object = $bucket->object($filename);
+            $delete = $object->delete();
             if ($delete) {
                 return true;
             }
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             // maybe invalid private key ?
             // print $e;
             // exit();
@@ -1893,7 +1970,7 @@ function Wo_DeleteFromToS3($filename, $config = array()) {
         }
     }
     if ($wo['config']['amazone_s3_2'] == 1) {
-        include_once('assets/libraries/s3-lib/vendor/autoload.php');
+        include_once 'assets/libraries/s3-lib/vendor/autoload.php';
         if (empty($wo['config']['amazone_s3_key_2']) || empty($wo['config']['amazone_s3_s_key_2']) || empty($wo['config']['region_2']) || empty($wo['config']['bucket_name_2'])) {
             return false;
         }
@@ -1902,12 +1979,12 @@ function Wo_DeleteFromToS3($filename, $config = array()) {
             'region' => $wo['config']['region_2'],
             'credentials' => array(
                 'key' => $wo['config']['amazone_s3_key_2'],
-                'secret' => $wo['config']['amazone_s3_s_key_2']
-            )
+                'secret' => $wo['config']['amazone_s3_s_key_2'],
+            ),
         ));
         $s3->deleteObject(array(
             'Bucket' => $wo['config']['bucket_name_2'],
-            'Key' => $filename
+            'Key' => $filename,
         ));
         if (!$s3->doesObjectExist($wo['config']['bucket_name_2'], $filename)) {
             return true;
@@ -1915,7 +1992,8 @@ function Wo_DeleteFromToS3($filename, $config = array()) {
     }
 }
 if (!function_exists('glob_recursive')) {
-    function glob_recursive($pattern, $flags = 0) {
+    function glob_recursive($pattern, $flags = 0)
+    {
         $files = glob($pattern, $flags);
         foreach (glob(dirname($pattern) . '/*', GLOB_ONLYDIR | GLOB_NOSORT) as $dir) {
             $files = array_merge($files, glob_recursive($dir . '/' . basename($pattern), $flags));
@@ -1923,7 +2001,8 @@ if (!function_exists('glob_recursive')) {
         return $files;
     }
 }
-function unzip_file($file, $destination) {
+function unzip_file($file, $destination)
+{
     // create object
     $zip = new ZipArchive();
     // open archive
@@ -1936,7 +2015,8 @@ function unzip_file($file, $destination) {
     $zip->close();
     return true;
 }
-function Wo_CanBlog() {
+function Wo_CanBlog()
+{
     global $wo;
     if ($wo['config']['blogs'] == 1) {
         if ($wo['config']['can_use_blog']) {
@@ -1946,9 +2026,12 @@ function Wo_CanBlog() {
     }
     return false;
 }
-function shuffle_assoc($list) {
-    if (!is_array($list))
+function shuffle_assoc($list)
+{
+    if (!is_array($list)) {
         return $list;
+    }
+
     $keys = array_keys($list);
     shuffle($keys);
     $random = array();
@@ -1957,21 +2040,23 @@ function shuffle_assoc($list) {
     }
     return $random;
 }
-function Wo_GetIcon($icon) {
+function Wo_GetIcon($icon)
+{
     global $wo;
     return $wo['config']['theme_url'] . '/icons/png/' . $icon . '.png';
 }
-function Wo_IsFileAllowed($file_name, $fileType = '') {
+function Wo_IsFileAllowed($file_name, $fileType = '')
+{
     global $wo;
-    $new_string        = pathinfo($file_name, PATHINFO_FILENAME) . '.' . strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+    $new_string = pathinfo($file_name, PATHINFO_FILENAME) . '.' . strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
     if ($wo['config']['audio_upload'] == 0) {
-        $wo['config']['allowedExtenstion'] = str_replace(array(',mp3',',wav'), '', $wo['config']['allowedExtenstion']);
+        $wo['config']['allowedExtenstion'] = str_replace(array(',mp3', ',wav'), '', $wo['config']['allowedExtenstion']);
     }
     if ($wo['config']['video_upload'] == 0) {
-        $wo['config']['allowedExtenstion'] = str_replace(array(',mp4',',flv',',mov',',avi',',webm',',mpeg'), '', $wo['config']['allowedExtenstion']);
+        $wo['config']['allowedExtenstion'] = str_replace(array(',mp4', ',flv', ',mov', ',avi', ',webm', ',mpeg'), '', $wo['config']['allowedExtenstion']);
     }
     $extension_allowed = explode(',', $wo['config']['allowedExtenstion']);
-    $file_extension    = pathinfo($new_string, PATHINFO_EXTENSION);
+    $file_extension = pathinfo($new_string, PATHINFO_EXTENSION);
     $mime_types = explode(',', str_replace(' ', '', $wo['config']['mime_types'] . ',application/json,application/octet-stream'));
     if (Wo_IsAdmin()) {
         $mime_types = explode(',', str_replace(' ', '', $wo['config']['mime_types'] . ',application/json,application/octet-stream,image/svg+xml'));
@@ -1986,7 +2071,8 @@ function Wo_IsFileAllowed($file_name, $fileType = '') {
     }
     return true;
 }
-function Wo_IsVideoNotAllowedMime($file_type) {
+function Wo_IsVideoNotAllowedMime($file_type)
+{
     global $wo;
     $mime_types = explode(',', $wo['config']['ffmpeg_mime_types']);
     if (!in_array($file_type, $mime_types)) {
@@ -1994,17 +2080,19 @@ function Wo_IsVideoNotAllowedMime($file_type) {
     }
     return false;
 }
-function Wo_IsFfmpegFileAllowed($file_name) {
+function Wo_IsFfmpegFileAllowed($file_name)
+{
     global $wo;
-    $new_string        = pathinfo($file_name, PATHINFO_FILENAME) . '.' . strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+    $new_string = pathinfo($file_name, PATHINFO_FILENAME) . '.' . strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
     $extension_allowed = explode(',', $wo['config']['allowedffmpegExtenstion']);
-    $file_extension    = pathinfo($new_string, PATHINFO_EXTENSION);
+    $file_extension = pathinfo($new_string, PATHINFO_EXTENSION);
     if (in_array($file_extension, $extension_allowed)) {
         return true;
     }
     return false;
 }
-function Wo_ShortText($text = "", $len = 100) {
+function Wo_ShortText($text = "", $len = 100)
+{
     if (empty($text) || !is_string($text) || !is_numeric($len) || $len < 1) {
         return "****";
     }
@@ -2013,14 +2101,15 @@ function Wo_ShortText($text = "", $len = 100) {
     }
     return $text;
 }
-function Wo_DelexpiredEnvents() {
+function Wo_DelexpiredEnvents()
+{
     global $wo, $sqlConnect;
-    $t_events     = T_EVENTS;
+    $t_events = T_EVENTS;
     $t_events_inv = T_EVENTS_INV;
-    $t_events_go  = T_EVENTS_GOING;
+    $t_events_go = T_EVENTS_GOING;
     $t_events_int = T_EVENTS_INT;
-    $t_posts      = T_POSTS;
-    $sql          = "SELECT `id` FROM `$t_events` WHERE `end_date` < CURDATE()";
+    $t_posts = T_POSTS;
+    $sql = "SELECT `id` FROM `$t_events` WHERE `end_date` < CURDATE()";
     @mysqli_query($sqlConnect, "DELETE FROM `$t_posts` WHERE `event_id` IN ({$sql})");
     @mysqli_query($sqlConnect, "DELETE FROM `$t_posts` WHERE `page_event_id` IN ({$sql})");
     @mysqli_query($sqlConnect, "DELETE FROM `$t_events_inv` WHERE `event_id` IN ({$sql})");
@@ -2028,7 +2117,8 @@ function Wo_DelexpiredEnvents() {
     @mysqli_query($sqlConnect, "DELETE FROM `$t_events_int` WHERE `event_id` IN ({$sql})");
     @mysqli_query($sqlConnect, "DELETE FROM `$t_events` WHERE `end_date` < CURDATE()");
 }
-function ToObject($array) {
+function ToObject($array)
+{
     $object = new stdClass();
     foreach ($array as $key => $value) {
         if (is_array($value)) {
@@ -2040,9 +2130,12 @@ function ToObject($array) {
     }
     return $object;
 }
-function ToArray($obj) {
-    if (is_object($obj))
+function ToArray($obj)
+{
+    if (is_object($obj)) {
         $obj = (array) $obj;
+    }
+
     if (is_array($obj)) {
         $new = array();
         foreach ($obj as $key => $val) {
@@ -2053,7 +2146,8 @@ function ToArray($obj) {
     }
     return $new;
 }
-function fetchDataFromURL($url = '') {
+function fetchDataFromURL($url = '')
+{
     if (empty($url)) {
         return false;
     }
@@ -2071,45 +2165,48 @@ function fetchDataFromURL($url = '') {
     return curl_exec($ch);
 }
 
-function resetCache($folder = '') {
+function resetCache($folder = '')
+{
     $pathScan = './cache';
-    if (!empty($folder)) { 
+    if (!empty($folder)) {
         $pathScan = './cache/' . $folder;
     }
     foreach (glob_recursive($pathScan, '*.tmp') as $key => $value) {
         unlink($value);
     }
 }
-function glob_recursive($base, $pattern, $flags = 0) {
-	$flags = $flags & ~GLOB_NOCHECK;
-	
-	if (substr($base, -1) !== DIRECTORY_SEPARATOR) {
-		$base .= DIRECTORY_SEPARATOR;
-	}
+function glob_recursive($base, $pattern, $flags = 0)
+{
+    $flags = $flags & ~GLOB_NOCHECK;
 
-	$files = glob($base.$pattern, $flags);
-	if (!is_array($files)) {
-		$files = [];
-	}
+    if (substr($base, -1) !== DIRECTORY_SEPARATOR) {
+        $base .= DIRECTORY_SEPARATOR;
+    }
 
-	$dirs = glob($base.'*', GLOB_ONLYDIR|GLOB_NOSORT|GLOB_MARK);
-	if (!is_array($dirs)) {
-		return $files;
-	}
-	
-	foreach ($dirs as $dir) {
-		$dirFiles = glob_recursive($dir, $pattern, $flags);
-		$files = array_merge($files, $dirFiles);
-	}
+    $files = glob($base . $pattern, $flags);
+    if (!is_array($files)) {
+        $files = [];
+    }
 
-	return $files;
+    $dirs = glob($base . '*', GLOB_ONLYDIR | GLOB_NOSORT | GLOB_MARK);
+    if (!is_array($dirs)) {
+        return $files;
+    }
+
+    foreach ($dirs as $dir) {
+        $dirFiles = glob_recursive($dir, $pattern, $flags);
+        $files = array_merge($files, $dirFiles);
+    }
+
+    return $files;
 }
 
-function getBrowser() {
-    $u_agent  = $_SERVER['HTTP_USER_AGENT'];
-    $bname    = 'Unknown';
+function getBrowser()
+{
+    $u_agent = $_SERVER['HTTP_USER_AGENT'];
+    $bname = 'Unknown';
     $platform = 'Unknown';
-    $version  = "";
+    $version = "";
     // First get the platform?
     if (preg_match('/macintosh|mac os x/i', $u_agent)) {
         $platform = 'mac';
@@ -2127,28 +2224,28 @@ function getBrowser() {
     // Next get the name of the useragent yes seperately and for good reason
     if (preg_match('/MSIE/i', $u_agent) && !preg_match('/Opera/i', $u_agent)) {
         $bname = 'Internet Explorer';
-        $ub    = "MSIE";
+        $ub = "MSIE";
     } elseif (preg_match('/Firefox/i', $u_agent)) {
         $bname = 'Mozilla Firefox';
-        $ub    = "Firefox";
+        $ub = "Firefox";
     } elseif (preg_match('/Chrome/i', $u_agent)) {
         $bname = 'Google Chrome';
-        $ub    = "Chrome";
+        $ub = "Chrome";
     } elseif (preg_match('/Safari/i', $u_agent)) {
         $bname = 'Apple Safari';
-        $ub    = "Safari";
+        $ub = "Safari";
     } elseif (preg_match('/Opera/i', $u_agent)) {
         $bname = 'Opera';
-        $ub    = "Opera";
+        $ub = "Opera";
     } elseif (preg_match('/Netscape/i', $u_agent)) {
         $bname = 'Netscape';
-        $ub    = "Netscape";
+        $ub = "Netscape";
     }
     // finally get the correct version number
-    $known   = array(
+    $known = array(
         'Version',
         $ub,
-        'other'
+        'other',
     );
     $pattern = '#(?<browser>' . join('|', $known) . ')[/ ]+(?<version>[0-9.|a-zA-Z.]*)#';
     if (!preg_match_all($pattern, $u_agent, $matches)) {
@@ -2177,10 +2274,11 @@ function getBrowser() {
         'version' => $version,
         'platform' => $platform,
         'pattern' => $pattern,
-        'ip_address' => get_ip_address()
+        'ip_address' => get_ip_address(),
     );
 }
-function Wo_RunInBackground($data = array()) {
+function Wo_RunInBackground($data = array())
+{
     if (!empty(ob_get_status())) {
         ob_end_clean();
         header("Content-Encoding: none");
@@ -2204,9 +2302,10 @@ function Wo_RunInBackground($data = array()) {
         }
     }
 }
-function watermark_image($target) {
+function watermark_image($target)
+{
     global $wo;
-    include_once('assets/libraries/SimpleImage-master/vendor/autoload.php');
+    include_once 'assets/libraries/SimpleImage-master/vendor/autoload.php';
     if ($wo['config']['watermark'] != 1) {
         return false;
     }
@@ -2214,24 +2313,24 @@ function watermark_image($target) {
         $image = new \claviska\SimpleImage();
         $image->fromFile($target)->autoOrient()->overlay("./themes/{$wo['config']['theme']}/img/icon.png", 'top left', 1, 30, 30)->toFile($target, 'image/jpeg');
         return true;
-    }
-    catch (Exception $err) {
+    } catch (Exception $err) {
         return $err->getMessage();
     }
 }
 
-function blur_image($target) {
+function blur_image($target)
+{
     global $wo;
-    include_once('assets/libraries/SimpleImage-master/vendor/autoload.php');
+    include_once 'assets/libraries/SimpleImage-master/vendor/autoload.php';
 
     try {
         $image_name = @end(explode('/', $target));
         $extension = @end(explode('.', $image_name));
-        $key = sha1(time() + time() - rand(9999, 9999)) . Wo_GenerateKey() . '_image.'.$extension;
+        $key = sha1(time() + time() - rand(9999, 9999)) . Wo_GenerateKey() . '_image.' . $extension;
         $new_url = str_replace($image_name, $key, $target);
 
         $image = new \claviska\SimpleImage();
-        $image->fromFile($target)->blur("gaussian",150)->toFile($new_url, 'image/jpeg');
+        $image->fromFile($target)->blur("gaussian", 150)->toFile($new_url, 'image/jpeg');
         if (!empty($wo['filesToRemove'])) {
             foreach ($wo['filesToRemove'] as $key => $value) {
                 @unlink($value);
@@ -2240,13 +2339,13 @@ function blur_image($target) {
 
         Wo_UploadToS3($new_url);
         return $new_url;
-    }
-    catch (Exception $err) {
+    } catch (Exception $err) {
         return $err->getMessage();
     }
 }
 
-function cache($id, $folder, $type, $data = []) {
+function cache($id, $folder, $type, $data = [])
+{
     global $wo, $sqlConnect, $cache, $db;
     if (empty($type) || empty($folder) || empty($id)) {
         return false;
@@ -2305,45 +2404,48 @@ function cache($id, $folder, $type, $data = []) {
     return false;
 }
 
-function Wo_IsMobile() {
+function Wo_IsMobile()
+{
     $useragent = $_SERVER['HTTP_USER_AGENT'];
     if (preg_match('/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i', $useragent) || preg_match('/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i', substr($useragent, 0, 4))) {
         return true;
     }
     return false;
 }
-function cleanString($string) {
+function cleanString($string)
+{
     return $string = preg_replace("/&#?[a-z0-9]+;/i", "", $string);
 }
-function checkHTTPS() {
-    if(!empty($_SERVER['HTTPS'])) {
-        if($_SERVER['HTTPS'] !== 'off') {
-          return true;
+function checkHTTPS()
+{
+    if (!empty($_SERVER['HTTPS'])) {
+        if ($_SERVER['HTTPS'] !== 'off') {
+            return true;
         }
     } else {
-      if($_SERVER['SERVER_PORT'] == 443) {
-        return true;
-      }
+        if ($_SERVER['SERVER_PORT'] == 443) {
+            return true;
+        }
     }
     if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
-      if ($_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
-         return true;
-      }
+        if ($_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+            return true;
+        }
     }
     return false;
 }
-function url_origin( $s, $use_forwarded_host = false )
+function url_origin($s, $use_forwarded_host = false)
 {
-    $ssl      = ( ! empty( $s['HTTPS'] ) && $s['HTTPS'] == 'on' );
-    $sp       = strtolower( $s['SERVER_PROTOCOL'] );
-    $protocol = substr( $sp, 0, strpos( $sp, '/' ) ) . ( ( $ssl ) ? 's' : '' );
-    $port     = $s['SERVER_PORT'];
-    $port     = ( ( ! $ssl && $port=='80' ) || ( $ssl && $port=='443' ) ) ? '' : ':'.$port;
-    $host     = ( $use_forwarded_host && isset( $s['HTTP_X_FORWARDED_HOST'] ) ) ? $s['HTTP_X_FORWARDED_HOST'] : ( isset( $s['HTTP_HOST'] ) ? $s['HTTP_HOST'] : null );
-    $host     = isset( $host ) ? $host : $s['SERVER_NAME'] . $port;
+    $ssl = (!empty($s['HTTPS']) && $s['HTTPS'] == 'on');
+    $sp = strtolower($s['SERVER_PROTOCOL']);
+    $protocol = substr($sp, 0, strpos($sp, '/')) . (($ssl) ? 's' : '');
+    $port = $s['SERVER_PORT'];
+    $port = ((!$ssl && $port == '80') || ($ssl && $port == '443')) ? '' : ':' . $port;
+    $host = ($use_forwarded_host && isset($s['HTTP_X_FORWARDED_HOST'])) ? $s['HTTP_X_FORWARDED_HOST'] : (isset($s['HTTP_HOST']) ? $s['HTTP_HOST'] : null);
+    $host = isset($host) ? $host : $s['SERVER_NAME'] . $port;
     return $host;
 }
-function full_url( $s, $use_forwarded_host = false )
+function full_url($s, $use_forwarded_host = false)
 {
-    return url_origin( $s, $use_forwarded_host ) . $s['REQUEST_URI'];
+    return url_origin($s, $use_forwarded_host) . $s['REQUEST_URI'];
 }

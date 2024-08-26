@@ -2182,7 +2182,6 @@ $pages_search = array (
   355 => 
   array (
     'link' => 'manage-updates',
-    'title' => 'Purchase Code',
     'page_title' => '',
   ),
   356 => 
